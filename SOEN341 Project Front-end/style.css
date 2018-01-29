@@ -1,0 +1,66 @@
+.loginlogo{
+	padding: 70px 30px;
+	width: 320px;
+	height: 420px;
+	background: #000;
+	left: 50%;
+	top: 50%;
+	color: #fff;
+	position: absolute;
+	transform: translate(-50%, -50%);
+	box-sizing: border-box;
+}
+
+body{
+
+	margin: 0;
+	padding: 0;
+	background: url(cover.jpg);
+	background-size: cover;
+	background-position: center;
+	font-family: sans-serif;
+}
+
+.logo{
+
+	border-radius: 50%;
+	position: absolute;
+	width: 100px;
+	height: 100px;
+	left: calc(50% - 50px);
+	top: -50px;
+}
+
+
+.loginlogo input[type = "text"], input[type = "password"]
+{
+
+	
+	background: transparent;
+
+}
+
+
+h3{
+	text-align: center;
+	font-size: 15px;
+	margin: 0;
+	padding: 0 0 20px
+
+}
+
+.loginlogo input 
+{
+	margin-bottom: 18px;
+	width: 100%;
+}
+
+.button{
+
+	background: lightblue;
+}
+
+
+
+
+
