@@ -1,10 +1,45 @@
-# SOEN341-QAWebsite
+# Questions & Answers Web Application
+## Written in C# Using the Open Source ASP.Net web framework (.NET Core)
+  
+### Authors:
+  
+Bradley Laguerre           (27906153)   
+Chris Dubuc-Pesetti        (40037815)   
+Maikil (Mike) Salib        (27195060)  
+Ofer Nitka-Nakash          (40023371)    
+Philip Kyres               (40023459)   
+Rafik Ifrani               (40028192)   
+Thi Thanh Truc Rosa Phung  (40014601)   
+Vatika Prasad              (40033221)  
+  
+### Client:
+Yi Zeng
 
-Thi Thanh Truc Rosa Phung (40014601)  
-Chris Dubuc-Pesetti (40037815)  
-Ofer Nitka-Nakash (40023371)  
-Philip Kyres (40023459)  
-Rafik Ifrani (40028192)  
-Maikil (Mike) Salib (27195060)  
-Vatika Prasad (40033221)  
-Bradley Laguerre (27906153)
+## Built With
+* [ASP.NET](https://www.asp.net/) - Web Framework
+* [Bootstrap](https://getbootstrap.com/) - Front End Library
+
+## Running the tests
+
+Functions will be used to run testing by another team member.
+
+### Break down of tests
+
+Inside function
+
+```
+To be updated
+```
+
+### Coding style tests
+
+Explain what these tests test and why
+
+```
+To be updated
+```
+
+## Acknowledgments
+
+* Visual Studio
+* MVC
