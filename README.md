@@ -1,7 +1,11 @@
 # Questions & Answers Web Application
-## Written in C# Using the Open Source ASP.Net web framework (.NET Core)
+
+## Project Description
+
+This project is a question and answer site to be created in accordance with the desires of the TA, who is to be treated as the customer,
+for the SOEN 341 course taking place on the winter semester of 2018 at Concordia University.
   
-### Authors:
+## Authors:
   
 Bradley Laguerre           (27906153)   
 Chris Dubuc-Pesetti        (40037815)   
