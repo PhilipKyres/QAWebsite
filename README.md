@@ -6,7 +6,7 @@ This project is a question and answer site to be created in accordance with the 
 for the SOEN 341 course taking place on the winter semester of 2018 at Concordia University.
   
 ## Authors:
-  
+
 Bradley Laguerre           (27906153)   
 Chris Dubuc-Pesetti        (40037815)   
 Maikil (Mike) Salib        (27195060)  
@@ -15,6 +15,8 @@ Philip Kyres               (40023459)
 Rafik Ifrani               (40028192)   
 Thi Thanh Truc Rosa Phung  (40014601)   
 Vatika Prasad              (40033221)  
+
+Team SB2
   
 ### Client:
 Yi Zeng
