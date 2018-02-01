@@ -49,3 +49,7 @@ To be updated
 
 * Visual Studio
 * MVC
+
+## Communication
+
+Discord server link: https://discord.gg/kJPP38N
