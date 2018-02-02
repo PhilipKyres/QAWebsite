@@ -2,7 +2,7 @@ language: csharp
 solution: SOEN341-QAWebsite.sln
 
 mono:
-  - latest
+  - none
 
 dotnet: 
    - latest
