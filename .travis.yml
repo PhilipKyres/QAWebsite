@@ -4,3 +4,7 @@ solution: SOEN341-QAWebsite.sln
 dotnet: 2.1.4
 
 mono: none
+
+script:  
+    - ./build.sh
+    
