@@ -1,2 +1,11 @@
 language: csharp
 solution: SOEN341-QAWebsite.sln
+
+mono:
+  - latest
+
+dotnet: 
+   - latest
+   
+script:
+ - dotnet restore
