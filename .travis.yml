@@ -1,6 +1,9 @@
 language: csharp
 solution: SOEN341-QAWebsite.sln
 
+before_install:
+  - chmod +x build.sh
+
 dotnet: 2.1.4
 
 mono: none
