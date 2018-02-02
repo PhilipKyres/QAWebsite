@@ -13,11 +13,3 @@ mono: none
 script:  
   - dotnet --info
     - ./build.sh
-    
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: d342f14e4e12be4c1dc4b79668e1b57c77304fb9
-  keep-history: true
-  on:
-    branch: CIPatch
