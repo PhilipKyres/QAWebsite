@@ -1,12 +1,11 @@
 language: csharp
 solution: SOEN341-QAWebsite.sln
 
+sudo: required
+
 dotnet: 2.1.4
 
 mono: none
-
-before_install:
- - chmod +x
 
 script:  
     - ./build.sh
