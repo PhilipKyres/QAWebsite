@@ -1,8 +1,6 @@
 language: csharp
 solution: SOEN341-QAWebsite.sln
 
-sudo: required
-
 dotnet: 2.1.4
 
 mono: none
