@@ -1,9 +1,6 @@
 language: csharp
 solution: SOEN341-QAWebsite.sln
 
-dotnet: 2.0.1
+dotnet: 2.1.4
 
 mono: none
-   
-script:
- - dotnet restore
