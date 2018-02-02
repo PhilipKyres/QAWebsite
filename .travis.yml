@@ -5,6 +5,9 @@ dotnet: 2.1.4
 
 mono: none
 
+before_install:
+ - chmod +x gradlew
+
 script:  
     - ./build.sh
     
