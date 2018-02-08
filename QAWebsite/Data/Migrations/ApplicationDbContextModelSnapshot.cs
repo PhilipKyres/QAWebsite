@@ -159,6 +159,12 @@ namespace QAWebsite.Data.Migrations
 
                     b.Property<bool>("TwoFactorEnabled");
 
+                    b.Property<int>("Upvotes");
+
+                    b.Property<int>("Downvotes");
+
+                    b.Property<byte[]>("UserImage");
+
                     b.Property<string>("UserName")
                         .HasAnnotation("MaxLength", 256);
 
@@ -172,6 +178,7 @@ namespace QAWebsite.Data.Migrations
                         .HasName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRoleClaim<string>", b =>

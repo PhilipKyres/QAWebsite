@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using QAWebsite.Models;
 using QAWebsite.Models.ManageViewModels;
+using QAWebsite.Properties;
 using QAWebsite.Services;
 
 namespace QAWebsite.Controllers
@@ -55,12 +55,27 @@ namespace QAWebsite.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
+            byte[] userImage = user.UserImage;
+            if (user.UserImage == null)
+            {
+                using (var memStream = new MemoryStream())
+                {
+                    Resources.defaultUserImage.Save(memStream, Resources.defaultUserImage.RawFormat);
+                    userImage = memStream.ToArray();
+                }
+            }
+
+
+
             var model = new IndexViewModel
             {
                 Username = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 IsEmailConfirmed = user.EmailConfirmed,
+                UserImage = userImage,
+                Upvotes = user.Upvotes,
+                Downvotes = user.Downvotes,
                 StatusMessage = StatusMessage
             };
 

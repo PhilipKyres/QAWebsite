@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace QAWebsite.Models.ManageViewModels
 {
@@ -21,5 +22,9 @@ namespace QAWebsite.Models.ManageViewModels
         public string PhoneNumber { get; set; }
 
         public string StatusMessage { get; set; }
+
+        public byte[] UserImage{ get; set; }
+        public int Upvotes { get; internal set; }
+        public int Downvotes { get; internal set; }
     }
 }
