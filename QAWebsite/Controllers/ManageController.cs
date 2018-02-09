@@ -6,6 +6,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -55,28 +56,16 @@ namespace QAWebsite.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            byte[] userImage = user.UserImage;
-            if (user.UserImage == null)
-            {
-                using (var memStream = new MemoryStream())
-                {
-                    Resources.defaultUserImage.Save(memStream, Resources.defaultUserImage.RawFormat);
-                    userImage = memStream.ToArray();
-                }
-            }
-
-
-
             var model = new IndexViewModel
             {
                 Username = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 IsEmailConfirmed = user.EmailConfirmed,
-                UserImage = userImage,
                 Upvotes = user.Upvotes,
                 Downvotes = user.Downvotes,
-                StatusMessage = StatusMessage
+                StatusMessage = StatusMessage,
+                AboutMe = user.AboutMe
             };
 
             return View(model);
@@ -90,32 +79,51 @@ namespace QAWebsite.Controllers
             {
                 return View(model);
             }
-
+            var dataChanged = false;
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
+            if (user.AboutMe != model.AboutMe)
             {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+                user.AboutMe = model.AboutMe;
+                dataChanged = true;
             }
 
-            var email = user.Email;
-            if (model.Email != email)
+            if (user.Email != model.Email)
             {
-                var setEmailResult = await _userManager.SetEmailAsync(user, model.Email);
-                if (!setEmailResult.Succeeded)
+                user.Email = model.Email;
+                dataChanged = true;
+            }
+
+            if (user.PhoneNumber != model.PhoneNumber)
+            {
+                user.PhoneNumber = model.PhoneNumber;
+                dataChanged = true;
+            }
+
+            if (user.AboutMe != model.AboutMe)
+            {
+                user.AboutMe = model.AboutMe;
+                dataChanged = true;
+            }
+
+            if (model.UserImage != null)
+            {
+                var userImage = new byte[0];
+                using (var memoryStream = new MemoryStream())
                 {
-                    throw new ApplicationException($"Unexpected error occurred setting email for user with ID '{user.Id}'.");
+                    model.UserImage.CopyTo(memoryStream);
+                    userImage = memoryStream.ToArray();
+                }
+
+
+                if (user.UserImage != userImage)
+                {
+                    user.UserImage = userImage;
+                    dataChanged = true;
                 }
             }
 
-            var phoneNumber = user.PhoneNumber;
-            if (model.PhoneNumber != phoneNumber)
-            {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    throw new ApplicationException($"Unexpected error occurred setting phone number for user with ID '{user.Id}'.");
-                }
-            }
+            if (dataChanged)
+               await _userManager.UpdateAsync(user);
 
             StatusMessage = "Your profile has been updated";
             return RedirectToAction(nameof(Index));
@@ -554,7 +562,7 @@ namespace QAWebsite.Controllers
             model.SharedKey = FormatKey(unformattedKey);
             model.AuthenticatorUri = GenerateQrCodeUri(user.Email, unformattedKey);
         }
-
+        
         #endregion
     }
 }

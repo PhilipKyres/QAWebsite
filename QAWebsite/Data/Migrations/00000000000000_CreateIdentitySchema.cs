@@ -58,6 +58,7 @@ namespace QAWebsite.Data.Migrations
                     SecurityStamp = table.Column<string>(nullable: true),
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
+                    AboutMe = table.Column<string>(maxLength: 4000, nullable: true),
                     Upvotes = table.Column<int>(defaultValue: 0),
                     Downvotes = table.Column<int>(defaultValue: 0),
                     UserImage = table.Column<byte[]>(nullable:true)

@@ -14,5 +14,7 @@ namespace QAWebsite.Models
         public virtual int Upvotes { get; set; }
 
         public virtual int Downvotes { get; set; }
+
+        public virtual string AboutMe { get; set; }
     }
 }

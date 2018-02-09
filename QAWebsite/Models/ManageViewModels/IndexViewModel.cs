@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Drawing;
+using Microsoft.AspNetCore.Http;
 
 namespace QAWebsite.Models.ManageViewModels
 {
@@ -23,7 +24,10 @@ namespace QAWebsite.Models.ManageViewModels
 
         public string StatusMessage { get; set; }
 
-        public byte[] UserImage{ get; set; }
+        public string AboutMe { get; set; }
+
+        [Display(Name = "User Image")]
+        public IFormFile UserImage{ get; set; }
         public int Upvotes { get; internal set; }
         public int Downvotes { get; internal set; }
     }

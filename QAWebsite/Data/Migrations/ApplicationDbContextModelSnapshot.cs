@@ -165,6 +165,9 @@ namespace QAWebsite.Data.Migrations
 
                     b.Property<byte[]>("UserImage");
 
+                    b.Property<string>("AboutMe")
+                                            .HasAnnotation("MaxLength", 4000);
+
                     b.Property<string>("UserName")
                         .HasAnnotation("MaxLength", 256);
 
