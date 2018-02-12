@@ -22,7 +22,9 @@ namespace QAWebsite.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
         }
-
+        
         public DbSet<QAWebsite.Models.ProfileViewModel> ProfileViewModel { get; set; }
+
+        public DbSet<QAWebsite.Models.Question> Question { get; set; }
     }
 }

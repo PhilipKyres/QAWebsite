@@ -49,6 +49,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Folder Include="Data\Migrations\" />
   </ItemGroup>
 
 </Project>
