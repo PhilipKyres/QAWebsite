@@ -74,7 +74,8 @@ namespace QAWebsite.Controllers
                     Content = vm.Content,
                     CreationDate = DateTime.Now,
                     EditDate = DateTime.Now,
-                    AuthorId = _userManager.GetUserId(User)
+                    AuthorId = _userManager.GetUserId(User),
+                    Votes = 0
                 };
 
                 _context.Add(question);

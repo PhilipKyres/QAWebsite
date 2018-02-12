@@ -1,7 +1,7 @@
 ﻿@model QAWebsite.Models.Question
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Question Details";
 }
 
 <h2>Details</h2>
@@ -33,6 +33,12 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.EditDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Votes)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Votes)
         </dd>
     </dl>
 </div>
