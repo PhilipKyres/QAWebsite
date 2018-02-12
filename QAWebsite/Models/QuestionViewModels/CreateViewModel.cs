@@ -14,5 +14,8 @@ namespace QAWebsite.Models.QuestionViewModels
 
         [Required]
         public string Content { get; set; }
+
+        [Required]
+        public string Tags { get; set; }
     }
 }

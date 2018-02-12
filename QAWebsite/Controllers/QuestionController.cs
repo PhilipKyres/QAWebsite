@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
 using QAWebsite.Models.QuestionViewModels;
+using QAWebsite.Models.MultipleViewModels;
 
 namespace QAWebsite.Controllers
 {
@@ -30,7 +31,13 @@ namespace QAWebsite.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Question.ToListAsync());
+            var tags = await _context.Tags.ToListAsync();
+
+            QuestionTagsViewModel model = new QuestionTagsViewModel();
+            model.QuestionModel = await _context.Question.ToListAsync();
+            model.TagsModel = await _context.Tags.ToListAsync();
+
+            return View(model);
         }
 
         // GET: Question/Details/5
@@ -43,13 +50,15 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null)
+            QuestionTagsViewModel model = new QuestionTagsViewModel();
+            model.QuestionModel = await _context.Question.ToListAsync();
+            model.TagsModel = await _context.Tags.ToListAsync();
+            if (model == null)
             {
                 return NotFound();
             }
 
-            return View(question);
+            return View(model);
         }
 
         // GET: Question/Create
@@ -77,6 +86,22 @@ namespace QAWebsite.Controllers
                     AuthorId = _userManager.GetUserId(User)
                 };
 
+                if (vm.Tags.Contains(','))
+                {
+                    String[] tagsList = vm.Tags.Split(',');
+
+                    for (int i = 0; i < tagsList.Length; i++)
+                    {
+                        var tags = new TaggingViewModel
+                        {
+                            Id = Guid.NewGuid().ToString().Substring(0, 8),
+                            Tags = tagsList[i],
+                            QuestionId = question.Id
+                        };
+                        _context.Add(tags);
+                    }
+                }
+
                 _context.Add(question);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -93,11 +118,13 @@ namespace QAWebsite.Controllers
             }
 
             var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
+            var tags = await _context.Tags.FirstOrDefaultAsync(m => m.QuestionId == id);
+
             if (question == null || question.AuthorId != _userManager.GetUserId(User))
             {
                 return NotFound();
             }
-            return View(new EditViewModel(question));
+            return View(new EditViewModel(question, tags));
         }
 
         // POST: Question/Edit/5
@@ -115,18 +142,21 @@ namespace QAWebsite.Controllers
             if (ModelState.IsValid)
             {
                 var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-                if (question == null || question.AuthorId != _userManager.GetUserId(User))
+                var tags = await _context.Tags.SingleOrDefaultAsync(m => m.QuestionId == id);
+                if (question == null || tags == null || question.AuthorId != _userManager.GetUserId(User))
                 {
                     return NotFound();
                 }
 
                 question.Title = vm.Title;
                 question.Content = vm.Content;
+                tags.Tags = vm.Tags;
                 question.EditDate = DateTime.Now;
 
                 try
                 {
                     _context.Update(question);
+                    _context.Update(tags);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -153,13 +183,16 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null || question.AuthorId != _userManager.GetUserId(User))
+            QuestionTagsViewModel model = new QuestionTagsViewModel();
+            model.QuestionModel = await _context.Question.ToListAsync();
+            model.TagsModel = await _context.Tags.ToListAsync();
+
+            if (model == null || model.QuestionModel.FirstOrDefault().AuthorId != _userManager.GetUserId(User))
             {
                 return NotFound();
             }
 
-            return View(question);
+            return View(model);
         }
 
         // POST: Question/Delete/5

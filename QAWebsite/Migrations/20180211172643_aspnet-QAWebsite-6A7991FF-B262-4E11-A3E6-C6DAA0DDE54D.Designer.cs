@@ -11,9 +11,10 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180211172643_aspnet-QAWebsite-6A7991FF-B262-4E11-A3E6-C6DAA0DDE54D")]
+    partial class aspnetQAWebsite6A7991FFB2624E11A3E6C6DAA0DDE54D
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

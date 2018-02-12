@@ -12,11 +12,12 @@ namespace QAWebsite.Models.QuestionViewModels
     {
         public EditViewModel() {}
 
-        public EditViewModel(Question question)
+        public EditViewModel(Question question, TaggingViewModel tags)
         {
             this.Id = question.Id;
             this.Title = question.Title;
             this.Content = question.Content;
+            this.Tags = tags.Tags;
         }
 
         [ReadOnly(true)]
@@ -28,5 +29,8 @@ namespace QAWebsite.Models.QuestionViewModels
 
         [Required]
         public string Content { get; set; }
+
+        [Required]
+        public string Tags { get; set; }
     }
 }

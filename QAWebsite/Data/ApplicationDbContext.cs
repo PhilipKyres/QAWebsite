@@ -24,5 +24,6 @@ namespace QAWebsite.Data
         }
 
         public DbSet<QAWebsite.Models.Question> Question { get; set; }
+        public DbSet<QAWebsite.Models.TaggingViewModel> Tags { get; set; }
     }
 }

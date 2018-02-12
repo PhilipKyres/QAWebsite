@@ -1,4 +1,4 @@
-﻿@model QAWebsite.Models.Question
+﻿@model QAWebsite.Models.MultipleViewModels.QuestionTagsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -11,36 +11,49 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.DisplayNameFor(model => Model.QuestionModel.FirstOrDefault().Title)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Title)
+            @Html.DisplayFor(model => Model.QuestionModel.FirstOrDefault().Title)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Content)
+            @Html.DisplayNameFor(model => Model.QuestionModel.FirstOrDefault().Content)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Content)
+            @Html.DisplayFor(model => Model.QuestionModel.FirstOrDefault().Content)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.CreationDate)
+            @Html.DisplayNameFor(model => Model.TagsModel.FirstOrDefault().Tags)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.CreationDate)
+            @foreach (var tag in Model.TagsModel)
+            {
+                 @if (@Model.QuestionModel.FirstOrDefault().Id == tag.QuestionId)
+                 {
+                    @Html.DisplayFor(model => tag.Tags)
+
+                 }
+            }
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.EditDate)
+            @Html.DisplayNameFor(model => Model.QuestionModel.FirstOrDefault().CreationDate)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.EditDate)
+            @Html.DisplayFor(model => Model.QuestionModel.FirstOrDefault().CreationDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => Model.QuestionModel.FirstOrDefault().EditDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => Model.QuestionModel.FirstOrDefault().EditDate)
         </dd>
     </dl>
 </div>
 <div>
-    @if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
+    @if (User.Identity.IsAuthenticated && @Model.QuestionModel.FirstOrDefault().AuthorId == UserManager.GetUserId(User))
     {
-        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> @Html.Raw("|")
-        <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> @Html.Raw("|")
+        <a asp-action="Edit" asp-route-id="@Model.QuestionModel.FirstOrDefault().Id">Edit</a> @Html.Raw("|")
+        <a asp-action="Delete" asp-route-id="@Model.QuestionModel.FirstOrDefault().Id">Delete</a> @Html.Raw("|")
     }
     <a asp-action="Index">Back to List</a>
 </div>

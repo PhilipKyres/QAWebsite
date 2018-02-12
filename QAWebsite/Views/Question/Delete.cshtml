@@ -1,4 +1,4 @@
-﻿@model QAWebsite.Models.Question
+﻿@model QAWebsite.Models.MultipleViewModels.QuestionTagsViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -12,33 +12,46 @@
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.DisplayNameFor(model => Model.QuestionModel.FirstOrDefault().Title)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Title)
+            @Html.DisplayFor(model => Model.QuestionModel.FirstOrDefault().Title)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Content)
+            @Html.DisplayNameFor(model => model.QuestionModel.FirstOrDefault().Content)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Content)
+            @Html.DisplayFor(model => Model.QuestionModel.FirstOrDefault().Content)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.CreationDate)
+            @Html.DisplayNameFor(model => Model.TagsModel.FirstOrDefault().Tags)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.CreationDate)
+            @foreach (var tag in Model.TagsModel)
+             {
+                 @if (@Model.QuestionModel.FirstOrDefault().Id == tag.QuestionId)
+                  {
+                    @Html.DisplayFor(model => tag.Tags)
+
+                  }
+             }
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.EditDate)
+            @Html.DisplayNameFor(model => model.QuestionModel.FirstOrDefault().CreationDate)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.EditDate)
+            @Html.DisplayFor(model => Model.QuestionModel.FirstOrDefault().CreationDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.QuestionModel.FirstOrDefault().EditDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => Model.QuestionModel.FirstOrDefault().EditDate)
         </dd>
     </dl>
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="@Model.QuestionModel.FirstOrDefault().Id" />
         <input type="submit" value="Delete" class="btn btn-default" /> |
         <a asp-action="Index">Back to List</a>
     </form>
