@@ -102,6 +102,17 @@ namespace QAWebsite.Controllers
                     }
                 }
 
+                else
+                {
+                    var tags = new TaggingViewModel
+                    {
+                        Id = Guid.NewGuid().ToString().Substring(0, 8),
+                        Tags = vm.Tags,
+                        QuestionId = question.Id
+                    };
+                    _context.Add(tags);
+                }
+
                 _context.Add(question);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -143,7 +154,7 @@ namespace QAWebsite.Controllers
             {
                 var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
                 var tags = await _context.Tags.SingleOrDefaultAsync(m => m.QuestionId == id);
-                if (question == null || tags == null || question.AuthorId != _userManager.GetUserId(User))
+                if (question == null || question.AuthorId != _userManager.GetUserId(User))
                 {
                     return NotFound();
                 }
