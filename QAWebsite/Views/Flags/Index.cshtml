@@ -21,9 +21,6 @@
                 <th>
                     @Html.DisplayNameFor(model => model.CreationDate)
                 </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.AuthorId)
-                </th>
             <th></th>
         </tr>
     </thead>
@@ -38,9 +35,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreationDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AuthorId)
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

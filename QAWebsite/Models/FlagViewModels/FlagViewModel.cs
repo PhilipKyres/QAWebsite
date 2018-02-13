@@ -15,12 +15,12 @@ namespace QAWebsite.Models.FlagViewModels
 
         public FlagViewModel(Question question)
         {
-            this.Id = question.Id;
+            this.QuestionId = question.Id;
         }
 
         [ReadOnly(true)]
         [HiddenInput(DisplayValue = false)]
-        public string Id { get; set; }
+        public string QuestionId { get; set; }
 
         [Required]
         [Display(Name = "Reason")]

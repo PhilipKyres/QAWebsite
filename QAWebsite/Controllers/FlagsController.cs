@@ -56,16 +56,16 @@ namespace QAWebsite.Controllers
             {
                 var flag = new Flag
                 {
-                    Id = Guid.NewGuid().ToString().Substring(0, 8),
+                    Id = Guid.NewGuid().ToString(),   
+                    QuestionId = fm.QuestionId,
                     Reason = fm.SelectedReason,
                     Content = fm.Content,
                     CreationDate = DateTime.Now,
-                    AuthorId = _userManager.GetUserId(User)
                 };
 
                 _context.Add(flag);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "Question", flag.Id);
+                return RedirectToAction("Details", "Question", flag.QuestionId);
             }
             return View(fm);
         }

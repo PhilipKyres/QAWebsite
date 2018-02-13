@@ -183,15 +183,15 @@ namespace QAWebsite.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasMaxLength(8);
-
-                    b.Property<string>("AuthorId")
-                        .HasMaxLength(450);
+                        .HasMaxLength(36);
 
                     b.Property<string>("Content")
                         .IsRequired();
 
                     b.Property<DateTime>("CreationDate");
+
+                    b.Property<string>("QuestionId")
+                        .IsRequired();
 
                     b.Property<string>("Reason")
                         .IsRequired();

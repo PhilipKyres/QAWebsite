@@ -11,8 +11,12 @@ namespace QAWebsite.Models
     public class Flag
     {
         [Key]
-        [MaxLength(8)]
+        [MaxLength(36)]
         public string Id { get; set; }
+        
+        [Required]
+        [Display(Name = "Question Id")]
+        public string QuestionId { get; set; }
 
         [Required]
         [Display(Name = "Reason")]
@@ -26,8 +30,5 @@ namespace QAWebsite.Models
         [Display(Name = "Creation Date")]
         public DateTime CreationDate { get; set; }
 
-        [MaxLength(450)]
-        [ForeignKey("ApplicationUser")]
-        public string AuthorId { get; set; }
     }
 }
