@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
+using QAWebsite.Properties;
 
 namespace QAWebsite.Controllers
 {
@@ -32,18 +35,31 @@ namespace QAWebsite.Controllers
         {
 
             var user = await _userManager.FindByIdAsync(id);
-            var profileViewModel = new ProfileViewModel
+            if (user != null)
             {
-                Username = user.UserName,
-                Email = user.Email,
-                UserImage = user.UserImage,
-                Upvotes = user.Upvotes,
-                Downvotes = user.Downvotes,
-                AboutMe = user.AboutMe
-            };
+                var profileViewModel = new ProfileViewModel
+                {
+                    Username = user.UserName,
+                    Email = user.Email,
+                    Upvotes = 0, //TODO Fetch and calculate from upvotes of questions/answers
+                    Downvotes = 0, //TODO Fetch and calculate from upvotes of questions/answers
+                    AboutMe = (user.AboutMe != null) ? user.AboutMe : Resources.aboutMeNullString,
+                    QuestionList = await _context.Question.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync()
+                };
 
-            return View("Profile", profileViewModel);
+                if(user.UserImage != null)
+                {
+                    profileViewModel.UserImage = user.UserImage;
+                }
+                else using (var memStream = new MemoryStream())
+                {
+                    Resources.defaultUserImage.Save(memStream, Resources.defaultUserImage.RawFormat);
+                    profileViewModel.UserImage = memStream.ToArray();
+                }
+                return View("Profile", profileViewModel);
+            }
 
+            return View("Error", new ErrorViewModel { RequestId = null});
         }
     }
 }

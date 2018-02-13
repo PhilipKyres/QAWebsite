@@ -60,10 +60,6 @@ namespace QAWebsite.Controllers
             {
                 Username = user.UserName,
                 Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                IsEmailConfirmed = user.EmailConfirmed,
-                Upvotes = user.Upvotes,
-                Downvotes = user.Downvotes,
                 StatusMessage = StatusMessage,
                 AboutMe = user.AboutMe
             };
@@ -90,12 +86,6 @@ namespace QAWebsite.Controllers
             if (user.Email != model.Email)
             {
                 user.Email = model.Email;
-                dataChanged = true;
-            }
-
-            if (user.PhoneNumber != model.PhoneNumber)
-            {
-                user.PhoneNumber = model.PhoneNumber;
                 dataChanged = true;
             }
 

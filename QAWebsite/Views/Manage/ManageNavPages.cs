@@ -12,7 +12,8 @@ namespace QAWebsite.Views.Manage
         public static string ActivePageKey => "ActivePage";
 
         public static string Index => "Index";
-
+        
+        public static string PublicProfile => "PublicProfile";
         public static string ChangePassword => "ChangePassword";
 
         public static string ExternalLogins => "ExternalLogins";
@@ -26,7 +27,9 @@ namespace QAWebsite.Views.Manage
         public static string ExternalLoginsNavClass(ViewContext viewContext) => PageNavClass(viewContext, ExternalLogins);
 
         public static string TwoFactorAuthenticationNavClass(ViewContext viewContext) => PageNavClass(viewContext, TwoFactorAuthentication);
-    
+
+        public static string PublicProfileNavClass(ViewContext viewContext) => PageNavClass(viewContext, PublicProfile);
+
         public static string PageNavClass(ViewContext viewContext, string page)
         {
             var activePage = viewContext.ViewData["ActivePage"] as string;

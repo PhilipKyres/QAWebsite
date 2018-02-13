@@ -8,7 +8,6 @@ namespace QAWebsite.Models
 {
     public class ProfileViewModel
     {
-        [Required]
         [Key]
         public string id { get; set; }
 
@@ -26,6 +25,8 @@ namespace QAWebsite.Models
         public string Email { get; set; }
 
         public string Username { get; set; }
+
+        public List<Question> QuestionList { get; set; }
 
 
         //TODO Add recent activity questions set here and in the controller/view for the profile page.

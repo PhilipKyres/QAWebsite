@@ -12,23 +12,18 @@ namespace QAWebsite.Models.ManageViewModels
     {
         public string Username { get; set; }
 
-        public bool IsEmailConfirmed { get; set; }
+    //    public bool IsEmailConfirmed { get; set; }
 
         [Required]
         [EmailAddress]
         public string Email { get; set; }
 
-        [Phone]
-        [Display(Name = "Phone number")]
-        public string PhoneNumber { get; set; }
-
         public string StatusMessage { get; set; }
 
+        [Display(Name = "About me")]
         public string AboutMe { get; set; }
 
         [Display(Name = "User Image")]
         public IFormFile UserImage{ get; set; }
-        public int Upvotes { get; internal set; }
-        public int Downvotes { get; internal set; }
     }
 }

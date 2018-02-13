@@ -61,6 +61,15 @@ namespace QAWebsite.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No Information was provided.
+        /// </summary>
+        internal static string aboutMeNullString {
+            get {
+                return ResourceManager.GetString("aboutMeNullString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap defaultUserImage {
