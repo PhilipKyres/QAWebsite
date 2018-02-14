@@ -83,7 +83,7 @@ namespace QAWebsite.Controllers
 
             if (model.UserImage != null)
             {
-                var userImage;
+                byte[] userImage;
                 using (var memoryStream = new MemoryStream())
                 {
                     model.UserImage.CopyTo(memoryStream);
