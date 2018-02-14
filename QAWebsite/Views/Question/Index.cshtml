@@ -1,4 +1,4 @@
-﻿@model IEnumerable<QAWebsite.Models.Question>
+﻿@model IEnumerable<QAWebsite.Models.QuestionViewModel>
 
 @{
     ViewData["Title"] = "Question List";
@@ -56,12 +56,12 @@
                 @Html.DisplayFor(modelItem => item.Downvotes)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                <a asp-action="Details" asp-route-id="@item.QuestionId">Details</a>
                 @if (User.Identity.IsAuthenticated && item.AuthorId == UserManager.GetUserId(User))
         {
             @Html.Raw("|")
-            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> @Html.Raw("|")
-            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            <a asp-action="Edit" asp-route-id="@item.QuestionId">Edit</a> @Html.Raw("|")
+            <a asp-action="Delete" asp-route-id="@item.QuestionId">Delete</a>
 }
             </td>
         </tr>

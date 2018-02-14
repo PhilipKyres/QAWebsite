@@ -31,13 +31,16 @@ namespace QAWebsite.Controllers
         public async Task<IActionResult> Index()
         {
            var questions = await _context.Question.ToListAsync();
-            questions.ForEach(
-                 q => {
-                    q.Upvotes = _context.QuestionRating.Where(qr => (qr.QuestionId == q.Id) && (qr.RatingValue == (int)Ratings.Upvote)).Count();
-                    q.Downvotes = _context.QuestionRating.Where(qr => (qr.QuestionId == q.Id) && (qr.RatingValue == (int)Ratings.Downvote)).Count();
-                }
-                );
-            return View(questions);
+            List<QuestionViewModel> questionList = new List<QuestionViewModel>();
+            foreach (Question question in questions) {
+               var tempHolder = new QuestionViewModel(question);
+                tempHolder.AuthorName = _context.Users.Where(u => u.Id == tempHolder.AuthorId).FirstOrDefault().UserName;
+                tempHolder.Upvotes = await _context.QuestionRating.Where(qr => (qr.QuestionId == question.Id) && (qr.RatingValue == (int)Ratings.Upvote)).CountAsync();
+                tempHolder.Downvotes = await _context.QuestionRating.Where(qr => (qr.QuestionId == question.Id) && (qr.RatingValue == (int)Ratings.Downvote)).CountAsync();
+                questionList.Add(tempHolder);
+            }
+
+            return View(questionList);
         }
 
         // GET: Question/Details/5
@@ -57,10 +60,11 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            question.Upvotes = await _context.QuestionRating.Where(qr => (qr.QuestionId == question.Id) && (qr.RatingValue == (int)Ratings.Upvote)).CountAsync();
-            question.Downvotes = await _context.QuestionRating.Where(qr => (qr.QuestionId == question.Id) && (qr.RatingValue == (int)Ratings.Downvote)).CountAsync();
+            var questionViewModel = new QuestionViewModel(question);
+            questionViewModel.Upvotes = await _context.QuestionRating.Where(qr => (qr.QuestionId == question.Id) && (qr.RatingValue == (int)Ratings.Upvote)).CountAsync();
+            questionViewModel.Downvotes = await _context.QuestionRating.Where(qr => (qr.QuestionId == question.Id) && (qr.RatingValue == (int)Ratings.Downvote)).CountAsync();
 
-            return View(question);
+            return View(questionViewModel);
         }
 
         // GET: Question/Create

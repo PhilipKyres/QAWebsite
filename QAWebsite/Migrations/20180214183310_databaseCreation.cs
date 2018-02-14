@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace QAWebsite.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class databaseCreation : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -77,6 +77,20 @@ namespace QAWebsite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Question", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QuestionRating",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    QuestionId = table.Column<string>(nullable: true),
+                    RatedBy = table.Column<string>(nullable: true),
+                    RatingValue = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuestionRating", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -247,6 +261,9 @@ namespace QAWebsite.Migrations
 
             migrationBuilder.DropTable(
                 name: "Question");
+
+            migrationBuilder.DropTable(
+                name: "QuestionRating");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

@@ -221,11 +221,25 @@ namespace QAWebsite.Migrations
                         .IsRequired()
                         .HasMaxLength(300);
 
-                    b.Property<int>("Votes");
-
                     b.HasKey("Id");
 
                     b.ToTable("Question");
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionRating", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("QuestionId");
+
+                    b.Property<string>("RatedBy");
+
+                    b.Property<int>("RatingValue");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestionRating");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

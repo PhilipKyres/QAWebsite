@@ -34,9 +34,5 @@ namespace QAWebsite.Models
         [MaxLength(450)]
         [ForeignKey("ApplicationUser")]
         public string AuthorId { get; set; }
-
-        public int Upvotes { get; set; }
-        
-        public int Downvotes { get; set; }
     }
 }

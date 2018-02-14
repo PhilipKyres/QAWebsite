@@ -11,8 +11,8 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180212155901_SomethingChangedMigration")]
-    partial class SomethingChangedMigration
+    [Migration("20180214183310_databaseCreation")]
+    partial class databaseCreation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -180,6 +180,28 @@ namespace QAWebsite.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("QAWebsite.Models.Flag", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("Content")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreationDate");
+
+                    b.Property<string>("QuestionId")
+                        .IsRequired()
+                        .HasMaxLength(8);
+
+                    b.Property<int>("Reason");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Flag");
+                });
+
             modelBuilder.Entity("QAWebsite.Models.Question", b =>
                 {
                     b.Property<string>("Id")
@@ -200,11 +222,25 @@ namespace QAWebsite.Migrations
                         .IsRequired()
                         .HasMaxLength(300);
 
-                    b.Property<int>("Votes");
-
                     b.HasKey("Id");
 
                     b.ToTable("Question");
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionRating", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("QuestionId");
+
+                    b.Property<string>("RatedBy");
+
+                    b.Property<int>("RatingValue");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestionRating");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
