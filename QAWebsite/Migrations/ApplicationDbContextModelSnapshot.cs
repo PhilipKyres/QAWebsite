@@ -178,7 +178,7 @@ namespace QAWebsite.Migrations
 
                     b.ToTable("AspNetUsers");
                 });
-                
+
             modelBuilder.Entity("QAWebsite.Models.Flag", b =>
                 {
                     b.Property<string>("Id")
@@ -201,7 +201,7 @@ namespace QAWebsite.Migrations
                     b.ToTable("Flag");
                 });
 
-            modelBuilder.Entity("QAWebsite.Models.Question", b =>
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.Question", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
