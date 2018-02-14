@@ -17,8 +17,8 @@ namespace QAWebsite.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
-                .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
+                .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -38,7 +38,8 @@ namespace QAWebsite.Migrations
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
-                        .HasName("RoleNameIndex");
+                        .HasName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
                 });
@@ -139,8 +140,6 @@ namespace QAWebsite.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<int>("Downvotes");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256);
 
@@ -166,8 +165,6 @@ namespace QAWebsite.Migrations
 
                     b.Property<bool>("TwoFactorEnabled");
 
-                    b.Property<int>("Upvotes");
-
                     b.Property<byte[]>("UserImage");
 
                     b.Property<string>("UserName")
@@ -180,7 +177,8 @@ namespace QAWebsite.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasName("UserNameIndex");
+                        .HasName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
                 });
@@ -201,15 +199,11 @@ namespace QAWebsite.Migrations
 
                     b.Property<DateTime>("EditDate");
 
-                    b.Property<string>("ProfileViewModelid");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(300);
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ProfileViewModelid");
 
                     b.ToTable("Question");
                 });
@@ -257,13 +251,6 @@ namespace QAWebsite.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("QAWebsite.Models.Question", b =>
-                {
-                    b.HasOne("QAWebsite.Models.ProfileViewModel")
-                        .WithMany("QuestionList")
-                        .HasForeignKey("ProfileViewModelid");
                 });
 #pragma warning restore 612, 618
         }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace QAWebsite.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class initialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -28,6 +28,7 @@ namespace QAWebsite.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
+                    AboutMe = table.Column<string>(nullable: true),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
@@ -41,9 +42,8 @@ namespace QAWebsite.Migrations
                     PhoneNumberConfirmed = table.Column<bool>(nullable: false),
                     SecurityStamp = table.Column<string>(nullable: true),
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
-                    UserName = table.Column<string>(maxLength: 256, nullable: true),
-                    AboutMe = table.Column<string>(maxLength: 4000, nullable: true),
-                    UserImage = table.Column<byte[]>(nullable:true)
+                    UserImage = table.Column<byte[]>(nullable: true),
+                    UserName = table.Column<string>(maxLength: 256, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -55,11 +55,11 @@ namespace QAWebsite.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(maxLength: 8, nullable: false),
-                    AuthorId = table.Column<string>(nullable: true),
+                    AuthorId = table.Column<string>(maxLength: 450, nullable: true),
                     Content = table.Column<string>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     EditDate = table.Column<DateTime>(nullable: false),
-                    Title = table.Column<string>(nullable: false)
+                    Title = table.Column<string>(maxLength: 300, nullable: false)
                 },
                 constraints: table =>
                 {
