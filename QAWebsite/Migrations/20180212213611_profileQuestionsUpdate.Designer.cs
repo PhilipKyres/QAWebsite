@@ -185,30 +185,7 @@ namespace QAWebsite.Migrations
 
                     b.ToTable("AspNetUsers");
                 });
-
-            modelBuilder.Entity("QAWebsite.Models.ProfileViewModel", b =>
-                {
-                    b.Property<string>("id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("AboutMe");
-
-                    b.Property<int>("Downvotes");
-
-                    b.Property<string>("Email")
-                        .IsRequired();
-
-                    b.Property<int>("Upvotes");
-
-                    b.Property<byte[]>("UserImage");
-
-                    b.Property<string>("Username");
-
-                    b.HasKey("id");
-
-                    b.ToTable("ProfileViewModel");
-                });
-
+            
             modelBuilder.Entity("QAWebsite.Models.Question", b =>
                 {
                     b.Property<string>("Id")
