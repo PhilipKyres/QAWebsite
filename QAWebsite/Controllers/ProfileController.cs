@@ -33,7 +33,6 @@ namespace QAWebsite.Controllers
         [Route("/profile/{id}")]
         public async Task<IActionResult> Profile(string id)
         {
-
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
@@ -43,11 +42,11 @@ namespace QAWebsite.Controllers
                     Email = user.Email,
                     Upvotes = 0, //TODO Fetch and calculate from upvotes of questions/answers
                     Downvotes = 0, //TODO Fetch and calculate from upvotes of questions/answers
-                    AboutMe = (user.AboutMe != null) ? user.AboutMe : Resources.aboutMeNullString,
+                    AboutMe = user.AboutMe ?? Resources.aboutMeNullString,
                     QuestionList = await _context.Question.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync()
                 };
 
-                if(user.UserImage != null)
+                if (user.UserImage != null)
                 {
                     profileViewModel.UserImage = user.UserImage;
                 }
