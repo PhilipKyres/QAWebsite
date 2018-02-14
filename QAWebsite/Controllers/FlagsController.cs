@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
+using QAWebsite.Models.Enums;
 using QAWebsite.Models.FlagViewModels;
 
 namespace QAWebsite.Controllers
 {
+    [Authorize]
     public class FlagsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -33,15 +36,16 @@ namespace QAWebsite.Controllers
             }
 
             var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null || question.AuthorId != _userManager.GetUserId(User))
+            if (question == null)
             {
                 return NotFound();
             }
 
             var flagModel = new FlagViewModel(question)
             {
-                SelectedReason = "2"
+                SelectedReason = FlagType.OffTopic
             };
+
             return View(flagModel);
         }
 
@@ -56,16 +60,16 @@ namespace QAWebsite.Controllers
             {
                 var flag = new Flag
                 {
-                    Id = Guid.NewGuid().ToString(),   
-                    QuestionId = fm.QuestionId,
-                    Reason = fm.SelectedReason,
+                    Id = Guid.NewGuid().ToString(),
+                    Reason = (int)fm.SelectedReason,
                     Content = fm.Content,
                     CreationDate = DateTime.Now,
+                    QuestionId = Guid.NewGuid().ToString().Substring(0, 8),
                 };
 
                 _context.Add(flag);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "Question", flag.QuestionId);
+                return RedirectToAction("Details", "Question", flag.Id);
             }
             return View(fm);
         }

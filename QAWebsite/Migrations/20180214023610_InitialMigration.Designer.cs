@@ -11,8 +11,8 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180213082313_FlagViewModel")]
-    partial class FlagViewModel
+    [Migration("20180214023610_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -192,10 +192,10 @@ namespace QAWebsite.Migrations
                     b.Property<DateTime>("CreationDate");
 
                     b.Property<string>("QuestionId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(8);
 
-                    b.Property<string>("Reason")
-                        .IsRequired();
+                    b.Property<int>("Reason");
 
                     b.HasKey("Id");
 

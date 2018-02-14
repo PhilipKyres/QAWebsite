@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using QAWebsite.Models.Enums;
 
 namespace QAWebsite.Models.FlagViewModels
 {
@@ -24,15 +25,9 @@ namespace QAWebsite.Models.FlagViewModels
 
         [Required]
         [Display(Name = "Reason")]
-        public string SelectedReason { get; set; }
-        public List<SelectListItem> Reasons { get; } = new List<SelectListItem> 
-        {
-            new SelectListItem { Value = "0", Text = "Duplicate" },
-            new SelectListItem { Value = "1", Text = "Inappropriate" },
-            new SelectListItem { Value = "2", Text = "Off Topic" },
-            new SelectListItem { Value = "3", Text = "Other" }
-        };
-
+        [EnumDataType(typeof(FlagType))]
+        public FlagType SelectedReason { get; set; }
+       
         [Required]
         public string Content { get; set; }
     }

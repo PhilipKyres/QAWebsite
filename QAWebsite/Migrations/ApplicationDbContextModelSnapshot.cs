@@ -191,10 +191,10 @@ namespace QAWebsite.Migrations
                     b.Property<DateTime>("CreationDate");
 
                     b.Property<string>("QuestionId")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(8);
 
-                    b.Property<string>("Reason")
-                        .IsRequired();
+                    b.Property<int>("Reason");
 
                     b.HasKey("Id");
 

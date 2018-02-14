@@ -15,12 +15,8 @@ namespace QAWebsite.Models
         public string Id { get; set; }
         
         [Required]
-        [Display(Name = "Question Id")]
-        public string QuestionId { get; set; }
-
-        [Required]
         [Display(Name = "Reason")]
-        public string Reason { get; set; }
+        public int Reason { get; set; }
 
         [Required]
         [Display(Name = "Content")]
@@ -30,5 +26,9 @@ namespace QAWebsite.Models
         [Display(Name = "Creation Date")]
         public DateTime CreationDate { get; set; }
 
+        [ForeignKey("Question")]
+        [MaxLength(8)]
+        [Required]
+        public string QuestionId { get; set; }
     }
 }
