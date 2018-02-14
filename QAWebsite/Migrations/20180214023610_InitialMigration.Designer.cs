@@ -11,9 +11,10 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180214023610_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,7 +179,7 @@ namespace QAWebsite.Migrations
 
                     b.ToTable("AspNetUsers");
                 });
-                
+
             modelBuilder.Entity("QAWebsite.Models.Flag", b =>
                 {
                     b.Property<string>("Id")
@@ -226,39 +227,6 @@ namespace QAWebsite.Migrations
                     b.ToTable("Question");
                 });
 
-            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionTag", b =>
-                {
-                    b.Property<string>("QuestionId")
-                        .HasMaxLength(8);
-
-                    b.Property<string>("TagId")
-                        .HasMaxLength(36);
-
-                    b.HasKey("QuestionId", "TagId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("QuestionTag");
-                });
-
-            modelBuilder.Entity("QAWebsite.Models.QuestionModels.Tag", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(36);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(35);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Tag");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
@@ -301,19 +269,6 @@ namespace QAWebsite.Migrations
                     b.HasOne("QAWebsite.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionTag", b =>
-                {
-                    b.HasOne("QAWebsite.Models.QuestionModels.Question", "Question")
-                        .WithMany("QuestionTags")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("QAWebsite.Models.QuestionModels.Tag", "Tag")
-                        .WithMany("QuestionTags")
-                        .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
