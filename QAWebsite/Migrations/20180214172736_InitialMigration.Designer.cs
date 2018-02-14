@@ -11,8 +11,8 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180211172643_aspnet-QAWebsite-6A7991FF-B262-4E11-A3E6-C6DAA0DDE54D")]
-    partial class aspnetQAWebsite6A7991FFB2624E11A3E6C6DAA0DDE54D
+    [Migration("20180214172736_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -180,7 +180,7 @@ namespace QAWebsite.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("QAWebsite.Models.Question", b =>
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.Question", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
@@ -196,10 +196,6 @@ namespace QAWebsite.Migrations
 
                     b.Property<DateTime>("EditDate");
 
-                    b.Property<string>("Tags")
-                        .IsRequired()
-                        .HasMaxLength(300);
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(300);
@@ -207,6 +203,39 @@ namespace QAWebsite.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Question");
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionTag", b =>
+                {
+                    b.Property<string>("QuestionId")
+                        .HasMaxLength(8);
+
+                    b.Property<string>("TagId")
+                        .HasMaxLength(36);
+
+                    b.HasKey("QuestionId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("QuestionTag");
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.Tag", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(35);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -251,6 +280,19 @@ namespace QAWebsite.Migrations
                     b.HasOne("QAWebsite.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionTag", b =>
+                {
+                    b.HasOne("QAWebsite.Models.QuestionModels.Question", "Question")
+                        .WithMany("QuestionTags")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("QAWebsite.Models.QuestionModels.Tag", "Tag")
+                        .WithMany("QuestionTags")
+                        .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

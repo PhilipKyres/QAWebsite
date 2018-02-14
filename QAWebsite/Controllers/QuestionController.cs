@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
+using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.QuestionViewModels;
-using QAWebsite.Models.MultipleViewModels;
 
 namespace QAWebsite.Controllers
 {
@@ -20,24 +17,23 @@ namespace QAWebsite.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly TagController _tagController;
 
         public QuestionController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
+            _tagController = new TagController(context);
         }
 
         // GET: Question
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var tags = await _context.Tags.ToListAsync();
-
-            QuestionTagsViewModel model = new QuestionTagsViewModel();
-            model.QuestionModel = await _context.Question.ToListAsync();
-            model.TagsModel = await _context.Tags.ToListAsync();
-
-            return View(model);
+            return View(await _context.Question
+                .Include(x => x.QuestionTags)
+                .ThenInclude(x => x.Tag)
+                .ToListAsync());
         }
 
         // GET: Question/Details/5
@@ -50,15 +46,16 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            QuestionTagsViewModel model = new QuestionTagsViewModel();
-            model.QuestionModel = await _context.Question.ToListAsync();
-            model.TagsModel = await _context.Tags.ToListAsync();
-            if (model == null)
+            var question = await _context.Question
+                .Include(x => x.QuestionTags)
+                .ThenInclude(x => x.Tag)
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (question == null)
             {
                 return NotFound();
             }
 
-            return View(model);
+            return View(question);
         }
 
         // GET: Question/Create
@@ -74,6 +71,9 @@ namespace QAWebsite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateViewModel vm)
         {
+            //Validate here
+            var tagNames = _tagController.ValidateParseTags(vm.Tags, ModelState);
+
             if (ModelState.IsValid)
             {
                 var question = new Question
@@ -85,36 +85,12 @@ namespace QAWebsite.Controllers
                     EditDate = DateTime.Now,
                     AuthorId = _userManager.GetUserId(User)
                 };
-
-                if (vm.Tags.Contains(','))
-                {
-                    String[] tagsList = vm.Tags.Split(',');
-
-                    for (int i = 0; i < tagsList.Length; i++)
-                    {
-                        var tags = new TaggingViewModel
-                        {
-                            Id = Guid.NewGuid().ToString().Substring(0, 8),
-                            Tags = tagsList[i],
-                            QuestionId = question.Id
-                        };
-                        _context.Add(tags);
-                    }
-                }
-
-                else
-                {
-                    var tags = new TaggingViewModel
-                    {
-                        Id = Guid.NewGuid().ToString().Substring(0, 8),
-                        Tags = vm.Tags,
-                        QuestionId = question.Id
-                    };
-                    _context.Add(tags);
-                }
-
+                
                 _context.Add(question);
                 await _context.SaveChangesAsync();
+
+                await _tagController.CreateQuestionTags(question, tagNames);
+
                 return RedirectToAction(nameof(Index));
             }
             return View(vm);
@@ -128,14 +104,15 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            var tags = await _context.Tags.FirstOrDefaultAsync(m => m.QuestionId == id);
-
+            var question = await _context.Question
+                .Include(x => x.QuestionTags)
+                .ThenInclude(x => x.Tag)
+                .SingleOrDefaultAsync(m => m.Id == id);
             if (question == null || question.AuthorId != _userManager.GetUserId(User))
             {
                 return NotFound();
             }
-            return View(new EditViewModel(question, tags));
+            return View(new EditViewModel(question));
         }
 
         // POST: Question/Edit/5
@@ -150,10 +127,14 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
+            var tagNames = _tagController.ValidateParseTags(vm.Tags, ModelState);
+
             if (ModelState.IsValid)
             {
-                var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-                var tags = await _context.Tags.SingleOrDefaultAsync(m => m.QuestionId == id);
+                var question = await _context.Question
+                    .Include(x => x.QuestionTags)
+                    .ThenInclude(x => x.Tag)
+                    .SingleOrDefaultAsync(m => m.Id == id);
                 if (question == null || question.AuthorId != _userManager.GetUserId(User))
                 {
                     return NotFound();
@@ -161,14 +142,14 @@ namespace QAWebsite.Controllers
 
                 question.Title = vm.Title;
                 question.Content = vm.Content;
-                tags.Tags = vm.Tags;
                 question.EditDate = DateTime.Now;
 
                 try
                 {
                     _context.Update(question);
-                    _context.Update(tags);
                     await _context.SaveChangesAsync();
+
+                    await _tagController.UpdateQuestionTags(question, tagNames);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -194,16 +175,13 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            QuestionTagsViewModel model = new QuestionTagsViewModel();
-            model.QuestionModel = await _context.Question.ToListAsync();
-            model.TagsModel = await _context.Tags.ToListAsync();
-
-            if (model == null || model.QuestionModel.FirstOrDefault().AuthorId != _userManager.GetUserId(User))
+            var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
+            if (question == null || question.AuthorId != _userManager.GetUserId(User))
             {
                 return NotFound();
             }
 
-            return View(model);
+            return View(question);
         }
 
         // POST: Question/Delete/5

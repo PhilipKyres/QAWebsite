@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace QAWebsite.Models.QuestionViewModels
         [Required]
         public string Content { get; set; }
 
-        [Required]
+        [DisplayName("Tags (Comma separated)")]
         public string Tags { get; set; }
     }
 }

@@ -1,70 +1,64 @@
-﻿@model QAWebsite.Models.MultipleViewModels.QuestionTagsViewModel
+﻿@model IEnumerable<QAWebsite.Models.QuestionModels.Question>
 
 @{
     ViewData["Title"] = "Question List";
 }
 
-    <h2>Question List</h2>
+<h2>Question List</h2>
 
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => Model.QuestionModel.FirstOrDefault().Title)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => Model.QuestionModel.FirstOrDefault().Content)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => Model.TagsModel.FirstOrDefault().Tags)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => Model.QuestionModel.FirstOrDefault().CreationDate)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => Model.QuestionModel.FirstOrDefault().EditDate)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var question in Model.QuestionModel)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => question.Title)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => question.Content)
-                    </td>
-                    <td>
-                        @foreach (var tag in Model.TagsModel)
-                        {
-                            if (question.Id == tag.QuestionId)
-                            {
-                                @Html.DisplayFor(modelItem => tag.Tags)
-                            }
-                        }
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => question.CreationDate)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => question.EditDate)
-                    </td>
-                    <td>
-                        <a asp-action="Details" asp-route-id="@question.Id">Details</a>
-                        @if (User.Identity.IsAuthenticated && question.AuthorId == UserManager.GetUserId(User))
-                        {
-                            @Html.Raw("|")
-                            <a asp-action="Edit" asp-route-id="@question.Id">Edit</a> @Html.Raw("|")
-                            <a asp-action="Delete" asp-route-id="@question.Id">Delete</a>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Content)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.QuestionTags)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EditDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+            <td>
+                @string.Join(", ", item.QuestionTags.Select(x => x.Tag.Name))
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EditDate)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                @if (User.Identity.IsAuthenticated && item.AuthorId == UserManager.GetUserId(User))
+        {
+            @Html.Raw("|")
+            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> @Html.Raw("|")
+            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+}
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
