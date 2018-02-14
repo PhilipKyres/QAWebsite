@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Models;
+using QAWebsite.Models.QuestionModels;
 
 namespace QAWebsite.Data
 {
@@ -18,13 +19,24 @@ namespace QAWebsite.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Customize the ASP.NET Identity model and override the defaults if needed.
-            // For example, you can rename the ASP.NET Identity table names and more.
-            // Add your customizations after calling base.OnModelCreating(builder);
+
+            builder.Entity<Tag>().HasIndex(x => x.Name).IsUnique();
+            builder.Entity<QuestionTag>().HasKey(qt => new { qt.QuestionId, qt.TagId });
+
+            builder.Entity<QuestionTag>()
+                .HasOne(q => q.Question)
+                .WithMany(qt => qt.QuestionTags)
+                .HasForeignKey(q => q.QuestionId);
+
+            builder.Entity<QuestionTag>()
+                .HasOne(t => t.Tag)
+                .WithMany(qt => qt.QuestionTags)
+                .HasForeignKey(t => t.TagId);
         }
 
-        public DbSet<QAWebsite.Models.Question> Question { get; set; }
-
+        public DbSet<Question> Question { get; set; }
+        public DbSet<Tag> Tag { get; set; }
+        public DbSet<QuestionTag> QuestionTag { get; set; }
         public DbSet<QAWebsite.Models.Flag> Flag { get; set; }
     }
 }

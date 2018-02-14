@@ -11,9 +11,10 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180214172736_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,30 +179,8 @@ namespace QAWebsite.Migrations
 
                     b.ToTable("AspNetUsers");
                 });
-                
-            modelBuilder.Entity("QAWebsite.Models.Flag", b =>
-                {
-                    b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(36);
 
-                    b.Property<string>("Content")
-                        .IsRequired();
-
-                    b.Property<DateTime>("CreationDate");
-
-                    b.Property<string>("QuestionId")
-                        .IsRequired()
-                        .HasMaxLength(8);
-
-                    b.Property<int>("Reason");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Flag");
-                });
-
-            modelBuilder.Entity("QAWebsite.Models.Question", b =>
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.Question", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()

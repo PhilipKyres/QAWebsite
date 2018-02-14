@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
+using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.QuestionViewModels;
 
 namespace QAWebsite.Controllers
@@ -19,18 +17,23 @@ namespace QAWebsite.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly TagController _tagController;
 
         public QuestionController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
+            _tagController = new TagController(context);
         }
 
         // GET: Question
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Question.ToListAsync());
+            return View(await _context.Question
+                .Include(x => x.QuestionTags)
+                .ThenInclude(x => x.Tag)
+                .ToListAsync());
         }
 
         // GET: Question/Details/5
@@ -43,7 +46,10 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
+            var question = await _context.Question
+                .Include(x => x.QuestionTags)
+                .ThenInclude(x => x.Tag)
+                .SingleOrDefaultAsync(m => m.Id == id);
             if (question == null)
             {
                 return NotFound();
@@ -65,6 +71,9 @@ namespace QAWebsite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateViewModel vm)
         {
+            //Validate here
+            var tagNames = _tagController.ValidateParseTags(vm.Tags, ModelState);
+
             if (ModelState.IsValid)
             {
                 var question = new Question
@@ -76,9 +85,12 @@ namespace QAWebsite.Controllers
                     EditDate = DateTime.Now,
                     AuthorId = _userManager.GetUserId(User)
                 };
-
+                
                 _context.Add(question);
                 await _context.SaveChangesAsync();
+
+                await _tagController.CreateQuestionTags(question, tagNames);
+
                 return RedirectToAction(nameof(Index));
             }
             return View(vm);
@@ -92,7 +104,10 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
+            var question = await _context.Question
+                .Include(x => x.QuestionTags)
+                .ThenInclude(x => x.Tag)
+                .SingleOrDefaultAsync(m => m.Id == id);
             if (question == null || question.AuthorId != _userManager.GetUserId(User))
             {
                 return NotFound();
@@ -112,9 +127,14 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
+            var tagNames = _tagController.ValidateParseTags(vm.Tags, ModelState);
+
             if (ModelState.IsValid)
             {
-                var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
+                var question = await _context.Question
+                    .Include(x => x.QuestionTags)
+                    .ThenInclude(x => x.Tag)
+                    .SingleOrDefaultAsync(m => m.Id == id);
                 if (question == null || question.AuthorId != _userManager.GetUserId(User))
                 {
                     return NotFound();
@@ -128,6 +148,8 @@ namespace QAWebsite.Controllers
                 {
                     _context.Update(question);
                     await _context.SaveChangesAsync();
+
+                    await _tagController.UpdateQuestionTags(question, tagNames);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
-namespace QAWebsite.Models
+namespace QAWebsite.Models.QuestionModels
 {
     public class Question
     {
@@ -34,5 +31,7 @@ namespace QAWebsite.Models
         [MaxLength(450)]
         [ForeignKey("ApplicationUser")]
         public string AuthorId { get; set; }
+
+        public virtual ICollection<QuestionTag> QuestionTags { get; set; }
     }
 }

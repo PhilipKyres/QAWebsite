@@ -1,4 +1,4 @@
-﻿@model QAWebsite.Models.Question
+﻿@model QAWebsite.Models.QuestionModels.Question
 
 @{
     ViewData["Title"] = "Details";
@@ -21,6 +21,12 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Content)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.QuestionTags)
+        </dt>
+        <dd>
+            @string.Join(", ", Model.QuestionTags.Select(x => x.Tag.Name))
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.CreationDate)
