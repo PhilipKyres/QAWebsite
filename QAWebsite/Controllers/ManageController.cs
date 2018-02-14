@@ -75,44 +75,24 @@ namespace QAWebsite.Controllers
             {
                 return View(model);
             }
-            var dataChanged = false;
+            
             var user = await _userManager.GetUserAsync(User);
-            if (user.AboutMe != model.AboutMe)
-            {
-                user.AboutMe = model.AboutMe;
-                dataChanged = true;
-            }
-
-            if (user.Email != model.Email)
-            {
-                user.Email = model.Email;
-                dataChanged = true;
-            }
-
-            if (user.AboutMe != model.AboutMe)
-            {
-                user.AboutMe = model.AboutMe;
-                dataChanged = true;
-            }
+            user.AboutMe = model.AboutMe;
+            user.Email = model.Email;
+            user.AboutMe = model.AboutMe;
 
             if (model.UserImage != null)
             {
-                var userImage = new byte[0];
+                var userImage;
                 using (var memoryStream = new MemoryStream())
                 {
                     model.UserImage.CopyTo(memoryStream);
                     userImage = memoryStream.ToArray();
                 }
 
-
-                if (user.UserImage != userImage)
-                {
                     user.UserImage = userImage;
-                    dataChanged = true;
-                }
             }
-
-            if (dataChanged)
+            
                await _userManager.UpdateAsync(user);
 
             StatusMessage = "Your profile has been updated";
