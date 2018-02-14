@@ -64,7 +64,7 @@ namespace QAWebsite.Controllers
                     Reason = (int)fm.SelectedReason,
                     Content = fm.Content,
                     CreationDate = DateTime.Now,
-                    QuestionId = Guid.NewGuid().ToString().Substring(0, 8),
+                    QuestionId = fm.QuestionId,
                 };
 
                 _context.Add(flag);
