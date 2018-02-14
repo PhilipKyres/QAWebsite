@@ -24,7 +24,7 @@ namespace QAWebsite.Data
         }
 
         public DbSet<QAWebsite.Models.Question> Question { get; set; }
-
         public DbSet<QAWebsite.Models.QuestionRating> QuestionRating { get; set; }
+        public DbSet<QAWebsite.Models.Flag> Flag { get; set; }
     }
 }

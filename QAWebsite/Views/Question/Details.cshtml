@@ -56,7 +56,9 @@
     {
         @Html.Raw("|")
         <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> @Html.Raw("|")
-        <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+        <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> @Html.Raw("|")
+          <a asp-action="Create" asp-controller="Flags" asp-route-id="@Model.Id">Flag</a> @Html.Raw("|")
+
     }
     @Html.Raw("|")
     <a asp-action="Index">Back to List</a>

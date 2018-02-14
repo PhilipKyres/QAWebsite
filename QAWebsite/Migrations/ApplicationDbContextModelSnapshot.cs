@@ -179,6 +179,28 @@ namespace QAWebsite.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("QAWebsite.Models.Flag", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("Content")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreationDate");
+
+                    b.Property<string>("QuestionId")
+                        .IsRequired()
+                        .HasMaxLength(8);
+
+                    b.Property<int>("Reason");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Flag");
+                });
+
             modelBuilder.Entity("QAWebsite.Models.Question", b =>
                 {
                     b.Property<string>("Id")
