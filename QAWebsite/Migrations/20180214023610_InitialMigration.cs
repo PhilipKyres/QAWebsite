@@ -49,15 +49,30 @@ namespace QAWebsite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Flag",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 36, nullable: false),
+                    Content = table.Column<string>(nullable: false),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    QuestionId = table.Column<string>(maxLength: 8, nullable: false),
+                    Reason = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Flag", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Question",
                 columns: table => new
                 {
                     Id = table.Column<string>(maxLength: 8, nullable: false),
-                    AuthorId = table.Column<string>(nullable: true),
+                    AuthorId = table.Column<string>(maxLength: 450, nullable: true),
                     Content = table.Column<string>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     EditDate = table.Column<DateTime>(nullable: false),
-                    Title = table.Column<string>(nullable: false)
+                    Title = table.Column<string>(maxLength: 300, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -226,6 +241,9 @@ namespace QAWebsite.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Flag");
 
             migrationBuilder.DropTable(
                 name: "Question");
