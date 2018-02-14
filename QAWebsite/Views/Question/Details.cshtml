@@ -35,18 +35,29 @@
             @Html.DisplayFor(model => model.EditDate)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Votes)
+            @Html.DisplayNameFor(model => model.Upvotes)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Votes)
+            @Html.DisplayFor(model => model.Upvotes)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Downvotes)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Downvotes)
         </dd>
     </dl>
 </div>
 <div>
+    @Html.ActionLink("Upvote", "RateQuestion", "Rating", new { id = Model.Id, rateValue = Ratings.Upvote })
+    @Html.Raw("|")
+    @Html.ActionLink("Downvote", "RateQuestion", "Rating", new { id = Model.Id, rateValue = Ratings.Downvote })
     @if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
     {
+        @Html.Raw("|")
         <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> @Html.Raw("|")
-        <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> @Html.Raw("|")
+        <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
     }
+    @Html.Raw("|")
     <a asp-action="Index">Back to List</a>
 </div>

@@ -24,35 +24,47 @@
             <th>
                 @Html.DisplayNameFor(model => model.EditDate)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Upvotes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Downvotes)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Content)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreationDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.EditDate)
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    @if (User.Identity.IsAuthenticated && item.AuthorId == UserManager.GetUserId(User))
-                    {
-                        @Html.Raw("|")
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> @Html.Raw("|")
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    }
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EditDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Upvotes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Downvotes)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                @if (User.Identity.IsAuthenticated && item.AuthorId == UserManager.GetUserId(User))
+        {
+            @Html.Raw("|")
+            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> @Html.Raw("|")
+            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+}
+            </td>
+        </tr>
         }
     </tbody>
 </table>

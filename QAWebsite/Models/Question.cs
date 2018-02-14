@@ -35,8 +35,8 @@ namespace QAWebsite.Models
         [ForeignKey("ApplicationUser")]
         public string AuthorId { get; set; }
 
-        [Required]
-        [Display(Name = "Number of Votes")]
-        public int Votes { get; set; }
+        public int Upvotes { get; set; }
+        
+        public int Downvotes { get; set; }
     }
 }

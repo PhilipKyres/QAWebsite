@@ -30,7 +30,14 @@ namespace QAWebsite.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Question.ToListAsync());
+           var questions = await _context.Question.ToListAsync();
+            questions.ForEach(
+                 q => {
+                    q.Upvotes = _context.QuestionRating.Where(qr => (qr.QuestionId == q.Id) && (qr.RatingValue == (int)Ratings.Upvote)).Count();
+                    q.Downvotes = _context.QuestionRating.Where(qr => (qr.QuestionId == q.Id) && (qr.RatingValue == (int)Ratings.Downvote)).Count();
+                }
+                );
+            return View(questions);
         }
 
         // GET: Question/Details/5
@@ -44,10 +51,14 @@ namespace QAWebsite.Controllers
             }
 
             var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
+
             if (question == null)
             {
                 return NotFound();
             }
+
+            question.Upvotes = await _context.QuestionRating.Where(qr => (qr.QuestionId == question.Id) && (qr.RatingValue == (int)Ratings.Upvote)).CountAsync();
+            question.Downvotes = await _context.QuestionRating.Where(qr => (qr.QuestionId == question.Id) && (qr.RatingValue == (int)Ratings.Downvote)).CountAsync();
 
             return View(question);
         }
@@ -74,8 +85,7 @@ namespace QAWebsite.Controllers
                     Content = vm.Content,
                     CreationDate = DateTime.Now,
                     EditDate = DateTime.Now,
-                    AuthorId = _userManager.GetUserId(User),
-                    Votes = 0
+                    AuthorId = _userManager.GetUserId(User)
                 };
 
                 _context.Add(question);
