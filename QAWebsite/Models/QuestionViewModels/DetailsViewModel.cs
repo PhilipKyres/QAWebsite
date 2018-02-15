@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc;
 using QAWebsite.Models.QuestionModels;
 
 namespace QAWebsite.Models.QuestionViewModels
 {
-    public class QuestionViewModel
+    public class DetailsViewModel
     {
-        public QuestionViewModel(Question question, string authorName, int rating)
+        public DetailsViewModel(Question question, string authorName, int rating, List<AnswerViewModel> answers)
         {
             this.AuthorId = question.AuthorId;
             this.Id = question.Id;
@@ -19,6 +19,7 @@ namespace QAWebsite.Models.QuestionViewModels
             this.EditDate = question.EditDate;
             this.AuthorName = authorName;
             this.Rating = rating;
+            this.Answers = answers;
             this.QuestionTags = question.QuestionTags;
         }
 
@@ -52,6 +53,14 @@ namespace QAWebsite.Models.QuestionViewModels
 
         [Required]
         public int Rating { get; set; }
+
+        [Required]
+        [Display(Name = "Your Answer")]
+        public string AnswerContent { get; set; }
+
+        public string BestAnswerId { get; set; }
+
+        public ICollection<AnswerViewModel> Answers { get; set; }
 
         public ICollection<QuestionTag> QuestionTags { get; set; }
     }

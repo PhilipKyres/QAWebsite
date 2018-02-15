@@ -1,20 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QAWebsite.Models.QuestionModels
 {
-    public class Question
+    public class Answer
     {
         [Key]
-        [MaxLength(8)]
+        [MaxLength(36)]
         public string Id { get; set; }
-
-        [Required]
-        [MaxLength(300)]
-        [Display(Name = "Title")]
-        public string Title { get; set; }
 
         [Required]
         [Display(Name = "Content")]
@@ -28,14 +22,12 @@ namespace QAWebsite.Models.QuestionModels
         [Display(Name = "Edit Date")]
         public DateTime EditDate { get; set; }
 
+        [MaxLength(8)]
+        [ForeignKey("Question")]
+        public string QuestionId { get; set; }
+
         [MaxLength(450)]
         [ForeignKey("ApplicationUser")]
         public string AuthorId { get; set; }
-
-        [MaxLength(36)]
-        [ForeignKey("Answer")]
-        public string BestAnswerId { get; set; }
-
-        public virtual ICollection<QuestionTag> QuestionTags { get; set; }
     }
 }

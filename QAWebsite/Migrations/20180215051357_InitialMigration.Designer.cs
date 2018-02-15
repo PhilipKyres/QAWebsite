@@ -11,7 +11,7 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180215044736_InitialMigration")]
+    [Migration("20180215051357_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -184,6 +184,30 @@ namespace QAWebsite.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.Answer", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("AuthorId")
+                        .HasMaxLength(450);
+
+                    b.Property<string>("Content")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreationDate");
+
+                    b.Property<DateTime>("EditDate");
+
+                    b.Property<string>("QuestionId")
+                        .HasMaxLength(8);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Answer");
+                });
+
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.Flag", b =>
                 {
                     b.Property<string>("Id")
@@ -214,6 +238,9 @@ namespace QAWebsite.Migrations
 
                     b.Property<string>("AuthorId")
                         .HasMaxLength(450);
+
+                    b.Property<string>("BestAnswerId")
+                        .HasMaxLength(36);
 
                     b.Property<string>("Content")
                         .IsRequired();

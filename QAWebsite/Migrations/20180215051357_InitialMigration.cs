@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using System;
-using System.Collections.Generic;
 
 namespace QAWebsite.Migrations
 {
@@ -9,6 +8,22 @@ namespace QAWebsite.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Answer",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 36, nullable: false),
+                    AuthorId = table.Column<string>(maxLength: 450, nullable: true),
+                    Content = table.Column<string>(nullable: false),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    EditDate = table.Column<DateTime>(nullable: false),
+                    QuestionId = table.Column<string>(maxLength: 8, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Answer", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -71,6 +86,7 @@ namespace QAWebsite.Migrations
                 {
                     Id = table.Column<string>(maxLength: 8, nullable: false),
                     AuthorId = table.Column<string>(maxLength: 450, nullable: true),
+                    BestAnswerId = table.Column<string>(maxLength: 36, nullable: true),
                     Content = table.Column<string>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     EditDate = table.Column<DateTime>(nullable: false),
@@ -290,6 +306,9 @@ namespace QAWebsite.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Answer");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
