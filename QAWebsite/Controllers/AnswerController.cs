@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -16,27 +15,24 @@ using QAWebsite.Models.QuestionViewModels;
 namespace QAWebsite.Controllers
 {
     [Authorize]
-    public class QuestionController : Controller
+    public class AnswerController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public QuestionController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public AnswerController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
         }
 
-        // GET: Question
-        [AllowAnonymous]
+        // GET: Answer
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Question.ToListAsync());
+            return View(await _context.Answer.ToListAsync());  
         }
 
-        // GET: Question/Details/5
-        [AllowAnonymous]
-        [Route("/Question/{id:length(8)}")]
+        // GET: Answer/Details/5
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -44,51 +40,50 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null)
+            var answer = await _context.Answer
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (answer == null)
             {
                 return NotFound();
             }
 
-            AnswerController answerController = new AnswerController(_context, _userManager);
-            var avm = answerController.GetAnswerList(id);
-         
-            return View(new DetailsViewModel(question, avm));
+            return View(answer);
         }
 
-        // GET: Question/Create
+        // GET: Answer/Create
         public IActionResult Create()
         {
-            return View(new CreateViewModel());
+            return View();
         }
 
-        // POST: Question/Create
+        // POST: Answer/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateViewModel vm)
+        public async Task<IActionResult> Create(DetailsViewModel dvm)
         {
             if (ModelState.IsValid)
             {
-                var question = new Question
+                var answer = new Answer
                 {
-                    Id = Guid.NewGuid().ToString().Substring(0, 8),
-                    Title = vm.Title,
-                    Content = vm.Content,
+                    Id = Guid.NewGuid().ToString(),
+                    Content = dvm.AnswerContent,
                     CreationDate = DateTime.Now,
                     EditDate = DateTime.Now,
+                    QuestionId = dvm.Id,
                     AuthorId = _userManager.GetUserId(User)
                 };
 
-                _context.Add(question);
+                _context.Add(answer);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "Question", new { dvm.Id });
             }
-            return View(vm);
+
+            return View("~/Views/Question/Details", dvm);
         }
 
-        // GET: Question/Edit/5
+        // GET: Answer/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -96,46 +91,45 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null || question.AuthorId != _userManager.GetUserId(User))
+            var answer = await _context.Answer.SingleOrDefaultAsync(m => m.Id == id);
+            if (answer == null)
             {
                 return NotFound();
             }
-            return View(new EditViewModel(question));
+            return View(answer);
         }
 
-        // POST: Question/Edit/5
+        // POST: Answer/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, EditViewModel vm)
+        public async Task<IActionResult> Edit(string id, Answer am)
         {
-            if (id != vm.Id)
+            if (id != am.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-                if (question == null || question.AuthorId != _userManager.GetUserId(User))
+                var answer = await _context.Answer.SingleOrDefaultAsync(a => a.Id == id);
+                if (answer == null || answer.AuthorId != _userManager.GetUserId(User))
                 {
                     return NotFound();
                 }
 
-                question.Title = vm.Title;
-                question.Content = vm.Content;
-                question.EditDate = DateTime.Now;
+                answer.Content = am.Content;
+                answer.EditDate = DateTime.Now;
 
                 try
                 {
-                    _context.Update(question);
+                    _context.Update(answer);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!QuestionExists(vm.Id))
+                    if (!AnswerExists(am.Id))
                     {
                         return NotFound();
                     }
@@ -144,12 +138,13 @@ namespace QAWebsite.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                id = answer.QuestionId;
+                return RedirectToAction("Details", "Question", new { id } ); ;
             }
-            return View(vm);
+            return View(am);
         }
 
-        // GET: Question/Delete/5
+        // GET: Answer/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -157,34 +152,45 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null || question.AuthorId != _userManager.GetUserId(User))
+            var answer = await _context.Answer
+                .SingleOrDefaultAsync(m => m.Id == id);
+            if (answer == null)
             {
                 return NotFound();
             }
 
-            return View(question);
+            return View(answer);
         }
 
-        // POST: Question/Delete/5
+        // POST: Answer/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null || question.AuthorId != _userManager.GetUserId(User))
-            {
-                return NotFound();
-            }
-
-            _context.Question.Remove(question);
+            var answer = await _context.Answer.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Answer.Remove(answer);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool QuestionExists(string id)
+        private bool AnswerExists(string id)
         {
-            return _context.Question.Any(e => e.Id == id);
+            return _context.Answer.Any(e => e.Id == id);
+        }
+
+        public List<AnswerViewModel> GetAnswerList(string id)
+        {
+            var answer = _context.Answer.Where(a => a.QuestionId == id).OrderBy(o => o.CreationDate).ToList();
+
+            List<AnswerViewModel> avm = new List<AnswerViewModel>();
+
+            answer.ForEach(a =>
+            {
+                var user = _context.Users.Where(u => u.Id == a.AuthorId).FirstOrDefault();
+                avm.Add(new AnswerViewModel(a, user.UserName));
+            });
+
+            return avm;
         }
     }
 }

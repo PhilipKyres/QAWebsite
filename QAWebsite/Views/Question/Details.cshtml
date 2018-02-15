@@ -1,4 +1,4 @@
-﻿@model QAWebsite.Models.Question
+﻿@model QAWebsite.Models.QuestionViewModels.DetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -37,10 +37,90 @@
     </dl>
 </div>
 <div>
-    @if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
+    @if (User.Identity.IsAuthenticated)
     {
-        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> @Html.Raw("|")
-        <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> @Html.Raw("|")
+        @if (Model.AuthorId == UserManager.GetUserId(User))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> @Html.Raw("|")
+            <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> @Html.Raw("|")
+        }
+        else
+        {
+            <a asp-action="Create" asp-controller="Flags" asp-route-id="@Model.Id">Flag</a> @Html.Raw("|")
+        }
     }
     <a asp-action="Index">Back to List</a>
 </div>
+
+<hr />
+<br />
+
+<div>
+    <h4> @Html.DisplayFor(model => model.AnswerCount) Answers</h4>
+    <hr />
+    @foreach (var answer in Model.Answers)
+    {
+        <dl class="dl-horizontal">
+            <dt>
+                @if (answer.AuthorId == UserManager.GetUserId(User))
+                {
+                   <text>Your Answer </text>
+                }
+                else
+                {
+                    @Html.DisplayNameFor(modelItem => answer.Content)
+                }
+            </dt>
+            <dd>
+                @Html.DisplayFor(modelItem => answer.Content)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(modelItem => answer.CreationDate)
+            </dt>
+            <dd>
+                @Html.DisplayFor(modelItem => answer.CreationDate)
+            </dd>
+            @if (answer.CreationDate != answer.EditDate)
+            {
+                <dt>
+                    @Html.DisplayNameFor(modelItem => answer.EditDate)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(modelItem => answer.EditDate)
+                </dd>
+            }
+            <dt>
+                @Html.DisplayNameFor(modelItem => answer.Author)
+            </dt>
+            <dd>
+                @Html.DisplayFor(modelItem => answer.Author)
+            </dd>
+            <dd>
+                @if (User.Identity.IsAuthenticated && answer.AuthorId == UserManager.GetUserId(User))
+                {
+                    <a asp-action="Edit" asp-controller="Answer" asp-route-id="@answer.Id">Edit</a>
+                }
+            </dd>
+        </dl>
+        <hr />
+    }
+</div>
+
+@if (User.Identity.IsAuthenticated && !(Model.Answers.Any(a => a.AuthorId == @UserManager.GetUserId(User))))
+{
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-controller="Answer" asp-action="Create">
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <label asp-for="AnswerContent" class="control-label"></label>
+                    <textarea asp-for="AnswerContent" rows="5" class="form-control"></textarea>
+                    <span asp-validation-for="AnswerContent" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Submit" class="btn btn-default" />
+                </div>
+            </form>
+        </div>
+    </div>
+}

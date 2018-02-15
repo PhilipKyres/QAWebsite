@@ -11,7 +11,7 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180209081555_InitialMigration")]
+    [Migration("20180215013820_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,6 +129,30 @@ namespace QAWebsite.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("QAWebsite.Models.Answer", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("AuthorId")
+                        .HasMaxLength(450);
+
+                    b.Property<string>("Content")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreationDate");
+
+                    b.Property<DateTime>("EditDate");
+
+                    b.Property<string>("QuestionId")
+                        .HasMaxLength(8);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Answer");
+                });
+
             modelBuilder.Entity("QAWebsite.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -186,7 +210,8 @@ namespace QAWebsite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(8);
 
-                    b.Property<string>("AuthorId");
+                    b.Property<string>("AuthorId")
+                        .HasMaxLength(450);
 
                     b.Property<string>("Content")
                         .IsRequired();
@@ -196,7 +221,8 @@ namespace QAWebsite.Migrations
                     b.Property<DateTime>("EditDate");
 
                     b.Property<string>("Title")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(300);
 
                     b.HasKey("Id");
 
