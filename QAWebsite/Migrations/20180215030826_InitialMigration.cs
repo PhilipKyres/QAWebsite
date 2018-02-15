@@ -70,6 +70,7 @@ namespace QAWebsite.Migrations
                 {
                     Id = table.Column<string>(maxLength: 8, nullable: false),
                     AuthorId = table.Column<string>(maxLength: 450, nullable: true),
+                    BestAnswerId = table.Column<string>(maxLength: 36, nullable: true),
                     Content = table.Column<string>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
                     EditDate = table.Column<DateTime>(nullable: false),

@@ -182,6 +182,34 @@ namespace QAWebsite.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> SetBestAnswer(string id, string answerId, string best)
+        {
+            if (answerId == null || id == null || answerId != best && best != null)
+            {
+                return NotFound();
+            }
+
+            var question = await _context.Question.SingleOrDefaultAsync(q => q.Id == id);
+            if (question == null || question.AuthorId != _userManager.GetUserId(User))
+            {
+                return NotFound();
+            }
+
+            var answer = await _context.Answer.SingleOrDefaultAsync(a => a.QuestionId == id && a.Id == answerId);
+            if (answer == null)
+            {
+                return NotFound();
+            }
+
+            question.BestAnswerId = best;
+
+            _context.Update(question);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id });
+        }
+
+
         private bool QuestionExists(string id)
         {
             return _context.Question.Any(e => e.Id == id);

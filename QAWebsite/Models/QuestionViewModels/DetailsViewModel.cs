@@ -21,6 +21,7 @@ namespace QAWebsite.Models.QuestionViewModels
             this.CreationDate = question.CreationDate;
             this.EditDate = question.EditDate;
             this.AuthorId = question.AuthorId;
+            this.BestAnswer = question.BestAnswerId;
 
             this.Answers = answers;
             this.AnswerCount = answers.Count;
@@ -59,6 +60,8 @@ namespace QAWebsite.Models.QuestionViewModels
        
         [ReadOnly(true)]
         public int AnswerCount { get;}
+        
+        public string BestAnswer { get; set; }
 
     }
 }

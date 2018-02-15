@@ -212,6 +212,9 @@ namespace QAWebsite.Migrations
                     b.Property<string>("AuthorId")
                         .HasMaxLength(450);
 
+                    b.Property<string>("BestAnswerId")
+                        .HasMaxLength(36);
+
                     b.Property<string>("Content")
                         .IsRequired();
 

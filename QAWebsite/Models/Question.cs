@@ -34,5 +34,9 @@ namespace QAWebsite.Models
         [MaxLength(450)]
         [ForeignKey("ApplicationUser")]
         public string AuthorId { get; set; }
+
+        [MaxLength(36)]
+        [ForeignKey("Answer")]
+        public string BestAnswerId { get; set; }
     }
 }
