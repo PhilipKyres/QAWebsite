@@ -119,25 +119,18 @@
                 {
                     <a asp-action="Edit" asp-controller="Answer" asp-route-id="@answer.Id">Edit</a>
                 }
-                @if(Model.BestAnswerId != answer.Id)
-                {
-
-                     if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
-                     { 
-                        <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id"  asp-route-best="@answer.Id">Best Answer</a>
-                     }
-                }
-                else
-                {
-                    <b>BEST ANSWER </b>
-
-                    if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
+                @if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
+                { 
+                    if(Model.BestAnswerId != answer.Id)
                     {
-                         <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id" asp-route-best="@null">Remove Best Answer</a>
+                        <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id"  asp-route-best="@answer.Id">Best Answer</a>
                     }
-                   
+                    else
+                    {
+                        <b>BEST ANSWER </b>
+                        <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id" asp-route-best="@null">Remove Best Answer</a>
+                    }
                 }
-               
             </dd>
         </dl>
         <hr />
