@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Models;
 using QAWebsite.Models.QuestionModels;
@@ -37,6 +33,6 @@ namespace QAWebsite.Data
         public DbSet<Question> Question { get; set; }
         public DbSet<Tag> Tag { get; set; }
         public DbSet<QuestionTag> QuestionTag { get; set; }
-        public DbSet<QAWebsite.Models.Flag> Flag { get; set; }
+        public DbSet<Flag> Flag { get; set; }
     }
 }

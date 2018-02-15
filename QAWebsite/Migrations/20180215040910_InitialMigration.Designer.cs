@@ -11,7 +11,7 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180214204232_InitialMigration")]
+    [Migration("20180215040910_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -134,6 +134,8 @@ namespace QAWebsite.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("AboutMe");
+
                     b.Property<int>("AccessFailedCount");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -164,6 +166,8 @@ namespace QAWebsite.Migrations
 
                     b.Property<bool>("TwoFactorEnabled");
 
+                    b.Property<byte[]>("UserImage");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
 
@@ -180,7 +184,7 @@ namespace QAWebsite.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("QAWebsite.Models.Flag", b =>
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.Flag", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using QAWebsite.Models.QuestionModels;
 
-namespace QAWebsite.Models
+namespace QAWebsite.Models.QuestionViewModels
 {
     public class TagViewModel
     {

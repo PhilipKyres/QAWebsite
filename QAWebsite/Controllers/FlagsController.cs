@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
 using QAWebsite.Models.Enums;
-using QAWebsite.Models.FlagViewModels;
+using QAWebsite.Models.QuestionModels;
+using QAWebsite.Models.QuestionViewModels;
 
 namespace QAWebsite.Controllers
 {

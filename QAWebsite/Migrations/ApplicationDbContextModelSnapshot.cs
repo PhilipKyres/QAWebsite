@@ -133,6 +133,8 @@ namespace QAWebsite.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("AboutMe");
+
                     b.Property<int>("AccessFailedCount");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -163,6 +165,8 @@ namespace QAWebsite.Migrations
 
                     b.Property<bool>("TwoFactorEnabled");
 
+                    b.Property<byte[]>("UserImage");
+
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
 
@@ -179,7 +183,7 @@ namespace QAWebsite.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("QAWebsite.Models.Flag", b =>
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.Flag", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()

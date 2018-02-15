@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
 
-namespace QAWebsite.Models.FlagViewModels
+namespace QAWebsite.Models.QuestionViewModels
 {
     public class FlagViewModel
     {

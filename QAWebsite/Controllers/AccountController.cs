@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -220,7 +221,15 @@ namespace QAWebsite.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email};
+                if (model.UserImage != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        model.UserImage.CopyTo(memoryStream);
+                        user.UserImage = memoryStream.ToArray();
+                    }
+                }
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

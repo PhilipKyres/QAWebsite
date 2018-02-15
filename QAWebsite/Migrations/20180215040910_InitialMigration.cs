@@ -28,6 +28,7 @@ namespace QAWebsite.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
+                    AboutMe = table.Column<string>(nullable: true),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
@@ -41,6 +42,7 @@ namespace QAWebsite.Migrations
                     PhoneNumberConfirmed = table.Column<bool>(nullable: false),
                     SecurityStamp = table.Column<string>(nullable: true),
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
+                    UserImage = table.Column<byte[]>(nullable: true),
                     UserName = table.Column<string>(maxLength: 256, nullable: true)
                 },
                 constraints: table =>

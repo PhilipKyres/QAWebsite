@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Extensions;
-using QAWebsite.Models;
+using QAWebsite.Models.QuestionViewModels;
 
 namespace QAWebsite.Controllers
 {

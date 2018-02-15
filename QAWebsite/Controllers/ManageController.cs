@@ -1,17 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using QAWebsite.Models;
 using QAWebsite.Models.ManageViewModels;
+using QAWebsite.Properties;
 using QAWebsite.Services;
 
 namespace QAWebsite.Controllers
@@ -59,9 +60,8 @@ namespace QAWebsite.Controllers
             {
                 Username = user.UserName,
                 Email = user.Email,
-                PhoneNumber = user.PhoneNumber,
-                IsEmailConfirmed = user.EmailConfirmed,
-                StatusMessage = StatusMessage
+                StatusMessage = StatusMessage,
+                AboutMe = user.AboutMe
             };
 
             return View(model);
@@ -75,32 +75,25 @@ namespace QAWebsite.Controllers
             {
                 return View(model);
             }
-
+            
             var user = await _userManager.GetUserAsync(User);
-            if (user == null)
-            {
-                throw new ApplicationException($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-            }
+            user.AboutMe = model.AboutMe;
+            user.Email = model.Email;
+            user.AboutMe = model.AboutMe;
 
-            var email = user.Email;
-            if (model.Email != email)
+            if (model.UserImage != null)
             {
-                var setEmailResult = await _userManager.SetEmailAsync(user, model.Email);
-                if (!setEmailResult.Succeeded)
+                byte[] userImage;
+                using (var memoryStream = new MemoryStream())
                 {
-                    throw new ApplicationException($"Unexpected error occurred setting email for user with ID '{user.Id}'.");
+                    model.UserImage.CopyTo(memoryStream);
+                    userImage = memoryStream.ToArray();
                 }
-            }
 
-            var phoneNumber = user.PhoneNumber;
-            if (model.PhoneNumber != phoneNumber)
-            {
-                var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
-                if (!setPhoneResult.Succeeded)
-                {
-                    throw new ApplicationException($"Unexpected error occurred setting phone number for user with ID '{user.Id}'.");
-                }
+                    user.UserImage = userImage;
             }
+            
+               await _userManager.UpdateAsync(user);
 
             StatusMessage = "Your profile has been updated";
             return RedirectToAction(nameof(Index));
@@ -539,7 +532,7 @@ namespace QAWebsite.Controllers
             model.SharedKey = FormatKey(unformattedKey);
             model.AuthenticatorUri = GenerateQrCodeUri(user.Email, unformattedKey);
         }
-
+        
         #endregion
     }
 }
