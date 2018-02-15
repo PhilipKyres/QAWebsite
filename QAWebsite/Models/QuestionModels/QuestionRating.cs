@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace QAWebsite.Models
+namespace QAWebsite.Models.QuestionModels
 {
     public class QuestionRating
     {

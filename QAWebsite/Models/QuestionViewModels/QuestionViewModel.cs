@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using QAWebsite.Models.QuestionModels;
 
 namespace QAWebsite.Models.QuestionViewModels
 {
@@ -9,7 +11,7 @@ namespace QAWebsite.Models.QuestionViewModels
     {
         [MaxLength(8)]
         [ReadOnly(true)]
-        public string QuestionId { get; set; }
+        public string Id { get; set; }
 
         [Required]
         [Display(Name = "Title")]
@@ -38,16 +40,19 @@ namespace QAWebsite.Models.QuestionViewModels
         [Required]
         public int Rating { get; set; }
 
+        public ICollection<QuestionTag> QuestionTags { get; set; }
+
         public QuestionViewModel (Question question, string authorName, int rating)
         {
             this.AuthorId = question.AuthorId;
-            this.QuestionId = question.Id;
+            this.Id = question.Id;
             this.Title = question.Title;
             this.Content = question.Content;
             this.CreationDate = question.CreationDate;
             this.EditDate = question.EditDate;
             this.AuthorName = authorName;
             this.Rating = rating;
+            this.QuestionTags = question.QuestionTags;
         }
     }
 }

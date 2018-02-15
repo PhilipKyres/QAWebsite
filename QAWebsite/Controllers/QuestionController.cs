@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -35,9 +36,9 @@ namespace QAWebsite.Controllers
             var questions = await _context.Question
                 .Include(x => x.QuestionTags)
                 .ThenInclude(x => x.Tag)
-                .ToListAsync());
+                .ToListAsync();
 
-            var vms = questions.Select(q => new QuestionViewModel(q,
+            IEnumerable<QuestionViewModel> vms = questions.Select(q => new QuestionViewModel(q,
                 _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
                 _ratingController.GetRating(q.Id)));
 

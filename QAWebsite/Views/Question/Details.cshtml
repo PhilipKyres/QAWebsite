@@ -1,4 +1,5 @@
-﻿@model QAWebsite.Models.QuestionViewModels.QuestionViewModel
+﻿@using QAWebsite.Models.Enums
+@model QAWebsite.Models.QuestionViewModels.QuestionViewModel
 
 @{
     ViewData["Title"] = "Question Details";
@@ -49,17 +50,17 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Upvote", "RateQuestion", "Rating", new { questionId = Model.QuestionId, rateValue = Ratings.Upvote })
+    @Html.ActionLink("Upvote", "RateQuestion", "Rating", new { questionId = Model.Id, rateValue = Ratings.Upvote })
     @Html.Raw("|")
-    @Html.ActionLink("Downvote", "RateQuestion", "Rating", new { questionId = Model.QuestionId, rateValue = Ratings.Downvote })
+    @Html.ActionLink("Downvote", "RateQuestion", "Rating", new { questionId = Model.Id, rateValue = Ratings.Downvote })
 </div>
 <br/>
 <div>
     @if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
     {
-        <a asp-action="Edit" asp-route-id="@Model.QuestionId">Edit</a> @Html.Raw("|")
-        <a asp-action="Delete" asp-route-id="@Model.QuestionId">Delete</a> @Html.Raw("|")
-        <a asp-action="Create" asp-controller="Flags" asp-route-id="@Model.QuestionId">Flag</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> @Html.Raw("|")
+        <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> @Html.Raw("|")
+        <a asp-action="Create" asp-controller="Flags" asp-route-id="@Model.Id">Flag</a>
     }
     @Html.Raw("|")
     <a asp-action="Index">Back to List</a>

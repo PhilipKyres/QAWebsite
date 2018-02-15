@@ -82,6 +82,20 @@ namespace QAWebsite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "QuestionRating",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    QuestionId = table.Column<string>(nullable: true),
+                    RatedBy = table.Column<string>(nullable: true),
+                    RatingValue = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuestionRating", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tag",
                 columns: table => new
                 {
@@ -293,6 +307,9 @@ namespace QAWebsite.Migrations
 
             migrationBuilder.DropTable(
                 name: "Flag");
+
+            migrationBuilder.DropTable(
+                name: "QuestionRating");
 
             migrationBuilder.DropTable(
                 name: "QuestionTag");

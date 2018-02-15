@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using QAWebsite.Data;
 using QAWebsite.Models;
+using QAWebsite.Models.Enums;
+using QAWebsite.Models.QuestionModels;
 
 namespace QAWebsite.Controllers
 {
