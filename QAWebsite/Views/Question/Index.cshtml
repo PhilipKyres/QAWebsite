@@ -1,4 +1,5 @@
-﻿@model IEnumerable<QAWebsite.Models.QuestionViewModel>
+﻿@using QAWebsite.Models.QuestionViewModels
+@model IEnumerable<QAWebsite.Models.QuestionViewModels.QuestionViewModel>
 
 @{
     ViewData["Title"] = "Question List";
@@ -25,10 +26,7 @@
                 @Html.DisplayNameFor(model => model.EditDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Upvotes)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Downvotes)
+                @Html.DisplayNameFor(model => model.Rating)
             </th>
             <th></th>
         </tr>
@@ -50,10 +48,7 @@
                 @Html.DisplayFor(modelItem => item.EditDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Upvotes)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Downvotes)
+                @Html.DisplayFor(modelItem => item.Rating)
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.QuestionId">Details</a>

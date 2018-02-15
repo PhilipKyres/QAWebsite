@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace QAWebsite.Migrations
 {
-    public partial class databaseCreation : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

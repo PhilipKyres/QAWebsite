@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
@@ -19,28 +16,25 @@ namespace QAWebsite.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RatingController _ratingController;
 
         public QuestionController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
+            _ratingController = new RatingController(context, userManager);
         }
 
         // GET: Question
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-           var questions = await _context.Question.ToListAsync();
-            List<QuestionViewModel> questionList = new List<QuestionViewModel>();
-            foreach (Question question in questions) {
-               var tempHolder = new QuestionViewModel(question);
-                tempHolder.AuthorName = _context.Users.Where(u => u.Id == tempHolder.AuthorId).FirstOrDefault().UserName;
-                tempHolder.Upvotes = await _context.QuestionRating.Where(qr => (qr.QuestionId == question.Id) && (qr.RatingValue == (int)Ratings.Upvote)).CountAsync();
-                tempHolder.Downvotes = await _context.QuestionRating.Where(qr => (qr.QuestionId == question.Id) && (qr.RatingValue == (int)Ratings.Downvote)).CountAsync();
-                questionList.Add(tempHolder);
-            }
+            var questions = await _context.Question.ToListAsync();
+            var vms = questions.Select(q => new QuestionViewModel(q,
+                _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
+                _ratingController.GetRating(q.Id)));
 
-            return View(questionList);
+            return View(vms);
         }
 
         // GET: Question/Details/5
@@ -60,9 +54,7 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            var questionViewModel = new QuestionViewModel(question);
-            questionViewModel.Upvotes = await _context.QuestionRating.Where(qr => (qr.QuestionId == question.Id) && (qr.RatingValue == (int)Ratings.Upvote)).CountAsync();
-            questionViewModel.Downvotes = await _context.QuestionRating.Where(qr => (qr.QuestionId == question.Id) && (qr.RatingValue == (int)Ratings.Downvote)).CountAsync();
+            var questionViewModel = new QuestionViewModel(question, _context.Users.Where(u => u.Id == question.AuthorId).Select(x => x.UserName).SingleOrDefault(), _ratingController.GetRating(question.Id));
 
             return View(questionViewModel);
         }

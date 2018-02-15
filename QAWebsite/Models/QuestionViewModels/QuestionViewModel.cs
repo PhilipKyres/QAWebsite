@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
-namespace QAWebsite.Models
+namespace QAWebsite.Models.QuestionViewModels
 {
     public class QuestionViewModel
     {
@@ -39,12 +36,9 @@ namespace QAWebsite.Models
         public string AuthorName { get; set; }
 
         [Required]
-        public int Upvotes { get; set; }
+        public int Rating { get; set; }
 
-        [Required]
-        public int Downvotes { get; set; }
-
-        public QuestionViewModel (Question question)
+        public QuestionViewModel (Question question, string authorName, int rating)
         {
             this.AuthorId = question.AuthorId;
             this.QuestionId = question.Id;
@@ -52,6 +46,8 @@ namespace QAWebsite.Models
             this.Content = question.Content;
             this.CreationDate = question.CreationDate;
             this.EditDate = question.EditDate;
+            this.AuthorName = authorName;
+            this.Rating = rating;
         }
     }
 }

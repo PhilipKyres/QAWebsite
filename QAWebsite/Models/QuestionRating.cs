@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace QAWebsite.Models
 {
@@ -15,11 +13,10 @@ namespace QAWebsite.Models
         [ForeignKey("ApplicationUser")]
         public string RatedBy { get; set; }
 
-        [Required]
-        public int RatingValue { get; set; }
-
-
         [ForeignKey("Question")]
         public string QuestionId { get; set; }
+
+        [Required]
+        public int RatingValue { get; set; }
     }
 }
