@@ -106,7 +106,7 @@ namespace QAWebsite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, Answer am)
         {
-            if (id != null)
+            if (id == null)
             {
                 return NotFound();
             }
