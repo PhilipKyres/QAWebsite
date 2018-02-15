@@ -9,6 +9,8 @@ namespace QAWebsite.Models.QuestionViewModels
 {
     public class DetailsViewModel
     {
+        public DetailsViewModel() { }
+
         public DetailsViewModel(Question question, string authorName, int rating, List<AnswerViewModel> answers)
         {
             this.AuthorId = question.AuthorId;
@@ -17,41 +19,36 @@ namespace QAWebsite.Models.QuestionViewModels
             this.Content = question.Content;
             this.CreationDate = question.CreationDate;
             this.EditDate = question.EditDate;
+            this.QuestionTags = question.QuestionTags;
+            this.BestAnswerId = question.BestAnswerId;
             this.AuthorName = authorName;
             this.Rating = rating;
             this.Answers = answers;
-            this.QuestionTags = question.QuestionTags;
         }
 
         [MaxLength(8)]
         [ReadOnly(true)]
         public string Id { get; set; }
 
-        [Required]
         [Display(Name = "Title")]
         public string Title { get; set; }
 
-        [Required]
         [Display(Name = "Content")]
         public string Content { get; set; }
 
-        [Required]
         [Display(Name = "Creation Date")]
         public DateTime CreationDate { get; set; }
 
         [Display(Name = "Edit Date")]
         public DateTime EditDate { get; set; }
 
-        [Required]
         [ReadOnly(true)]
         [HiddenInput(DisplayValue = false)]
         public string AuthorId { get; set; }
 
-        [Required]
         [ReadOnly(true)]
         public string AuthorName { get; set; }
 
-        [Required]
         public int Rating { get; set; }
 
         [Required]

@@ -38,11 +38,32 @@ namespace QAWebsite.Controllers
                 .ThenInclude(x => x.Tag)
                 .ToListAsync();
 
-            IEnumerable<QuestionViewModel> vms = questions.Select(q => new QuestionViewModel(q,
+            IEnumerable<IndexViewModel> vms = questions.Select(q => new IndexViewModel(q,
                 _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
                 _ratingController.GetRating(q.Id)));
 
             return View(vms);
+        }
+
+        public async Task<DetailsViewModel> GetDetailsViewModel(string questionId)
+        {
+            if (questionId == null)
+            {
+                return null;
+            }
+
+            var question = await _context.Question
+                .Include(x => x.QuestionTags)
+                .ThenInclude(x => x.Tag)
+                .SingleOrDefaultAsync(m => m.Id == questionId);
+            if (question == null)
+            {
+                return null;
+            }
+
+            var avm = new AnswerController(_context, _userManager).GetAnswerList(questionId);
+
+            return new DetailsViewModel(question, _context.Users.Where(u => u.Id == question.AuthorId).Select(x => x.UserName).SingleOrDefault(), _ratingController.GetRating(question.Id), avm);
         }
 
         // GET: Question/Details/5
@@ -50,25 +71,14 @@ namespace QAWebsite.Controllers
         [Route("/Question/{id:length(8)}")]
         public async Task<IActionResult> Details(string id)
         {
-            if (id == null)
+            var vm = await GetDetailsViewModel(id);
+
+            if (vm == null)
             {
                 return NotFound();
             }
 
-            var question = await _context.Question
-                .Include(x => x.QuestionTags)
-                .ThenInclude(x => x.Tag)
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null)
-            {
-                return NotFound();
-            }
-            AnswerController answerController = new AnswerController(_context, _userManager);
-            var avm = answerController.GetAnswerList(id);
-
-            var questionViewModel = new DetailsViewModel(question, _context.Users.Where(u => u.Id == question.AuthorId).Select(x => x.UserName).SingleOrDefault(), _ratingController.GetRating(question.Id), avm);
-
-            return View(questionViewModel);
+            return View(vm);
         }
 
         // GET: Question/Create
@@ -239,7 +249,6 @@ namespace QAWebsite.Controllers
 
             return RedirectToAction("Details", new { id });
         }
-
 
         private bool QuestionExists(string id)
         {

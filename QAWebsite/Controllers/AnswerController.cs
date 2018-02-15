@@ -62,24 +62,26 @@ namespace QAWebsite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DetailsViewModel dvm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var answer = new Answer
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Content = dvm.AnswerContent,
-                    CreationDate = DateTime.Now,
-                    EditDate = DateTime.Now,
-                    QuestionId = dvm.Id,
-                    AuthorId = _userManager.GetUserId(User)
-                };
-
-                _context.Add(answer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "Question", new { dvm.Id });
+                var newDvm = await new QuestionController(_context, _userManager).GetDetailsViewModel(dvm.Id);
+                newDvm.AnswerContent = dvm.AnswerContent;
+                return View("~/Views/Question/Details.cshtml", newDvm);
             }
 
-            return View("~/Views/Question/Details", dvm);
+            var answer = new Answer
+            {
+                Id = Guid.NewGuid().ToString(),
+                Content = dvm.AnswerContent,
+                CreationDate = DateTime.Now,
+                EditDate = DateTime.Now,
+                QuestionId = dvm.Id,
+                AuthorId = _userManager.GetUserId(User)
+            };
+
+            _context.Add(answer);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "Question", new { dvm.Id });
         }
 
         // GET: Answer/Edit/5
@@ -185,8 +187,8 @@ namespace QAWebsite.Controllers
 
             answer.ForEach(a =>
             {
-                var user = _context.Users.Where(u => u.Id == a.AuthorId).FirstOrDefault();
-                avm.Add(new AnswerViewModel(a, user.UserName));
+                string name = _context.Users.Where(u => u.Id == a.AuthorId).Select(x => x.UserName).SingleOrDefault();
+                avm.Add(new AnswerViewModel(a, name));
             });
 
             return avm;

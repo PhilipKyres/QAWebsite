@@ -7,9 +7,9 @@ using QAWebsite.Models.QuestionModels;
 
 namespace QAWebsite.Models.QuestionViewModels
 {
-    public class QuestionViewModel
+    public class IndexViewModel
     {
-        public QuestionViewModel(Question question, string authorName, int rating)
+        public IndexViewModel(Question question, string authorName, int rating)
         {
             this.AuthorId = question.AuthorId;
             this.Id = question.Id;
