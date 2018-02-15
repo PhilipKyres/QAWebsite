@@ -18,22 +18,30 @@ namespace QAWebsite.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly TagController _tagController;
+        private readonly RatingController _ratingController;
 
         public QuestionController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
             _tagController = new TagController(context);
+            _ratingController = new RatingController(context, userManager);
         }
 
         // GET: Question
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Question
+            var questions = await _context.Question
                 .Include(x => x.QuestionTags)
                 .ThenInclude(x => x.Tag)
                 .ToListAsync());
+
+            var vms = questions.Select(q => new QuestionViewModel(q,
+                _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
+                _ratingController.GetRating(q.Id)));
+
+            return View(vms);
         }
 
         // GET: Question/Details/5
@@ -55,7 +63,9 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            return View(question);
+            var questionViewModel = new QuestionViewModel(question, _context.Users.Where(u => u.Id == question.AuthorId).Select(x => x.UserName).SingleOrDefault(), _ratingController.GetRating(question.Id));
+
+            return View(questionViewModel);
         }
 
         // GET: Question/Create

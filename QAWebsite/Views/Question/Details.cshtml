@@ -1,7 +1,7 @@
-﻿@model QAWebsite.Models.QuestionModels.Question
+﻿@model QAWebsite.Models.QuestionViewModels.QuestionViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Question Details";
 }
 
 <h2>Details</h2>
@@ -40,18 +40,27 @@
         <dd>
             @Html.DisplayFor(model => model.EditDate)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Rating)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Rating)
+        </dd>
     </dl>
 </div>
 <div>
-    @if (User.Identity.IsAuthenticated)
+    @Html.ActionLink("Upvote", "RateQuestion", "Rating", new { questionId = Model.QuestionId, rateValue = Ratings.Upvote })
+    @Html.Raw("|")
+    @Html.ActionLink("Downvote", "RateQuestion", "Rating", new { questionId = Model.QuestionId, rateValue = Ratings.Downvote })
+</div>
+<br/>
+<div>
+    @if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
     {
-        @if (Model.AuthorId == UserManager.GetUserId(User))
-        {
-            <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> @Html.Raw("|")
-            <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> @Html.Raw("|")
-
-        }
-        <a asp-action="Create" asp-controller="Flags" asp-route-id="@Model.Id">Flag</a> @Html.Raw("|")
+        <a asp-action="Edit" asp-route-id="@Model.QuestionId">Edit</a> @Html.Raw("|")
+        <a asp-action="Delete" asp-route-id="@Model.QuestionId">Delete</a> @Html.Raw("|")
+        <a asp-action="Create" asp-controller="Flags" asp-route-id="@Model.QuestionId">Flag</a>
     }
+    @Html.Raw("|")
     <a asp-action="Index">Back to List</a>
 </div>

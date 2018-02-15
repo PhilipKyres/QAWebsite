@@ -31,6 +31,8 @@ namespace QAWebsite.Data
         }
 
         public DbSet<Question> Question { get; set; }
+        public DbSet<QAWebsite.Models.Question> Question { get; set; }
+        public DbSet<QAWebsite.Models.QuestionRating> QuestionRating { get; set; }
         public DbSet<Tag> Tag { get; set; }
         public DbSet<QuestionTag> QuestionTag { get; set; }
         public DbSet<Flag> Flag { get; set; }
