@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace QAWebsite.Models.QuestionModels
 {
-    public class QuestionEdits
+    public class QuestionEdit
     {
         [Key]
         public string Id { get; set; }
@@ -19,20 +19,12 @@ namespace QAWebsite.Models.QuestionModels
         public string QuestionId { get; set; }
 
         
-        [Display(Name = "Initial Title")]
-        public string initialTitle { get; set; }
-
-        
         [Display(Name = "New Title")]
-        public string newTitle { get; set; }
-
-        
-        [Display(Name = "Initial Content")]
-        public string initialContent { get; set; }
+        public string NewTitle { get; set; }
 
        
         [Display(Name = "New Content")]
-        public string newContent { get; set; }
+        public string NewContent { get; set; }
 
         
         [Display(Name = "Edit Date")]

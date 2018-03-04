@@ -105,11 +105,9 @@ namespace QAWebsite.Migrations
                     Id = table.Column<string>(nullable: false),
                     EditDate = table.Column<DateTime>(nullable: false),
                     EditorId = table.Column<string>(nullable: true),
-                    QuestionId = table.Column<string>(nullable: true),
-                    initialContent = table.Column<string>(nullable: true),
-                    initialTitle = table.Column<string>(nullable: true),
-                    newContent = table.Column<string>(nullable: true),
-                    newTitle = table.Column<string>(nullable: true)
+                    NewContent = table.Column<string>(nullable: true),
+                    NewTitle = table.Column<string>(nullable: true),
+                    QuestionId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

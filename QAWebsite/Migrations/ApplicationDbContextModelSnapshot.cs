@@ -257,7 +257,7 @@ namespace QAWebsite.Migrations
                     b.ToTable("Question");
                 });
 
-            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionEdits", b =>
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionEdit", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -266,15 +266,11 @@ namespace QAWebsite.Migrations
 
                     b.Property<string>("EditorId");
 
+                    b.Property<string>("NewContent");
+
+                    b.Property<string>("NewTitle");
+
                     b.Property<string>("QuestionId");
-
-                    b.Property<string>("initialContent");
-
-                    b.Property<string>("initialTitle");
-
-                    b.Property<string>("newContent");
-
-                    b.Property<string>("newTitle");
 
                     b.HasKey("Id");
 

@@ -9,16 +9,16 @@ namespace QAWebsite.Models.QuestionViewModels
 {
     public class QuestionEditDetailViewModel
     {
-        public QuestionEditDetailViewModel(QuestionEdits edit, string editorName)
+        public QuestionEditDetailViewModel(QuestionEdit edit, string initialTitle, string initialContent, string editorName)
         {
             this.EditId = edit.Id;
             this.EditedBy = editorName;
             this.EditorId = edit.EditorId;
             this.EditDate = edit.EditDate;
-            this.InitialContent = edit.initialContent;
-            this.NewContent = edit.newContent;
-            this.InitialTitle = edit.initialTitle;
-            this.NewTitle= edit.newTitle;
+            this.InitialContent = initialContent;
+            this.NewContent = edit.NewContent;
+            this.InitialTitle = initialTitle;
+            this.NewTitle= edit.NewTitle;
             this.QuestionId = edit.QuestionId;
         }
 
