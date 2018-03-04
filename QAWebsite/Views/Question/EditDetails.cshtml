@@ -4,10 +4,9 @@
     ViewData["Title"] = "EditDetails";
 }
 
-<h2>EditDetails</h2>
+<h2>Edit Details</h2>
 
 <div>
-    <h4>QuestionEdits</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -56,4 +55,8 @@
             @Html.DisplayFor(model => model.EditDate)
         </dd>
     </dl>
+</div>
+
+<div>
+     <a asp-action="EditHistory" asp-route-id="@Model.QuestionId">Back To List</a>
 </div>
