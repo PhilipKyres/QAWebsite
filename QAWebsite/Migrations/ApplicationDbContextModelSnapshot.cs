@@ -257,6 +257,30 @@ namespace QAWebsite.Migrations
                     b.ToTable("Question");
                 });
 
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionEdits", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("EditDate");
+
+                    b.Property<string>("EditorId");
+
+                    b.Property<string>("QuestionId");
+
+                    b.Property<string>("initialContent");
+
+                    b.Property<string>("initialTitle");
+
+                    b.Property<string>("newContent");
+
+                    b.Property<string>("newTitle");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestionEdits");
+                });
+
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionRating", b =>
                 {
                     b.Property<string>("Id")
