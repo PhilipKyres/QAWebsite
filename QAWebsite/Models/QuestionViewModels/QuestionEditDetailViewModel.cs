@@ -19,6 +19,7 @@ namespace QAWebsite.Models.QuestionViewModels
             this.NewContent = edit.newContent;
             this.InitialTitle = edit.initialTitle;
             this.NewTitle= edit.newTitle;
+            this.QuestionId = edit.QuestionId;
         }
 
         [Required]
@@ -27,6 +28,10 @@ namespace QAWebsite.Models.QuestionViewModels
         [Required]
         [Display(Name = "Edited By")]
         public string EditedBy { get; set; }
+
+
+        [Required]
+        public string QuestionId { get; set; }
 
         [Required]
         public string EditorId { get; set; }
