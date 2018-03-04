@@ -11,7 +11,7 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180215051357_InitialMigration")]
+    [Migration("20180303232537_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -256,6 +256,30 @@ namespace QAWebsite.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Question");
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionEdits", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("EditDate");
+
+                    b.Property<string>("EditorId");
+
+                    b.Property<string>("QuestionId");
+
+                    b.Property<string>("initialContent");
+
+                    b.Property<string>("initialTitle");
+
+                    b.Property<string>("newContent");
+
+                    b.Property<string>("newTitle");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestionEdits");
                 });
 
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionRating", b =>

@@ -163,16 +163,50 @@ namespace QAWebsite.Controllers
                     return NotFound();
                 }
 
+
+                var initialTitle = question.Title;
+                var initialContent = question.Content;
+
                 question.Title = vm.Title;
                 question.Content = vm.Content;
                 question.EditDate = DateTime.Now;
 
+                QuestionEdits edit = new QuestionEdits
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    QuestionId = question.Id,
+                    EditorId = _userManager.GetUserId(User),
+                };
+
+                bool editMade = false;
+
+                if (!initialTitle.Equals(question.Title))
+                {
+                    edit.initialTitle = initialTitle;
+                    edit.newTitle = question.Title;
+                    editMade = true;
+                }
+
+                if (!initialContent.Equals(question.Content))
+                {
+                    edit.initialContent = initialContent;
+                    edit.newContent = question.Content;
+                    editMade = true;
+                }
+
                 try
                 {
-                    _context.Update(question);
-                    await _context.SaveChangesAsync();
 
                     await _tagController.UpdateQuestionTags(question, tagNames);
+
+                    if (editMade)
+                    {
+                        edit.EditDate = question.EditDate;
+                        _context.Add(edit);
+                    }
+
+                    _context.Update(question);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -188,6 +222,22 @@ namespace QAWebsite.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(vm);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> EditHistory(string id)
+        {
+            List<QuestionEditsListViewModel> editsListings = new List<QuestionEditsListViewModel>();
+            await _context.QuestionEdits.Where(edit => edit.QuestionId == id).ForEachAsync(
+                edit => editsListings.Add(new QuestionEditsListViewModel(edit, _context.Users.Where(user => user.Id == edit.EditorId).FirstOrDefault().UserName)));
+            return View(editsListings);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> EditDetails(string id)
+        {
+            var edit = await _context.QuestionEdits.Where(questionEdit => questionEdit.Id == id).FirstOrDefaultAsync();
+            return View(new QuestionEditDetailViewModel(edit, _context.Users.Where(user => user.Id == edit.EditorId).FirstOrDefault().UserName));
         }
 
         // GET: Question/Delete/5

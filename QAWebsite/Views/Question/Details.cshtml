@@ -68,6 +68,7 @@
             <a asp-action="Create" asp-controller="Flags" asp-route-id="@Model.Id">Flag</a> @Html.Raw("|")
         }
     }
+    <a asp-action="EditHistory" asp-route-id="@Model.Id">Edits History</a> @Html.Raw("|")
     <a asp-action="Index">Back to List</a>
 </div>
 
