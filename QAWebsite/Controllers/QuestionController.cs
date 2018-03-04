@@ -227,10 +227,10 @@ namespace QAWebsite.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> EditHistory(string id)
         {
-            List<QuestionEditsListViewModel> editsListings = new List<QuestionEditsListViewModel>();
+            List<QuestionEditListItem> editsListings = new List<QuestionEditListItem>();
             await _context.QuestionEdits.Where(edit => edit.QuestionId == id).ForEachAsync(
-                edit => editsListings.Add(new QuestionEditsListViewModel(edit, _context.Users.Where(user => user.Id == edit.EditorId).FirstOrDefault().UserName)));
-            return View(editsListings);
+                edit => editsListings.Add(new QuestionEditListItem(edit, _context.Users.Where(user => user.Id == edit.EditorId).FirstOrDefault().UserName)));
+            return View(new QuestionEditsListViewModel { QuestionId = id, Edits = editsListings});
         }
 
         [AllowAnonymous]

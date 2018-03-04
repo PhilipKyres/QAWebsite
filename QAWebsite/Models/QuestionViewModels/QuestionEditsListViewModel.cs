@@ -11,7 +11,14 @@ namespace QAWebsite.Models.QuestionViewModels
 {
     public class QuestionEditsListViewModel
     {
-        public QuestionEditsListViewModel(QuestionEdits edit, string editorName)
+        [Required]
+        public string QuestionId { get; set; }
+
+        public ICollection<QuestionEditListItem> Edits { get; set; }
+    }
+
+    public class QuestionEditListItem{
+        public QuestionEditListItem(QuestionEdits edit, string editorName)
         {
             this.EditId = edit.Id;
             this.EditedBy = editorName;
