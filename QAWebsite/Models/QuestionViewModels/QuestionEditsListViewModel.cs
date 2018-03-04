@@ -18,14 +18,14 @@ namespace QAWebsite.Models.QuestionViewModels
     }
 
     public class QuestionEditListItem{
-        public QuestionEditListItem(QuestionEdits edit, string editorName)
+        public QuestionEditListItem(QuestionEdit edit, string editorName)
         {
             this.EditId = edit.Id;
             this.EditedBy = editorName;
             this.EditorId = edit.EditorId;
             this.EditDate = edit.EditDate;
-            this.TitleChanged = edit.newTitle != null;
-            this.ContentChanged = edit.newContent != null;
+            this.TitleChanged = edit.NewTitle != null;
+            this.ContentChanged = edit.NewContent != null;
         }
 
         [Required]
