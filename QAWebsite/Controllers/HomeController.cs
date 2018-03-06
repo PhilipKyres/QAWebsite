@@ -17,7 +17,7 @@ namespace QAWebsite.Controllers
 
         public IActionResult About()
         {
-            ViewData["Message"] = "Your application description page.";
+            ViewData["Message"] = "SB2 Team for SOEN 341.";
 
             return View();
         }

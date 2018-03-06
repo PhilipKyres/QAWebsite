@@ -238,6 +238,9 @@ th {
   h3 {
     page-break-after: avoid;
   }
+  .rounded-circle {
+  border-radius: 50% !important;
+  }
   .navbar {
     display: none;
   }
