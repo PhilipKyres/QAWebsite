@@ -4,7 +4,7 @@
     ViewData["Title"] = "Profile";
 }
 
-<h2><i>@Html.DisplayFor(model => model.Username)</i></h2>
+<h2><i>@Html.DisplayFor(model => model.Username)</i><a asp-action="Suspend" class="btn btn-default">Suspend</a></h2>
 
 <div>
     <p>
@@ -41,39 +41,39 @@
         <h3>Recent Questions</h3>
         <div id="profileRecentQuestions">
             @{if (Model.QuestionList.Count > 0)
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => Model.QuestionList[0].Title)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => Model.QuestionList[0].CreationDate)
+                            </th>
+                        </tr>
+                    </thead>
+                    @foreach (var question in Model.QuestionList)
                 {
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    @Html.DisplayNameFor(model => Model.QuestionList[0].Title)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => Model.QuestionList[0].CreationDate)
-                                </th>
-                            </tr>
-                        </thead>
-                        @foreach (var question in Model.QuestionList)
-                        {
-                            <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => question.Title)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => question.CreationDate)
-                                </td>
-                                <td>
-                                    @Html.ActionLink("Details", "Details", "Question", new { id = question.Id })
-                                </td>
-                            </tr>
-                        }
-                    </table>
-                }
-                else
-                {
-                    <p>No question activity available for this user</p>
-                    }
-                }
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => question.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => question.CreationDate)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Details", "Details", "Question", new { id = question.Id })
+                        </td>
+                    </tr>
+            }
+                </table>
+        }
+        else
+        {
+            <p>No question activity available for this user</p>
+    }
+            }
         </div>
     </div>
 </div>

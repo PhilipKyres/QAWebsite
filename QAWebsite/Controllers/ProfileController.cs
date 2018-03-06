@@ -27,7 +27,7 @@ namespace QAWebsite.Controllers
         }
 
         [AllowAnonymous]
-        [Route("/profile/{id}")]
+        [Route("/Profile/{id}")]
         public async Task<IActionResult> Profile(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -56,6 +56,66 @@ namespace QAWebsite.Controllers
             }
 
             return View("Error", new ErrorViewModel { RequestId = null});
+        }
+
+        [Route("/Profile/Suspend/{id}")]
+        public async Task<IActionResult> Suspend(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            else
+            {
+                var profileViewModel = new ProfileViewModel
+                {
+                    Username = user.UserName,
+                    Email = user.Email,
+                    Upvotes = 0, //TODO Fetch and calculate from upvotes of questions/answers
+                    Downvotes = 0, //TODO Fetch and calculate from upvotes of questions/answers
+                    AboutMe = user.AboutMe ?? Resources.aboutMeNullString,
+                };
+                return View("Suspend", profileViewModel);
+            }
+        }
+
+        // POST: Profile/Suspend/5
+        [HttpPost, ActionName("Suspended")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SuspendComfirmed(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (user.IsEnabled.HasValue && user.IsEnabled.Value == true)
+            {
+                user.IsEnabled = false;
+                await _userManager.UpdateAsync(user);
+                return RedirectToAction("Profile", new { id = id });
+            }
+            
+            else
+            {
+                user.IsEnabled = true;
+                await _userManager.UpdateAsync(user);
+                return RedirectToAction("Profile", new { id = id });
+            }
         }
     }
 }
