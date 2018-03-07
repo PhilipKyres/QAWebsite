@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using QAWebsite.Models;
 using QAWebsite.Models.AccountViewModels;
+using QAWebsite.Models.Enums;
 using QAWebsite.Services;
 
 namespace QAWebsite.Controllers
@@ -23,17 +24,20 @@ namespace QAWebsite.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
+            RoleManager<ApplicationRole> roleManager,
             IEmailSender emailSender,
             ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _emailSender = emailSender;
             _logger = logger;
         }
@@ -245,6 +249,14 @@ namespace QAWebsite.Controllers
                     }
                 }
                 var result = await _userManager.CreateAsync(user, model.Password);
+
+                var userRole = _roleManager.Roles.Where(role => role.NormalizedName == Roles.User).FirstOrDefault();
+                if (userRole == null)
+                {
+                    userRole = new ApplicationRole(Roles.User);
+                    await _roleManager.CreateAsync(userRole);
+                }
+                await _userManager.AddToRoleAsync(user, Roles.User);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
@@ -459,7 +471,6 @@ namespace QAWebsite.Controllers
         {
             return View();
         }
-
         #region Helpers
 
         private void AddErrors(IdentityResult result)

@@ -5,7 +5,7 @@ using QAWebsite.Models.QuestionModels;
 
 namespace QAWebsite.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser,ApplicationRole,string>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
