@@ -29,9 +29,9 @@ namespace QAWebsite
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(config =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                config.SignIn.RequireConfirmedEmail = true;
+                options.User.RequireUniqueEmail = true;
             })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
