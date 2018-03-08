@@ -41,7 +41,7 @@ namespace QAWebsite.Controllers
         {
             if (questionId == null || !_context.Question.Any(e => e.Id == questionId))
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             var userId = _userManager.GetUserId(User);

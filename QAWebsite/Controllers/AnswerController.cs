@@ -36,14 +36,14 @@ namespace QAWebsite.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             var answer = await _context.Answer
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (answer == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             return View(answer);
@@ -89,13 +89,13 @@ namespace QAWebsite.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             var answer = await _context.Answer.SingleOrDefaultAsync(m => m.Id == id);
             if (answer == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
             return View(answer);
         }
@@ -109,7 +109,7 @@ namespace QAWebsite.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             if (ModelState.IsValid)
@@ -117,7 +117,7 @@ namespace QAWebsite.Controllers
                 var answer = await _context.Answer.SingleOrDefaultAsync(a => a.Id == id);
                 if (answer == null || answer.AuthorId != _userManager.GetUserId(User))
                 {
-                    return NotFound();
+                    return View("SoLost");
                 }
 
                 answer.Content = am.Content;
@@ -132,7 +132,7 @@ namespace QAWebsite.Controllers
                 {
                     if (!AnswerExists(am.Id))
                     {
-                        return NotFound();
+                        return View("SoLost");
                     }
                     else
                     {
@@ -150,14 +150,14 @@ namespace QAWebsite.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             var answer = await _context.Answer
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (answer == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             return View(answer);
