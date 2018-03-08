@@ -32,9 +32,8 @@ namespace QAWebsite
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
-            })
-
-                .AddEntityFrameworkStores<ApplicationDbContext>()
+                options.SignIn.RequireConfirmedEmail = true;
+            }).AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
             // Add application services.
