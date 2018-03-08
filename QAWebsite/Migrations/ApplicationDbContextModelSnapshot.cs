@@ -211,6 +211,28 @@ namespace QAWebsite.Migrations
                     b.ToTable("Answer");
                 });
 
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.AnswerComment", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("Answerid")
+                        .HasMaxLength(36);
+
+                    b.Property<string>("AuthorId")
+                        .HasMaxLength(450);
+
+                    b.Property<string>("Content")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreationDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AnswerComment");
+                });
+
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.Flag", b =>
                 {
                     b.Property<string>("Id")
@@ -259,6 +281,28 @@ namespace QAWebsite.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Question");
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionComment", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("AuthorId")
+                        .HasMaxLength(450);
+
+                    b.Property<string>("Content")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreationDate");
+
+                    b.Property<string>("QuestionId")
+                        .HasMaxLength(36);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestionComment");
                 });
 
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionEdit", b =>

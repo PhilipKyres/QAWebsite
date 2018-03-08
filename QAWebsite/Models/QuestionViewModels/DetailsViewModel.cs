@@ -11,7 +11,7 @@ namespace QAWebsite.Models.QuestionViewModels
     {
         public DetailsViewModel() { }
 
-        public DetailsViewModel(Question question, string authorName, int rating, List<AnswerViewModel> answers)
+        public DetailsViewModel(Question question, string authorName, int rating, List<AnswerViewModel> answers, List<CommentViewModel> comments)
         {
             this.AuthorId = question.AuthorId;
             this.Id = question.Id;
@@ -24,6 +24,7 @@ namespace QAWebsite.Models.QuestionViewModels
             this.AuthorName = authorName;
             this.Rating = rating;
             this.Answers = answers;
+            this.Comments = comments;
         }
 
         [MaxLength(8)]
@@ -57,8 +58,13 @@ namespace QAWebsite.Models.QuestionViewModels
 
         public string BestAnswerId { get; set; }
 
+        [Display(Name = "Add Comment")]
+        public string Comment { get; set; }
+
         public ICollection<AnswerViewModel> Answers { get; set; }
 
         public ICollection<QuestionTag> QuestionTags { get; set; }
+
+        public ICollection<CommentViewModel> Comments { get; set; }
     }
 }

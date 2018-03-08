@@ -188,7 +188,8 @@ namespace QAWebsite.Controllers
             answer.ForEach(a =>
             {
                 string name = _context.Users.Where(u => u.Id == a.AuthorId).Select(x => x.UserName).SingleOrDefault();
-                avm.Add(new AnswerViewModel(a, name));
+                var cvm = new CommentController(_context, _userManager).GetAnmswerCommentList(a.Id);
+                avm.Add(new AnswerViewModel(a, name, cvm));
             });
 
             return avm;

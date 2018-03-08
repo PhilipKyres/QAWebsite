@@ -11,8 +11,8 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180306235208_userRole")]
-    partial class userRole
+    [Migration("20180308075139_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -212,6 +212,28 @@ namespace QAWebsite.Migrations
                     b.ToTable("Answer");
                 });
 
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.AnswerComment", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("Answerid")
+                        .HasMaxLength(36);
+
+                    b.Property<string>("AuthorId")
+                        .HasMaxLength(450);
+
+                    b.Property<string>("Content")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreationDate");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AnswerComment");
+                });
+
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.Flag", b =>
                 {
                     b.Property<string>("Id")
@@ -260,6 +282,48 @@ namespace QAWebsite.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Question");
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionComment", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("AuthorId")
+                        .HasMaxLength(450);
+
+                    b.Property<string>("Content")
+                        .IsRequired();
+
+                    b.Property<DateTime>("CreationDate");
+
+                    b.Property<string>("QuestionId")
+                        .HasMaxLength(36);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestionComment");
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionEdit", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTime>("EditDate");
+
+                    b.Property<string>("EditorId");
+
+                    b.Property<string>("NewContent");
+
+                    b.Property<string>("NewTitle");
+
+                    b.Property<string>("QuestionId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestionEdits");
                 });
 
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionRating", b =>
