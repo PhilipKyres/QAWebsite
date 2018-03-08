@@ -31,12 +31,16 @@
     margin: 10%;
     width: 100%;
 }
-#googleMap {
-    width: 100%;
-    height: 500px;
-    text-align: center;
+#container-404-page {
     align-items: center;
+    text-align: center;
+    justify-content: center;
 }
-#contactText {
-    font-size: 17px;
+#404gif {
+    min-height: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    border-radius: 5%;
 }
