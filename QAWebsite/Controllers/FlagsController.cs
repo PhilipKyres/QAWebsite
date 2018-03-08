@@ -31,13 +31,13 @@ namespace QAWebsite.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
             if (question == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             var flagModel = new FlagViewModel(question)
@@ -86,14 +86,14 @@ namespace QAWebsite.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             var flag = await _context.Flag
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (flag == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             return View(flag);
@@ -104,14 +104,14 @@ namespace QAWebsite.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             var flag = await _context.Flag
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (flag == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             return View(flag);

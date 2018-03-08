@@ -54,8 +54,8 @@ namespace QAWebsite.Controllers
                 }
                 return View("Profile", profileViewModel);
             }
-
-            return View("Error", new ErrorViewModel { RequestId = null});
+            
+            return View("SoLost");
         }
     }
 }

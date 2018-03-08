@@ -76,14 +76,14 @@ namespace QAWebsite.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             var tag = await _context.Tag
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (tag == null)
             {
-                return NotFound();
+                return View("SoLost");
             }
 
             return View(tag);
