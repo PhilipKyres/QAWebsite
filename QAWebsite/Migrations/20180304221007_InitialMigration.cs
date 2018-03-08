@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using System;
+using System.Collections.Generic;
 
 namespace QAWebsite.Migrations
 {
@@ -95,6 +96,22 @@ namespace QAWebsite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Question", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QuestionEdits",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    EditDate = table.Column<DateTime>(nullable: false),
+                    EditorId = table.Column<string>(nullable: true),
+                    NewContent = table.Column<string>(nullable: true),
+                    NewTitle = table.Column<string>(nullable: true),
+                    QuestionId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuestionEdits", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -326,6 +343,9 @@ namespace QAWebsite.Migrations
 
             migrationBuilder.DropTable(
                 name: "Flag");
+
+            migrationBuilder.DropTable(
+                name: "QuestionEdits");
 
             migrationBuilder.DropTable(
                 name: "QuestionRating");

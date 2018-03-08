@@ -108,8 +108,19 @@ namespace QAWebsite.Controllers
                     EditDate = DateTime.Now,
                     AuthorId = _userManager.GetUserId(User)
                 };
+
+                var edit = new QuestionEdit
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    QuestionId = question.Id,
+                    EditorId = question.AuthorId,
+                    NewTitle = question.Title,
+                    NewContent = question.Content,
+                    EditDate = question.EditDate
+                };
                 
                 _context.Add(question);
+                _context.Add(edit);
                 await _context.SaveChangesAsync();
 
                 await _tagController.CreateQuestionTags(question, tagNames);
@@ -163,16 +174,48 @@ namespace QAWebsite.Controllers
                     return NotFound();
                 }
 
+
+                var initialTitle = question.Title;
+                var initialContent = question.Content;
+
                 question.Title = vm.Title;
                 question.Content = vm.Content;
                 question.EditDate = DateTime.Now;
 
+                QuestionEdit edit = new QuestionEdit
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    QuestionId = question.Id,
+                    EditorId = _userManager.GetUserId(User),
+                };
+
+                bool editMade = false;
+
+                if (!initialTitle.Equals(question.Title))
+                {
+                    edit.NewTitle = question.Title;
+                    editMade = true;
+                }
+
+                if (!initialContent.Equals(question.Content))
+                {
+                    edit.NewContent = question.Content;
+                    editMade = true;
+                }
+
                 try
                 {
-                    _context.Update(question);
-                    await _context.SaveChangesAsync();
 
                     await _tagController.UpdateQuestionTags(question, tagNames);
+
+                    if (editMade)
+                    {
+                        edit.EditDate = question.EditDate;
+                        _context.Add(edit);
+                    }
+
+                    _context.Update(question);
+                    await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -188,6 +231,26 @@ namespace QAWebsite.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(vm);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> EditHistory(string id)
+        {
+            List<QuestionEditListItem> editsListings = new List<QuestionEditListItem>();
+            await _context.QuestionEdits.Where(edit => edit.QuestionId == id).OrderByDescending(edit=>edit.EditDate).ForEachAsync(
+                edit => editsListings.Add(new QuestionEditListItem(edit, _context.Users.Where(user => user.Id == edit.EditorId).FirstOrDefault().UserName)));
+            return View(new QuestionEditsListViewModel { QuestionId = id, Edits = editsListings});
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> EditDetails(string id)
+        {
+            var edit = await _context.QuestionEdits.Where(questionEdit => questionEdit.Id == id).FirstOrDefaultAsync();
+            
+            var initialTitle =  (edit.NewTitle!=null)?_context.QuestionEdits.Where(questionEdit => questionEdit.QuestionId == edit.QuestionId && questionEdit.NewTitle != null).OrderBy(questionEdit => questionEdit.EditDate).First().NewTitle:null;
+            var initialContent = (edit.NewContent!=null)?_context.QuestionEdits.Where(questionEdit => questionEdit.QuestionId == edit.QuestionId && questionEdit.NewContent != null).OrderBy(questionEdit => questionEdit.EditDate).First().NewContent:null;
+
+            return View(new QuestionEditDetailViewModel(edit, initialTitle, initialContent,_context.Users.Where(user => user.Id == edit.EditorId).FirstOrDefault().UserName));
         }
 
         // GET: Question/Delete/5

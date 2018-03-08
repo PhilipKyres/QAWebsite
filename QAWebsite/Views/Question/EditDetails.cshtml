@@ -1,0 +1,62 @@
+﻿@model QAWebsite.Models.QuestionViewModels.QuestionEditDetailViewModel
+
+@{
+    ViewData["Title"] = "EditDetails";
+}
+
+<h2>Edit Details</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.EditedBy)
+        </dt>
+        <dd>
+            <a asp-action="Profile" asp-controller="Profile" asp-route-id="@Model.EditorId">@Html.DisplayFor(modelItem => Model.EditedBy)</a>
+        </dd>
+        
+        @if (Model.InitialTitle != null)
+        {
+                    <dt>
+                        @Html.DisplayNameFor(model => model.InitialTitle)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.InitialTitle)
+                    </dd>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.NewTitle)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.NewTitle)
+                    </dd>
+        }
+          
+        @if (Model.InitialContent != null)
+        {
+                <dt>
+                    @Html.DisplayNameFor(model => model.InitialContent)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.InitialContent)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.NewContent)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.NewContent)
+                </dd>
+        }
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EditDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EditDate)
+        </dd>
+    </dl>
+</div>
+
+<div>
+     <a asp-action="EditHistory" asp-route-id="@Model.QuestionId">Back To List</a>
+</div>
