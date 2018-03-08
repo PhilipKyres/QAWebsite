@@ -5,7 +5,8 @@
   </PropertyGroup>
 
 <ItemGroup>
-    <packagereference Include="Microsoft.NET.Test.Sdk" Version="15.5.0"></packagereference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.0.1" />
+    <packagereference Include="Microsoft.NET.Test.Sdk" Version="15.6.0"></packagereference>
     <packagereference Include="NUnit" Version="3.9.0"></packagereference>
     <packagereference Include="NUnit3TestAdapter" Version="3.9.0"></packagereference>
   </ItemGroup>
