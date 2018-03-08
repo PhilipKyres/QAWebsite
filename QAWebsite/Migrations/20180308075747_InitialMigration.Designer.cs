@@ -11,7 +11,7 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180308072918_InitialMigration")]
+    [Migration("20180308075747_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
