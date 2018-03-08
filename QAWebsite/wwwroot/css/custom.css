@@ -31,3 +31,12 @@
     margin: 10%;
     width: 100%;
 }
+#googleMap {
+    width: 100%;
+    height: 500px;
+    text-align: center;
+    align-items: center;
+}
+#contactText {
+    font-size: 17px;
+}

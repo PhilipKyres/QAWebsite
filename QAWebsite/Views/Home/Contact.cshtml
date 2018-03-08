@@ -1,33 +1,37 @@
-﻿@{
+﻿{
     ViewData["Title"] = "Contact Details";
     ViewData["Message"] = "Headquarters Address:";
 }
 <h2>@ViewData["Title"]</h2>
+
 <h4>@ViewData["Message"]</h4>
+<div class="container">
+    <address>
+        <i>Sir George Williams Campus<br />
+        1455 De Maisonneuve Blvd. W.<br />
+        Montreal, Quebec, Canada<br />
+        Postal Code: H3G 1M8<br />
+        Phone: 514-848-2424</i>
+    </address>
+    <div id="googleMap" ></div>
 
-<address>
-    Sir George Williams Campus<br />
-    1455 De Maisonneuve Blvd. W.<br />
-    Montreal, Quebec, Canada<br />
-    Postal Code: H3G 1M8<br />
-    Phone: 514-848-2424
-</address>
+    <script>
+        function myMap() {
+            var mapProp = {
+                center: new google.maps.LatLng(45.4973, -73.5790),
+                zoom: 16,
+            };
+            var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+        }
+    </script>
 
-<div id="googleMap" style="width:70%;height:400px;"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5kp9t9mVSktAHIN2W-M5VF4T4hnoYX5w&callback=myMap"></script>
 
-<script>
-function myMap() {
-var mapProp= {
-    center:new google.maps.LatLng(45.4973,-73.5790),
-    zoom:16,
-};
-var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
-}
-</script>
-
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5kp9t9mVSktAHIN2W-M5VF4T4hnoYX5w&callback=myMap"></script>
-
-<address>
-    <strong style="font-size: 17px;"><br />Please contact the website administrator via e-mail if experiencing any issues related to account inquiries or website navigation.</strong><br />
-    <strong>Website Admin can be contacted at:</strong> <a href="mailto:Support@QAWebsite.com">Support@QAWebsite.com</a><br />
-</address>
+    <p  id="contactText"><i>
+    <strong>
+        <br />Please contact the website administrator via e-mail if experiencing any issues related to account inquiries or website navigation.
+    </strong><br />
+    <strong>Website Admin can be contacted at:</strong>
+    </i> <a href="mailto:Support@QAWebsite.com">QAWebsite341@gmail.com</a><br />
+    </p>
+</div>
