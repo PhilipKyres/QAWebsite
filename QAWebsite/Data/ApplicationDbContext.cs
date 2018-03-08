@@ -39,5 +39,6 @@ namespace QAWebsite.Data
         public DbSet<QuestionEdit> QuestionEdits { get; set; }
         public DbSet<AnswerComment> AnswerComment { get; set; }
         public DbSet<QuestionComment> QuestionComment { get; set; }
+
     }
 }

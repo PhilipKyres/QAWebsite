@@ -1,17 +1,37 @@
-﻿@{
-    ViewData["Title"] = "Contact";
+﻿{
+    ViewData["Title"] = "Contact Details";
+    ViewData["Message"] = "Headquarters Address:";
 }
 <h2>@ViewData["Title"]</h2>
-<h3>@ViewData["Message"]</h3>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
+<h4>@ViewData["Message"]</h4>
+<div class="container">
+    <address>
+        <i>Sir George Williams Campus<br />
+        1455 De Maisonneuve Blvd. W.<br />
+        Montreal, Quebec, Canada<br />
+        Postal Code: H3G 1M8<br />
+        Phone: 514-848-2424</i>
+    </address>
+    <div id="googleMap" ></div>
 
-<address>
-    <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+    <script>
+        function myMap() {
+            var mapProp = {
+                center: new google.maps.LatLng(45.4973, -73.5790),
+                zoom: 16,
+            };
+            var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+        }
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5kp9t9mVSktAHIN2W-M5VF4T4hnoYX5w&callback=myMap"></script>
+
+    <p  id="contactText"><i>
+    <strong>
+        <br />Please contact the website administrator via e-mail if experiencing any issues related to account inquiries or website navigation.
+    </strong><br />
+    <strong>Website Admin can be contacted at:</strong>
+    </i> <a href="mailto:Support@QAWebsite.com">QAWebsite341@gmail.com</a><br />
+    </p>
+</div>
