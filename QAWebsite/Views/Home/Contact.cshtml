@@ -1,10 +1,5 @@
-﻿{
-    ViewData["Title"] = "Contact Details";
-    ViewData["Message"] = "Headquarters Address:";
-}
-<h2>@ViewData["Title"]</h2>
-
-<h4>@ViewData["Message"]</h4>
+﻿<h2>Contact Details</h2>
+<h4>Headquarters Address:</h4>
 <div class="container">
     <address>
         <i>Sir George Williams Campus<br />
@@ -13,25 +8,31 @@
         Postal Code: H3G 1M8<br />
         Phone: 514-848-2424</i>
     </address>
-    <div id="googleMap" ></div>
+    <div id="googleMap" style="width:100vh;height:60vh;"></div>
 
     <script>
         function myMap() {
+            var position = new google.maps.LatLng(45.4973, -73.5790);
             var mapProp = {
-                center: new google.maps.LatLng(45.4973, -73.5790),
+                center: position,
                 zoom: 16,
             };
             var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+            var marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                title: 'Concordia University'
+            });
         }
     </script>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5kp9t9mVSktAHIN2W-M5VF4T4hnoYX5w&callback=myMap"></script>
 
-    <p  id="contactText"><i>
+    <address  id="contactText"><i>
     <strong>
         <br />Please contact the website administrator via e-mail if experiencing any issues related to account inquiries or website navigation.
     </strong><br />
     <strong>Website Admin can be contacted at:</strong>
     </i> <a href="mailto:Support@QAWebsite.com">QAWebsite341@gmail.com</a><br />
-    </p>
+    </address>
 </div>

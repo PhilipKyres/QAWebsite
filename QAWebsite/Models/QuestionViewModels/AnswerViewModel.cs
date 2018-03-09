@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc;
 using QAWebsite.Models.QuestionModels;
 
 namespace QAWebsite.Models.QuestionViewModels
 {
     public class AnswerViewModel
     {
-        public AnswerViewModel(Answer answer, string authorName, List<CommentViewModel> comments)
+        public AnswerViewModel(Answer answer, string authorName, int rating, List<CommentViewModel> comments)
         {
             this.Id = answer.Id;
             this.Content = answer.Content;
@@ -15,7 +16,8 @@ namespace QAWebsite.Models.QuestionViewModels
             this.EditDate = answer.EditDate;
             this.QuestionId = answer.QuestionId;
             this.AuthorId = answer.AuthorId;
-            this.Author = authorName;
+            this.AuthorName = authorName;
+            this.Rating = rating;
             this.Comments = comments;
         }
 
@@ -38,13 +40,14 @@ namespace QAWebsite.Models.QuestionViewModels
         [Display(Name = "Question Id")]
         public string QuestionId { get; set; }
 
-        [MaxLength(450)]
-        [Display(Name = "Author Id")]
+        [HiddenInput(DisplayValue = false)]
         public string AuthorId { get; set; }
 
-        [MaxLength(450)]
         [Display(Name = "Author")]
-        public string Author { get; set; }
+        public string AuthorName { get; set; }
+
+        [Display(Name = "Rating")]
+        public int Rating { get; set; }
 
         [Display(Name = "Comment")]
         public ICollection<CommentViewModel> Comments { get; set; }

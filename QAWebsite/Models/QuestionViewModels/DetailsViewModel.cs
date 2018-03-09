@@ -43,11 +43,10 @@ namespace QAWebsite.Models.QuestionViewModels
         [Display(Name = "Edit Date")]
         public DateTime EditDate { get; set; }
 
-        [ReadOnly(true)]
         [HiddenInput(DisplayValue = false)]
         public string AuthorId { get; set; }
 
-        [ReadOnly(true)]
+        [Display(Name = "Author")]
         public string AuthorName { get; set; }
 
         public int Rating { get; set; }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -38,7 +36,7 @@ namespace QAWebsite.Controllers
 
             IEnumerable<IndexViewModel> vms = questions.Select(q => new IndexViewModel(q,
                 _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
-                _ratingController.GetRating(q.Id)));
+                RatingController.GetRating(_context.QuestionRating, q.Id)));
 
             return View(vms);
         }

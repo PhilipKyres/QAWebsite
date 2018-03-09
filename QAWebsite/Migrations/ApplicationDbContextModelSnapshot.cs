@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.Internal;
 using QAWebsite.Data;
+using QAWebsite.Models.Enums;
 using System;
 
 namespace QAWebsite.Migrations
@@ -233,6 +234,24 @@ namespace QAWebsite.Migrations
                     b.ToTable("AnswerComment");
                 });
 
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.AnswerRating", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
+
+                    b.Property<string>("FkId");
+
+                    b.Property<string>("RatedBy")
+                        .HasMaxLength(450);
+
+                    b.Property<int>("RatingValue");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AnswerRating");
+                });
+
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.Flag", b =>
                 {
                     b.Property<string>("Id")
@@ -328,11 +347,13 @@ namespace QAWebsite.Migrations
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionRating", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd();
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36);
 
-                    b.Property<string>("QuestionId");
+                    b.Property<string>("FkId");
 
-                    b.Property<string>("RatedBy");
+                    b.Property<string>("RatedBy")
+                        .HasMaxLength(450);
 
                     b.Property<int>("RatingValue");
 
