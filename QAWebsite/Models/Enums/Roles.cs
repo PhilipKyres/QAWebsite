@@ -5,10 +5,9 @@ using System.Threading.Tasks;
 
 namespace QAWebsite.Models.Enums
 {
-    public static class Roles
+    public enum  Roles
     {
-
-        public const string Administrator = "ADMINISTRATOR";
-        public const string User = "USER";
+        ADMINISTRATOR,
+        USER
     }
 }

@@ -250,13 +250,13 @@ namespace QAWebsite.Controllers
                 }
                 var result = await _userManager.CreateAsync(user, model.Password);
 
-                var userRole = _roleManager.Roles.Where(role => role.NormalizedName == Roles.User).FirstOrDefault();
+                var userRole = _roleManager.Roles.Where(role => role.NormalizedName == Roles.USER.ToString()).FirstOrDefault();
                 if (userRole == null)
                 {
-                    userRole = new ApplicationRole(Roles.User);
+                    userRole = new ApplicationRole(Roles.USER.ToString());
                     await _roleManager.CreateAsync(userRole);
                 }
-                await _userManager.AddToRoleAsync(user, Roles.User);
+                await _userManager.AddToRoleAsync(user, Roles.USER.ToString());
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");

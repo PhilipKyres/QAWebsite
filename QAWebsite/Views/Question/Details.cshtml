@@ -58,7 +58,7 @@
 <div>
     @if (User.Identity.IsAuthenticated)
     {
-        if (Model.AuthorId == UserManager.GetUserId(User))
+        if (Model.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
         {
             <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> @Html.Raw("|")
             <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> @Html.Raw("|")
@@ -70,6 +70,7 @@
     }
     <a asp-action="EditHistory" asp-route-id="@Model.Id">Edits History</a> @Html.Raw("|")
     <a asp-action="Index">Back to List</a>
+   
 </div>
 
 <hr />

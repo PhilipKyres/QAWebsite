@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
+using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.QuestionViewModels;
 
@@ -143,7 +144,10 @@ namespace QAWebsite.Controllers
                 .Include(x => x.QuestionTags)
                 .ThenInclude(x => x.Tag)
                 .SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null || question.AuthorId != _userManager.GetUserId(User))
+
+            var currentUser = _userManager.GetUserAsync(User).Result;
+            if (question == null || question.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
+           // if (question == null || question.AuthorId != _userManager.GetUserId(User))
             {
                 return NotFound();
             }
@@ -170,7 +174,9 @@ namespace QAWebsite.Controllers
                     .Include(x => x.QuestionTags)
                     .ThenInclude(x => x.Tag)
                     .SingleOrDefaultAsync(m => m.Id == id);
-                if (question == null || question.AuthorId != _userManager.GetUserId(User))
+
+                var currentUser = _userManager.GetUserAsync(User).Result;
+                if (question == null || question.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
                 {
                     return NotFound();
                 }
@@ -187,7 +193,7 @@ namespace QAWebsite.Controllers
                 {
                     Id = Guid.NewGuid().ToString(),
                     QuestionId = question.Id,
-                    EditorId = _userManager.GetUserId(User),
+                    EditorId = currentUser.Id,
                 };
 
                 bool editMade = false;
@@ -263,7 +269,8 @@ namespace QAWebsite.Controllers
             }
 
             var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null || question.AuthorId != _userManager.GetUserId(User))
+            var currentUser = _userManager.GetUserAsync(User).Result;
+            if (question == null || question.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
             {
                 return NotFound();
             }
@@ -277,7 +284,8 @@ namespace QAWebsite.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null || question.AuthorId != _userManager.GetUserId(User))
+            var currentUser = _userManager.GetUserAsync(User).Result;
+            if (question == null || question.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
             {
                 return NotFound();
             }
