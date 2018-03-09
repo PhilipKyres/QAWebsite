@@ -43,6 +43,24 @@ namespace QAWebsite.Controllers
             return View(vms);
         }
 
+        [AllowAnonymous]
+        public async Task<IActionResult> Search(string search)
+        {
+            var split = search.Trim().ToLower().Split(' ');
+
+            var questions = await _context.Question
+                .Include(x => x.QuestionTags)
+                .ThenInclude(x => x.Tag)
+                .Where(x => split.Any(s => x.Title.ToLower().Contains(s) || x.Content.ToLower().Contains(s) || x.QuestionTags.Any(qt => qt.Tag.Name.ToLower().Contains(s))))
+                .ToListAsync();
+
+            var vms = questions.Select(q => new IndexViewModel(q,
+                _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
+                RatingController.GetRating(_context.QuestionRating, q.Id)));
+
+            return View("Index", vms);
+        }
+
         public async Task<DetailsViewModel> GetDetailsViewModel(string questionId)
         {
             if (questionId == null)
