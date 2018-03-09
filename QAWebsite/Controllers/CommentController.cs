@@ -36,7 +36,7 @@ namespace QAWebsite.Controllers
                 return View("~/Views/Question/Details.cshtml", newDvm);
             }
 
-            Comment comment = new Comment();
+            Comment comment;
 
             if (type == CommentTypes.Question)
             {
