@@ -11,12 +11,12 @@ using Microsoft.Extensions.DependencyInjection;
 using QAWebsite.Controllers;
 using QAWebsite.Data;
 using QAWebsite.Models;
-using QAWebsite.Models.QuestionViewModels;
+using QAWebsite.Models.AccountViewModels;
 
 namespace QAWebsite.Tests
 {
     [TestFixture]
-    public class QuestionTest
+    public class AccountTest
     {
         private const string UserNameIdentifier = "testId";
         private const string UserName = "testName";
@@ -49,29 +49,12 @@ namespace QAWebsite.Tests
 
             _accountController = new AccountController(_context, _userManager)
             {
-                ControllerContext = new ControllerContext() {HttpContext = context}
+                ControllerContext = new ControllerContext() { HttpContext = context }
             };
         }
 
         [Test]
-        public async Task CreateQuestion()
-        {
-            // Arrange
-
-            // Act
-            var vm = new CreateViewModel() {Title = "Test Title", Content = "Test content", Tags = "test, another tag"};
-            await _accountController.Create(vm);
-
-            // Assert
-            var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title");
-            Assert.IsNotNull(question);
-            Assert.AreEqual(question.AuthorId, UserNameIdentifier);
-            Assert.AreEqual(question.Content, vm.Content);
-            Assert.AreEqual(question.QuestionTags.Count, 2);
-        }
-
-        [Test]
-        public void EditQuestion()
+        public void AccountCreation()
         {
             // Arrange
 
@@ -79,35 +62,6 @@ namespace QAWebsite.Tests
 
             // Assert
         }
-
-        [Test]
-        public void VoteQuestion()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
-        }
-
-        [Test]
-        public void BestAnswer()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
-        }
-
-        [Test]
-        public void DeleteQuestion()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
-        }
+        
     }
 }

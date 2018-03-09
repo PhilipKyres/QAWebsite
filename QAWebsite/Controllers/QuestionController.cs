@@ -14,14 +14,14 @@ using QAWebsite.Models.QuestionViewModels;
 namespace QAWebsite.Controllers
 {
     [Authorize]
-    public class QuestionController : Controller
+    public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly TagController _tagController;
         private readonly RatingController _ratingController;
 
-        public QuestionController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public AccountController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;

@@ -64,7 +64,7 @@ namespace QAWebsite.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var newDvm = await new QuestionController(_context, _userManager).GetDetailsViewModel(dvm.Id);
+                var newDvm = await new AccountController(_context, _userManager).GetDetailsViewModel(dvm.Id);
                 newDvm.AnswerContent = dvm.AnswerContent;
                 return View("~/Views/Question/Details.cshtml", newDvm);
             }
