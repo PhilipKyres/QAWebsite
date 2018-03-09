@@ -55,7 +55,7 @@ namespace QAWebsite.Controllers
                 return View("Profile", profileViewModel);
             }
             
-            return View("SoLost");
+            return NotFound();
         }
     }
 }

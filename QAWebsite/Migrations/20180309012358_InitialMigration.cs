@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using System;
-using System.Collections.Generic;
 
 namespace QAWebsite.Migrations
 {
@@ -23,6 +22,21 @@ namespace QAWebsite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Answer", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AnswerComment",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 36, nullable: false),
+                    Answerid = table.Column<string>(maxLength: 36, nullable: true),
+                    AuthorId = table.Column<string>(maxLength: 450, nullable: true),
+                    Content = table.Column<string>(nullable: false),
+                    CreationDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AnswerComment", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -98,6 +112,21 @@ namespace QAWebsite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Question", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QuestionComment",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 36, nullable: false),
+                    AuthorId = table.Column<string>(maxLength: 450, nullable: true),
+                    Content = table.Column<string>(nullable: false),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    QuestionId = table.Column<string>(maxLength: 36, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuestionComment", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -329,6 +358,9 @@ namespace QAWebsite.Migrations
                 name: "Answer");
 
             migrationBuilder.DropTable(
+                name: "AnswerComment");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
@@ -345,6 +377,9 @@ namespace QAWebsite.Migrations
 
             migrationBuilder.DropTable(
                 name: "Flag");
+
+            migrationBuilder.DropTable(
+                name: "QuestionComment");
 
             migrationBuilder.DropTable(
                 name: "QuestionEdits");

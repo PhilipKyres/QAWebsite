@@ -76,7 +76,7 @@ namespace QAWebsite.Controllers
 
             if (vm == null)
             {
-                return View("SoLost");
+                return NotFound();
             }
 
             return View(vm);
