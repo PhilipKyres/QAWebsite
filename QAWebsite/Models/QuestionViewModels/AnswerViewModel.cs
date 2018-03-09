@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using QAWebsite.Models.QuestionModels;
 
@@ -6,7 +7,7 @@ namespace QAWebsite.Models.QuestionViewModels
 {
     public class AnswerViewModel
     {
-        public AnswerViewModel(Answer answer, string authorName)
+        public AnswerViewModel(Answer answer, string authorName, List<CommentViewModel> comments)
         {
             this.Id = answer.Id;
             this.Content = answer.Content;
@@ -15,6 +16,7 @@ namespace QAWebsite.Models.QuestionViewModels
             this.QuestionId = answer.QuestionId;
             this.AuthorId = answer.AuthorId;
             this.Author = authorName;
+            this.Comments = comments;
         }
 
         [Required]
@@ -43,5 +45,8 @@ namespace QAWebsite.Models.QuestionViewModels
         [MaxLength(450)]
         [Display(Name = "Author")]
         public string Author { get; set; }
+
+        [Display(Name = "Comment")]
+        public ICollection<CommentViewModel> Comments { get; set; }
     }
 }

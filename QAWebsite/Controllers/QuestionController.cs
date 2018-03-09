@@ -62,8 +62,9 @@ namespace QAWebsite.Controllers
             }
 
             var avm = new AnswerController(_context, _userManager).GetAnswerList(questionId);
+            var cvm = new CommentController(_context, _userManager).GetQuestionCommentsList(questionId);
 
-            return new DetailsViewModel(question, _context.Users.Where(u => u.Id == question.AuthorId).Select(x => x.UserName).SingleOrDefault(), _ratingController.GetRating(question.Id), avm);
+            return new DetailsViewModel(question, _context.Users.Where(u => u.Id == question.AuthorId).Select(x => x.UserName).SingleOrDefault(), _ratingController.GetRating(question.Id), avm, cvm);
         }
 
         // GET: Question/Details/5

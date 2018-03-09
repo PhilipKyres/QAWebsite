@@ -1,6 +1,6 @@
 ﻿@using QAWebsite.Models.Enums
 @model QAWebsite.Models.QuestionViewModels.DetailsViewModel
-
+@using QAWebsite.Models.Enums;
 @{
     ViewData["Title"] = "Question Details";
 }
@@ -54,7 +54,7 @@
     @Html.Raw("|")
     @Html.ActionLink("Downvote", "RateQuestion", "Rating", new { questionId = Model.Id, rateValue = Ratings.Downvote })
 </div>
-<br/>
+<br />
 <div>
     @if (User.Identity.IsAuthenticated)
     {
@@ -75,6 +75,60 @@
 <hr />
 <br />
 
+
+@foreach (var comment in Model.Comments)
+{
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => comment.Content)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => comment.Content)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => comment.CreationDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => comment.CreationDate)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => comment.AuthorName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => comment.AuthorName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(modelItem => comment.CreationDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(modelItem => comment.CreationDate)
+        </dd>
+    </dl>
+}
+
+@if (User.Identity.IsAuthenticated)
+{
+<div class="row">
+    <div class="col-md-6">
+        <form asp-controller="Comment" asp-action="Create">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" value="@Model.Id" , name="parentId" />
+            <input type="hidden" value="@CommentTypes.Question" , name="type" />
+            <div class="form-group">
+                <label asp-for="Comment" class="control-label"></label>
+                <textarea asp-for="Comment" rows="2" class="form-control"></textarea>
+                <span asp-validation-for="Comment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+}
+<br />
+
 <div>
     <h4> @Html.DisplayFor(model => model.Answers.Count) Answers</h4>
     <hr />
@@ -84,7 +138,7 @@
             <dt>
                 @if (answer.AuthorId == UserManager.GetUserId(User))
                 {
-                   <text>Your Answer </text>
+                    <text>Your Answer </text>
                 }
                 else
                 {
@@ -121,10 +175,10 @@
                     <a asp-action="Edit" asp-controller="Answer" asp-route-id="@answer.Id">Edit</a>
                 }
                 @if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
-                { 
-                    if(Model.BestAnswerId != answer.Id)
+                {
+                    if (Model.BestAnswerId != answer.Id)
                     {
-                        <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id"  asp-route-best="@answer.Id">Best Answer</a>
+                        <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id" asp-route-best="@answer.Id">Best Answer</a>
                     }
                     else
                     {
@@ -135,6 +189,59 @@
             </dd>
         </dl>
         <hr />
+
+        @foreach (var aComment in answer.Comments)
+        {
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => aComment.Content)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => aComment.Content)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => aComment.CreationDate)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => aComment.CreationDate)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => aComment.AuthorName)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => aComment.AuthorName)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(modelItem => aComment.CreationDate)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(modelItem => aComment.CreationDate)
+                </dd>
+            </dl>
+        }
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <form asp-controller="Comment" asp-action="Create">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" value="@answer.Id" , name="parentId" />
+                        <input type="hidden" value="@CommentTypes.Answer" , name="type" />
+                        <div class="form-group">
+                            <label asp-for="Comment" class="control-label"></label>
+                            <textarea asp-for="Comment" rows="2" class="form-control"></textarea>
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Submit" class="btn btn-default" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <hr />
+        }
     }
 </div>
 
