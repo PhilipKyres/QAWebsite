@@ -23,7 +23,7 @@ namespace QAWebsite.Tests
 
         private ApplicationDbContext _context;
         private UserManager<ApplicationUser> _userManager;
-        private AccountController _accountController;
+        private QuestionController _questionController;
 
         [SetUp]
         public void SetUp()
@@ -47,7 +47,7 @@ namespace QAWebsite.Tests
             _context = serviceProvider.GetRequiredService<ApplicationDbContext>();
             _userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            _accountController = new AccountController(_context, _userManager)
+            _questionController = new QuestionController(_context, _userManager)
             {
                 ControllerContext = new ControllerContext() {HttpContext = context}
             };
@@ -60,7 +60,7 @@ namespace QAWebsite.Tests
 
             // Act
             var vm = new CreateViewModel() {Title = "Test Title", Content = "Test content", Tags = "test, another tag"};
-            await _accountController.Create(vm);
+            await _questionController.Create(vm);
 
             // Assert
             var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title");
