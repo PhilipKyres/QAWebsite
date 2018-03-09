@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using QAWebsite.Data;
@@ -21,11 +16,20 @@ namespace QAWebsite
             var host = BuildWebHost(args);
             using (var scope = host.Services.CreateScope())
             {
-                var ApplicationDbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
+                var applicationDbContext = scope.ServiceProvider.GetService<ApplicationDbContext>();
                 var services = scope.ServiceProvider;
-               (DBInitializer.SeedAsync(ApplicationDbContext,
-                services.GetRequiredService<UserManager<ApplicationUser>>(),
-                services.GetRequiredService<RoleManager<ApplicationRole>>())).Wait();
+
+                try
+                {
+                    DbInitializer.SeedAsync(applicationDbContext,
+                        services.GetRequiredService<UserManager<ApplicationUser>>(),
+                        services.GetRequiredService<RoleManager<ApplicationRole>>()).Wait();
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred seeding the DB.");
+                }
             }
             
             host.Run();
