@@ -242,7 +242,7 @@ namespace QAWebsite.Controllers
                 return View(model);
             }
 
-            var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
+            var user = new ApplicationUser { UserName = model.Username, Email = model.Email, };
             if (model.UserImage != null)
             {
                 using (var memoryStream = new MemoryStream())
@@ -254,6 +254,12 @@ namespace QAWebsite.Controllers
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
+            if (!result.Succeeded)
+            {
+                AddErrors(result);
+                return View(model);
+            }
+
             var userRole = _roleManager.Roles.FirstOrDefault(role => role.NormalizedName == Roles.User);
             if (userRole == null)
             {
@@ -262,22 +268,14 @@ namespace QAWebsite.Controllers
             }
 
             await _userManager.AddToRoleAsync(user, Roles.User);
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("User created a new account with password.");
 
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
-                await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+            await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
 
-                //await _signInManager.SignInAsync(user, isPersistent: false);
-                _logger.LogInformation("User created a new account with password.");
-                return RedirectToLocal(returnUrl);
-            }
-            AddErrors(result);
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            //await _signInManager.SignInAsync(user, isPersistent: false);
+            _logger.LogInformation("User created a new account with password.");
+            return RedirectToLocal(returnUrl);
         }
 
         [HttpPost]
