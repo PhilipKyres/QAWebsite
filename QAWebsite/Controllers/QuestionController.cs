@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
+using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.QuestionViewModels;
 
@@ -162,7 +163,10 @@ namespace QAWebsite.Controllers
                 .Include(x => x.QuestionTags)
                 .ThenInclude(x => x.Tag)
                 .SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null || question.AuthorId != _userManager.GetUserId(User))
+
+            var currentUser = _userManager.GetUserAsync(User).Result;
+            if (question == null || question.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
+           // if (question == null || question.AuthorId != _userManager.GetUserId(User))
             {
                 return NotFound();
             }
@@ -183,74 +187,76 @@ namespace QAWebsite.Controllers
 
             var tagNames = _tagController.ValidateParseTags(vm.Tags, ModelState);
 
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(vm);
-            }
+                var question = await _context.Question
+                    .Include(x => x.QuestionTags)
+                    .ThenInclude(x => x.Tag)
+                    .SingleOrDefaultAsync(m => m.Id == id);
 
-            var question = await _context.Question
-                .Include(x => x.QuestionTags)
-                .ThenInclude(x => x.Tag)
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null || question.AuthorId != _userManager.GetUserId(User))
-            {
-                return NotFound();
-            }
-
-
-            var initialTitle = question.Title;
-            var initialContent = question.Content;
-
-            question.Title = vm.Title;
-            question.Content = vm.Content;
-            question.EditDate = DateTime.Now;
-
-            QuestionEdit edit = new QuestionEdit
-            {
-                Id = Guid.NewGuid().ToString(),
-                QuestionId = question.Id,
-                EditorId = _userManager.GetUserId(User),
-            };
-
-            bool editMade = false;
-
-            if (!initialTitle.Equals(question.Title))
-            {
-                edit.NewTitle = question.Title;
-                editMade = true;
-            }
-
-            if (!initialContent.Equals(question.Content))
-            {
-                edit.NewContent = question.Content;
-                editMade = true;
-            }
-
-            try
-            {
-                await _tagController.UpdateQuestionTags(question, tagNames);
-
-                if (editMade)
-                {
-                    edit.EditDate = question.EditDate;
-                    _context.Add(edit);
-                }
-
-                _context.Update(question);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!QuestionExists(vm.Id))
+                var currentUser = _userManager.GetUserAsync(User).Result;
+                if (question == null || question.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
                 {
                     return NotFound();
                 }
-                else
+
+
+                var initialTitle = question.Title;
+                var initialContent = question.Content;
+
+                question.Title = vm.Title;
+                question.Content = vm.Content;
+                question.EditDate = DateTime.Now;
+
+                QuestionEdit edit = new QuestionEdit
                 {
-                    throw;
+                    Id = Guid.NewGuid().ToString(),
+                    QuestionId = question.Id,
+                    EditorId = currentUser.Id,
+                };
+
+                bool editMade = false;
+
+                if (!initialTitle.Equals(question.Title))
+                {
+                    edit.NewTitle = question.Title;
+                    editMade = true;
                 }
+
+                if (!initialContent.Equals(question.Content))
+                {
+                    edit.NewContent = question.Content;
+                    editMade = true;
+                }
+
+                try
+                {
+
+                    await _tagController.UpdateQuestionTags(question, tagNames);
+
+                    if (editMade)
+                    {
+                        edit.EditDate = question.EditDate;
+                        _context.Add(edit);
+                    }
+
+                    _context.Update(question);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!QuestionExists(vm.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
             }
-            return RedirectToAction(nameof(Index));
+            return View(vm);
         }
 
         [AllowAnonymous]
@@ -282,7 +288,8 @@ namespace QAWebsite.Controllers
             }
 
             var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null || question.AuthorId != _userManager.GetUserId(User))
+            var currentUser = _userManager.GetUserAsync(User).Result;
+            if (question == null || question.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
             {
                 return NotFound();
             }
@@ -296,7 +303,8 @@ namespace QAWebsite.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null || question.AuthorId != _userManager.GetUserId(User))
+            var currentUser = _userManager.GetUserAsync(User).Result;
+            if (question == null || question.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
             {
                 return NotFound();
             }

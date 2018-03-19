@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<QAWebsite.Models.QuestionViewModels.IndexViewModel>
+@using QAWebsite.Models.Enums;
 
 @{
     ViewData["Title"] = "Question List";
@@ -57,7 +58,7 @@
                 </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    @if (User.Identity.IsAuthenticated && item.AuthorId == UserManager.GetUserId(User))
+                    @if (User.Identity.IsAuthenticated && item.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
                     {
                         @Html.Raw("|")
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> @Html.Raw("|")

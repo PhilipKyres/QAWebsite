@@ -12,22 +12,23 @@ namespace QAWebsite.Data
     {
         public static async Task SeedAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager)
         {
-            var config = new ConfigurationBuilder()
+           var config = new ConfigurationBuilder()
 	        .SetBasePath(Directory.GetCurrentDirectory())
 	        .AddJsonFile("seedingData.json")
 	        .Build();
             
-            var userRole = roleManager.Roles.FirstOrDefault(role => role.NormalizedName == Roles.User);
+            var userRole = roleManager.Roles.FirstOrDefault(role => role.NormalizedName == Roles.USER.ToString());
+
             if (userRole == null)
             {
-                userRole = new ApplicationRole(Roles.User);
+                userRole = new ApplicationRole(Roles.USER.ToString());
                 await roleManager.CreateAsync(userRole);
             }
 
-            var adminRole = roleManager.Roles.FirstOrDefault(role => role.NormalizedName == Roles.Administrator);
+            var adminRole = roleManager.Roles.FirstOrDefault(role => role.NormalizedName == Roles.ADMINISTRATOR.ToString());
             if (adminRole == null)
             {
-                adminRole = new ApplicationRole(Roles.Administrator);
+                adminRole = new ApplicationRole(Roles.ADMINISTRATOR.ToString());
                 await roleManager.CreateAsync(adminRole);
             }
             var adminSection = config.GetSection("AdministratorAccount");
@@ -42,7 +43,7 @@ namespace QAWebsite.Data
                 };
 
                 await userManager.CreateAsync(user, adminSection["AdministratorPassword"]);
-                await userManager.AddToRoleAsync(user, Roles.Administrator);
+                await userManager.AddToRoleAsync(user, Roles.ADMINISTRATOR.ToString());
             }
 
             await context.SaveChangesAsync().ConfigureAwait(false);
