@@ -77,9 +77,9 @@ namespace QAWebsite.Controllers
             {
                 return null;
             }
-
+            
             var avm = new AnswerController(_context, _userManager).GetAnswerList(questionId);
-            var cvm = new CommentController(_context, _userManager).GetQuestionCommentsList(questionId);
+            var cvm = new CommentController(_context, _userManager).GetComments(_context.QuestionComment,questionId);
 
             return new DetailsViewModel(question, 
                 _context.Users.Where(u => u.Id == question.AuthorId).Select(x => x.UserName).SingleOrDefault(), 

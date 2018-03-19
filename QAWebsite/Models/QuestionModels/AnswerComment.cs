@@ -5,11 +5,10 @@ namespace QAWebsite.Models.QuestionModels
 {
     public class AnswerComment : Comment
     {
-        [MaxLength(36)]
-        [ForeignKey("AnswerId")]
-        public string Answerid { get; set; }
-
         [Required]
         public virtual Answer Answer { get; set; }
+
+        [ForeignKey("Answer")]
+        public override string FkId { get; set; }
     }
 }

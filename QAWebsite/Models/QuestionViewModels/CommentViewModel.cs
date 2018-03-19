@@ -10,7 +10,7 @@ namespace QAWebsite.Models.QuestionViewModels
 {
     public class CommentViewModel
     {
-        public CommentViewModel(Comment comment, string authorName, string parentId, CommentTypes type)
+        public CommentViewModel(Comment comment, string authorName, string parentId)
         {
             this.Id = comment.Id;
             this.Content = comment.Content;
@@ -18,7 +18,6 @@ namespace QAWebsite.Models.QuestionViewModels
             this.AuthorId = comment.AuthorId;
             this.AuthorName = authorName;
             this.ParentId = parentId;
-            this.Type = type;
         }
 
         [Required]
@@ -40,8 +39,5 @@ namespace QAWebsite.Models.QuestionViewModels
 
         [Required]
         public string ParentId { get; set; }
-
-        [Required]
-        public CommentTypes Type { get; set; }
     }
 }

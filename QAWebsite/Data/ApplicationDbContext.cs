@@ -37,12 +37,12 @@ namespace QAWebsite.Data
             builder.Entity<Answer>()
                .HasMany(x => x.Comments)
                .WithOne(x => x.Answer)
-               .HasForeignKey(x => x.Answerid);
+               .HasForeignKey(x => x.FkId);
 
             builder.Entity<Question>()
                .HasMany(x => x.Comments)
                .WithOne(x => x.Question)
-               .HasForeignKey(x => x.QuestionId);
+               .HasForeignKey(x => x.FkId);
         }
 
         public DbSet<Question> Question { get; set; }

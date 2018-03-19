@@ -276,14 +276,14 @@ namespace QAWebsite.Migrations
                     AuthorId = table.Column<string>(maxLength: 450, nullable: true),
                     Content = table.Column<string>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false),
-                    QuestionId = table.Column<string>(maxLength: 8, nullable: false)
+                    FkId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_QuestionComment", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_QuestionComment_Question_QuestionId",
-                        column: x => x.QuestionId,
+                        name: "FK_QuestionComment_Question_FkId",
+                        column: x => x.FkId,
                         principalTable: "Question",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -318,17 +318,17 @@ namespace QAWebsite.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(maxLength: 36, nullable: false),
-                    Answerid = table.Column<string>(maxLength: 36, nullable: false),
                     AuthorId = table.Column<string>(maxLength: 450, nullable: true),
                     Content = table.Column<string>(nullable: false),
-                    CreationDate = table.Column<DateTime>(nullable: false)
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    FkId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AnswerComment", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AnswerComment_Answer_Answerid",
-                        column: x => x.Answerid,
+                        name: "FK_AnswerComment_Answer_FkId",
+                        column: x => x.FkId,
                         principalTable: "Answer",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -340,9 +340,9 @@ namespace QAWebsite.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AnswerComment_Answerid",
+                name: "IX_AnswerComment_FkId",
                 table: "AnswerComment",
-                column: "Answerid");
+                column: "FkId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -384,9 +384,9 @@ namespace QAWebsite.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_QuestionComment_QuestionId",
+                name: "IX_QuestionComment_FkId",
                 table: "QuestionComment",
-                column: "QuestionId");
+                column: "FkId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_QuestionTag_TagId",
