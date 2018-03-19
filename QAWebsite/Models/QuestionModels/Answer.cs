@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -29,5 +30,10 @@ namespace QAWebsite.Models.QuestionModels
         [MaxLength(450)]
         [ForeignKey("ApplicationUser")]
         public string AuthorId { get; set; }
+
+        [Required]
+        public virtual Question Question { get; set; }
+
+        public virtual ICollection<AnswerComment> Comments { get; set; }
     }
 }

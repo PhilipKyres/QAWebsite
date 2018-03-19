@@ -12,7 +12,7 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180319005622_InitialMigration")]
+    [Migration("20180319184241_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -206,9 +206,12 @@ namespace QAWebsite.Migrations
                     b.Property<DateTime>("EditDate");
 
                     b.Property<string>("QuestionId")
+                        .IsRequired()
                         .HasMaxLength(8);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
 
                     b.ToTable("Answer");
                 });
@@ -220,6 +223,7 @@ namespace QAWebsite.Migrations
                         .HasMaxLength(36);
 
                     b.Property<string>("Answerid")
+                        .IsRequired()
                         .HasMaxLength(36);
 
                     b.Property<string>("AuthorId")
@@ -231,6 +235,8 @@ namespace QAWebsite.Migrations
                     b.Property<DateTime>("CreationDate");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Answerid");
 
                     b.ToTable("AnswerComment");
                 });
@@ -318,9 +324,12 @@ namespace QAWebsite.Migrations
                     b.Property<DateTime>("CreationDate");
 
                     b.Property<string>("QuestionId")
-                        .HasMaxLength(36);
+                        .IsRequired()
+                        .HasMaxLength(8);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
 
                     b.ToTable("QuestionComment");
                 });
@@ -438,6 +447,30 @@ namespace QAWebsite.Migrations
                     b.HasOne("QAWebsite.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.Answer", b =>
+                {
+                    b.HasOne("QAWebsite.Models.QuestionModels.Question", "Question")
+                        .WithMany("Answers")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.AnswerComment", b =>
+                {
+                    b.HasOne("QAWebsite.Models.QuestionModels.Answer", "Answer")
+                        .WithMany("Comments")
+                        .HasForeignKey("Answerid")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionComment", b =>
+                {
+                    b.HasOne("QAWebsite.Models.QuestionModels.Question", "Question")
+                        .WithMany("Comments")
+                        .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

@@ -5,8 +5,11 @@ namespace QAWebsite.Models.QuestionModels
 {
     public class QuestionComment : Comment
     {
-        [MaxLength(36)]
+        [MaxLength(8)]
         [ForeignKey("Question")]
         public string QuestionId { get; set; }
+
+        [Required]
+        public virtual Question Question { get; set; }
     }
 }

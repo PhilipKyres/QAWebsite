@@ -28,6 +28,21 @@ namespace QAWebsite.Data
                 .HasOne(t => t.Tag)
                 .WithMany(qt => qt.QuestionTags)
                 .HasForeignKey(t => t.TagId);
+
+            builder.Entity<Question>()
+                .HasMany(x => x.Answers)
+                .WithOne(x => x.Question)
+                .HasForeignKey(x => x.QuestionId);
+
+            builder.Entity<Answer>()
+               .HasMany(x => x.Comments)
+               .WithOne(x => x.Answer)
+               .HasForeignKey(x => x.Answerid);
+
+            builder.Entity<Question>()
+               .HasMany(x => x.Comments)
+               .WithOne(x => x.Question)
+               .HasForeignKey(x => x.QuestionId);
         }
 
         public DbSet<Question> Question { get; set; }
