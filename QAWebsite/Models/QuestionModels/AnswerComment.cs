@@ -8,5 +8,8 @@ namespace QAWebsite.Models.QuestionModels
         [MaxLength(36)]
         [ForeignKey("AnswerId")]
         public string Answerid { get; set; }
+
+        [Required]
+        public virtual Answer Answer { get; set; }
     }
 }
