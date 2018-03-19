@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
 using QAWebsite.Models.AccountViewModels;
+using QAWebsite.Models.Enums;
+using QAWebsite.Models.QuestionModels;
 using QAWebsite.Properties;
 
 namespace QAWebsite.Controllers
@@ -24,21 +27,33 @@ namespace QAWebsite.Controllers
             _userManager = userManager;
         }
 
+        public static int GetRatingCount<T>(DbSet<T> dbSet,IList idList, Ratings ratingType) where T : Rating
+        {
+            return dbSet.Count(item => idList.Contains(item.FkId) && item.RatingValue == ratingType);
+        }
+
         [AllowAnonymous]
         [Route("/Profile/{id}")]
         public async Task<IActionResult> Profile(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user != null)
-            {
+            { 
+                var QuestionIdList = await _context.Question.Where(q => q.AuthorId == id).Select(question => question.Id).ToListAsync();
+                var AnswerIdList = await _context.Answer.Where(q => q.AuthorId == id).Select(answer => answer.Id).ToListAsync();
+
                 var profileViewModel = new ProfileViewModel
                 {
+                    Id = user.Id,
                     Username = user.UserName,
                     Email = user.Email,
-                    Upvotes = 0, //TODO Fetch and calculate from upvotes of questions/answers
-                    Downvotes = 0, //TODO Fetch and calculate from upvotes of questions/answers
+                    QuestionUpvotes = GetRatingCount(_context.QuestionRating, QuestionIdList, Ratings.Upvote),
+                    QuestionDownvotes = GetRatingCount(_context.QuestionRating, QuestionIdList, Ratings.Downvote),
+                    AnswerUpvotes = GetRatingCount(_context.AnswerRating, AnswerIdList, Ratings.Upvote),
+                    AnswerDownvotes = GetRatingCount(_context.AnswerRating, AnswerIdList, Ratings.Downvote),
                     AboutMe = user.AboutMe ?? Resources.aboutMeNullString,
-                    QuestionList = await _context.Question.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync()
+                    QuestionList = await _context.Question.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync(),
+                    AnswerList = await _context.Answer.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync()
                 };
 
                 if (user.UserImage != null)

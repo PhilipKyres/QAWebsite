@@ -6,14 +6,21 @@ namespace QAWebsite.Models.AccountViewModels
 {
     public class ProfileViewModel
     {
-        [Key]
         public string Id { get; set; }
 
         public virtual byte[] UserImage { get; set; }
 
-        public virtual int Upvotes { get; set; }
+        [Display(Name = "Upvote")]
+        public virtual int QuestionUpvotes { get; set; }
 
-        public virtual int Downvotes { get; set; }
+        [Display(Name = "Downvote")]
+        public virtual int QuestionDownvotes { get; set; }
+
+        [Display(Name = "Upvote")]
+        public virtual int AnswerUpvotes { get; set; }
+
+        [Display(Name = "Downvote")]
+        public virtual int AnswerDownvotes { get; set; }
 
         [Display(Name = "About Me")]
         public virtual string AboutMe { get; set; }
@@ -26,6 +33,8 @@ namespace QAWebsite.Models.AccountViewModels
 
         public List<Question> QuestionList { get; set; }
 
-        //TODO Add recent activity questions set here and in the controller/view for the profile page.
+
+        public List<Answer> AnswerList { get; set; }
+        
     }
 }

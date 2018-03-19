@@ -14,6 +14,7 @@
     height: 100%;
     display: inline-block;
     max-width:68%;
+    width:68%;
 }
 #aboutMeContainer {
     height: 40%;
@@ -24,10 +25,7 @@
 #accountInfo {
     margin: 10%;
 }
-#userReputation {
-    margin: 10%;
-}
-#profileRecentQuestions {
+#profileRecentActivity {
     margin: 10%;
     width: 100%;
 }
