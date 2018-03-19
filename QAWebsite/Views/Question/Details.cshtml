@@ -1,6 +1,5 @@
 ﻿@using QAWebsite.Models.Enums
 @model QAWebsite.Models.QuestionViewModels.DetailsViewModel
-@using QAWebsite.Models.Enums;
 @{
     ViewData["Title"] = "Question Details";
 }
@@ -135,6 +134,11 @@
     <hr />
     @foreach (var answer in Model.Answers)
     {
+        if (Model.BestAnswerId == answer.Id)
+        {
+            <h4><b>BEST ANSWER</b></h4>
+        }
+
         <dl class="dl-horizontal">
             <dt>
                 @if (answer.AuthorId == UserManager.GetUserId(User))
@@ -165,33 +169,43 @@
                 </dd>
             }
             <dt>
-                @Html.DisplayNameFor(modelItem => answer.Author)
+                @Html.DisplayNameFor(modelItem => answer.AuthorName)
             </dt>
             <dd>
-                @Html.DisplayFor(modelItem => answer.Author)
+                @Html.DisplayFor(modelItem => answer.AuthorName)
             </dd>
+            <dt>
+                @Html.DisplayNameFor(model => answer.Rating)
+            </dt>
             <dd>
-                @if (User.Identity.IsAuthenticated && answer.AuthorId == UserManager.GetUserId(User))
-                {
-                    <a asp-action="Edit" asp-controller="Answer" asp-route-id="@answer.Id">Edit</a>
-                }
-                @if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
-                {
-                    if (Model.BestAnswerId != answer.Id)
-                    {
-                        <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id" asp-route-best="@answer.Id">Best Answer</a>
-                    }
-                    else
-                    {
-                        <b>BEST ANSWER </b>
-                        <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id" asp-route-best="@null">Remove Best Answer</a>
-                    }
-                }
+                @Html.DisplayFor(model => answer.Rating)
             </dd>
         </dl>
+        <div>
+            @Html.ActionLink("Upvote", "RateAnswer", "Rating", new { answerId = answer.Id, rateValue = Ratings.Upvote })
+            @Html.Raw("|")
+            @Html.ActionLink("Downvote", "RateAnswer", "Rating", new { answerId = answer.Id, rateValue = Ratings.Downvote })
+        </div>
+        if (User.Identity.IsAuthenticated && answer.AuthorId == UserManager.GetUserId(User))
+        {
+            <a asp-action="Edit" asp-controller="Answer" asp-route-id="@answer.Id">Edit</a>
+        }
+
+        if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
+        {
+            @Html.Raw("|")
+            if (Model.BestAnswerId == answer.Id)
+            {
+                <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id" asp-route-best="@null">Remove Best Answer</a>
+            }
+            else
+            {
+                <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id" asp-route-best="@answer.Id">Best Answer</a>
+            }
+        }
         <hr />
 
-        @foreach (var aComment in answer.Comments)
+        foreach (var aComment in answer.Comments)
         {
             <dl class="dl-horizontal">
                 <dt>
@@ -222,7 +236,7 @@
             </dl>
         }
 
-        @if (User.Identity.IsAuthenticated)
+        if (User.Identity.IsAuthenticated)
         {
             <div class="row">
                 <div class="col-md-6">

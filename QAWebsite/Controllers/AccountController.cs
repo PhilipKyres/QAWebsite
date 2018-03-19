@@ -239,7 +239,7 @@ namespace QAWebsite.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Username, Email = model.Email};
+                var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
                 if (model.UserImage != null)
                 {
                     using (var memoryStream = new MemoryStream())
@@ -256,16 +256,18 @@ namespace QAWebsite.Controllers
                     userRole = new ApplicationRole(Roles.USER.ToString());
                     await _roleManager.CreateAsync(userRole);
                 }
-                await _userManager.AddToRoleAsync(user, Roles.USER.ToString());
+
                 if (result.Succeeded)
                 {
+
+                    await _userManager.AddToRoleAsync(user, Roles.USER.ToString());
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
                     await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
-
-                    //await _signInManager.SignInAsync(user, isPersistent: false);
+                    
                     _logger.LogInformation("User created a new account with password.");
                     return RedirectToLocal(returnUrl);
                 }

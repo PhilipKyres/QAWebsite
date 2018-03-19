@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
 using QAWebsite.Models.Enums;
@@ -36,7 +34,7 @@ namespace QAWebsite.Controllers
                 return View("~/Views/Question/Details.cshtml", newDvm);
             }
 
-            Comment comment = new Comment();
+            Comment comment;
 
             if (type == CommentTypes.Question)
             {

@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace QAWebsite.Models.QuestionModels
 {
-    public class Comment
+    public abstract class Comment
     {
         [Key]
         [MaxLength(36)]

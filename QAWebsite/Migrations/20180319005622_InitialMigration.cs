@@ -41,6 +41,20 @@ namespace QAWebsite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AnswerRating",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 36, nullable: false),
+                    FkId = table.Column<string>(nullable: true),
+                    RatedBy = table.Column<string>(maxLength: 450, nullable: true),
+                    RatingValue = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AnswerRating", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -150,9 +164,9 @@ namespace QAWebsite.Migrations
                 name: "QuestionRating",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
-                    QuestionId = table.Column<string>(nullable: true),
-                    RatedBy = table.Column<string>(nullable: true),
+                    Id = table.Column<string>(maxLength: 36, nullable: false),
+                    FkId = table.Column<string>(nullable: true),
+                    RatedBy = table.Column<string>(maxLength: 450, nullable: true),
                     RatingValue = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -360,6 +374,9 @@ namespace QAWebsite.Migrations
 
             migrationBuilder.DropTable(
                 name: "AnswerComment");
+
+            migrationBuilder.DropTable(
+                name: "AnswerRating");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");

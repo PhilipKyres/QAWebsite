@@ -25,7 +25,7 @@ namespace QAWebsite.Services
 
             using (SmtpClient client = new SmtpClient()) {
                 client.Connect("smtp.gmail.com", 587, false);
-                client.Authenticate("qawebsite341@gmail.com", "1qaz2wsx34");
+                client.Authenticate("qawebsite341@gmail.com", "!Qaz2wsx");
                 client.Send(emailMessage);
                 client.Disconnect(true);
             }

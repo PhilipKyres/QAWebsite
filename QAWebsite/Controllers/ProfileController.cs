@@ -12,8 +12,6 @@ using QAWebsite.Properties;
 
 namespace QAWebsite.Controllers
 {
-    [Produces("application/json")]
-    [Route("api/Profile")]
     public class ProfileController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -27,7 +25,7 @@ namespace QAWebsite.Controllers
         }
 
         [AllowAnonymous]
-        [Route("/profile/{id}")]
+        [Route("/Profile/{id}")]
         public async Task<IActionResult> Profile(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -55,7 +53,7 @@ namespace QAWebsite.Controllers
                 return View("Profile", profileViewModel);
             }
             
-            return View("SoLost");
+            return NotFound();
         }
     }
 }

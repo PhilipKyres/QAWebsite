@@ -20,14 +20,12 @@ namespace QAWebsite.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly TagController _tagController;
-        private readonly RatingController _ratingController;
 
         public QuestionController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _userManager = userManager;
             _tagController = new TagController(context);
-            _ratingController = new RatingController(context, userManager);
         }
 
         // GET: Question
@@ -39,11 +37,29 @@ namespace QAWebsite.Controllers
                 .ThenInclude(x => x.Tag)
                 .ToListAsync();
 
-            IEnumerable<IndexViewModel> vms = questions.Select(q => new IndexViewModel(q,
+            var vms = questions.Select(q => new IndexViewModel(q,
                 _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
-                _ratingController.GetRating(q.Id)));
+                RatingController.GetRating(_context.QuestionRating, q.Id)));
 
             return View(vms);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> Search(string search)
+        {
+            var split = search.Trim().ToLower().Split(' ');
+
+            var questions = await _context.Question
+                .Include(x => x.QuestionTags)
+                .ThenInclude(x => x.Tag)
+                .Where(x => split.Any(s => x.Title.ToLower().Contains(s) || x.Content.ToLower().Contains(s) || x.QuestionTags.Any(qt => qt.Tag.Name.ToLower().Contains(s))))
+                .ToListAsync();
+
+            var vms = questions.Select(q => new IndexViewModel(q,
+                _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
+                RatingController.GetRating(_context.QuestionRating, q.Id)));
+
+            return View("Index", vms);
         }
 
         public async Task<DetailsViewModel> GetDetailsViewModel(string questionId)
@@ -65,7 +81,9 @@ namespace QAWebsite.Controllers
             var avm = new AnswerController(_context, _userManager).GetAnswerList(questionId);
             var cvm = new CommentController(_context, _userManager).GetQuestionCommentsList(questionId);
 
-            return new DetailsViewModel(question, _context.Users.Where(u => u.Id == question.AuthorId).Select(x => x.UserName).SingleOrDefault(), _ratingController.GetRating(question.Id), avm, cvm);
+            return new DetailsViewModel(question, 
+                _context.Users.Where(u => u.Id == question.AuthorId).Select(x => x.UserName).SingleOrDefault(), 
+                RatingController.GetRating(_context.QuestionRating, question.Id), avm, cvm);
         }
 
         // GET: Question/Details/5
@@ -77,7 +95,7 @@ namespace QAWebsite.Controllers
 
             if (vm == null)
             {
-                return View("SoLost");
+                return NotFound();
             }
 
             return View(vm);
@@ -99,37 +117,38 @@ namespace QAWebsite.Controllers
             //Validate here
             var tagNames = _tagController.ValidateParseTags(vm.Tags, ModelState);
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var question = new Question
-                {
-                    Id = Guid.NewGuid().ToString().Substring(0, 8),
-                    Title = vm.Title,
-                    Content = vm.Content,
-                    CreationDate = DateTime.Now,
-                    EditDate = DateTime.Now,
-                    AuthorId = _userManager.GetUserId(User)
-                };
-
-                var edit = new QuestionEdit
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    QuestionId = question.Id,
-                    EditorId = question.AuthorId,
-                    NewTitle = question.Title,
-                    NewContent = question.Content,
-                    EditDate = question.EditDate
-                };
-                
-                _context.Add(question);
-                _context.Add(edit);
-                await _context.SaveChangesAsync();
-
-                await _tagController.CreateQuestionTags(question, tagNames);
-
-                return RedirectToAction(nameof(Index));
+                return View(vm);
             }
-            return View(vm);
+
+            var question = new Question
+            {
+                Id = Guid.NewGuid().ToString().Substring(0, 8),
+                Title = vm.Title,
+                Content = vm.Content,
+                CreationDate = DateTime.Now,
+                EditDate = DateTime.Now,
+                AuthorId = _userManager.GetUserId(User)
+            };
+
+            var edit = new QuestionEdit
+            {
+                Id = Guid.NewGuid().ToString(),
+                QuestionId = question.Id,
+                EditorId = question.AuthorId,
+                NewTitle = question.Title,
+                NewContent = question.Content,
+                EditDate = question.EditDate
+            };
+                
+            _context.Add(question);
+            _context.Add(edit);
+            await _context.SaveChangesAsync();
+
+            await _tagController.CreateQuestionTags(question, tagNames);
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Question/Edit/5
@@ -245,7 +264,7 @@ namespace QAWebsite.Controllers
         {
             List<QuestionEditListItem> editsListings = new List<QuestionEditListItem>();
             await _context.QuestionEdits.Where(edit => edit.QuestionId == id).OrderByDescending(edit=>edit.EditDate).ForEachAsync(
-                edit => editsListings.Add(new QuestionEditListItem(edit, _context.Users.Where(user => user.Id == edit.EditorId).FirstOrDefault().UserName)));
+                edit => editsListings.Add(new QuestionEditListItem(edit, _context.Users.FirstOrDefault(user => user.Id == edit.EditorId).UserName)));
             return View(new QuestionEditsListViewModel { QuestionId = id, Edits = editsListings});
         }
 
@@ -257,7 +276,7 @@ namespace QAWebsite.Controllers
             var initialTitle =  (edit.NewTitle!=null)?_context.QuestionEdits.Where(questionEdit => questionEdit.QuestionId == edit.QuestionId && questionEdit.NewTitle != null).OrderBy(questionEdit => questionEdit.EditDate).First().NewTitle:null;
             var initialContent = (edit.NewContent!=null)?_context.QuestionEdits.Where(questionEdit => questionEdit.QuestionId == edit.QuestionId && questionEdit.NewContent != null).OrderBy(questionEdit => questionEdit.EditDate).First().NewContent:null;
 
-            return View(new QuestionEditDetailViewModel(edit, initialTitle, initialContent,_context.Users.Where(user => user.Id == edit.EditorId).FirstOrDefault().UserName));
+            return View(new QuestionEditDetailViewModel(edit, initialTitle, initialContent,_context.Users.FirstOrDefault(user => user.Id == edit.EditorId).UserName));
         }
 
         // GET: Question/Delete/5

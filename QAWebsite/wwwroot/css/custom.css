@@ -31,16 +31,28 @@
     margin: 10%;
     width: 100%;
 }
-#container-404-page {
-    align-items: center;
+
+.text-center {
     text-align: center;
-    justify-content: center;
+    padding-top: 6%;
+    padding-bottom: 6%;
 }
-#404gif {
-    min-height: 100%;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100%;
-    border-radius: 5%;
+
+.searchpad {
+    background-color: #808080;
+    background-image: url('../images/FrontPageBannerImage.jpg');
+}
+
+.homeTitle {
+    color: white;
+    font-size: 87px;
+    text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.navTitle {
+    text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+}
+
+.homeHeading {
+    padding-left: 8px;
 }

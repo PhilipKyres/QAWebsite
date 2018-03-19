@@ -2,9 +2,9 @@
 
 namespace QAWebsite.Models.QuestionModels
 {
-    public class QuestionRating : Rating
+    public class AnswerRating : Rating
     {
-        [ForeignKey("Question")]
+        [ForeignKey("Answer")]
         public override string FkId { get; set; }
     }
 }

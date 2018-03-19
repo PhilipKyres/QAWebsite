@@ -36,14 +36,14 @@ namespace QAWebsite.Controllers
         {
             if (id == null)
             {
-                return View("SoLost");
+                return NotFound();
             }
 
             var answer = await _context.Answer
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (answer == null)
             {
-                return View("SoLost");
+                return NotFound();
             }
 
             return View(answer);
@@ -89,13 +89,13 @@ namespace QAWebsite.Controllers
         {
             if (id == null)
             {
-                return View("SoLost");
+                return NotFound();
             }
 
             var answer = await _context.Answer.SingleOrDefaultAsync(m => m.Id == id);
             if (answer == null)
             {
-                return View("SoLost");
+                return NotFound();
             }
             return View(answer);
         }
@@ -109,40 +109,41 @@ namespace QAWebsite.Controllers
         {
             if (id == null)
             {
-                return View("SoLost");
+                return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var answer = await _context.Answer.SingleOrDefaultAsync(a => a.Id == id);
-                if (answer == null || answer.AuthorId != _userManager.GetUserId(User))
-                {
-                    return View("SoLost");
-                }
-
-                answer.Content = am.Content;
-                answer.EditDate = DateTime.Now;
-
-                try
-                {
-                    _context.Update(answer);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AnswerExists(am.Id))
-                    {
-                        return View("SoLost");
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                id = answer.QuestionId;
-                return RedirectToAction("Details", "Question", new { id } ); ;
+                return View(am);
             }
-            return View(am);
+
+            var answer = await _context.Answer.SingleOrDefaultAsync(a => a.Id == id);
+            if (answer == null || answer.AuthorId != _userManager.GetUserId(User))
+            {
+                return NotFound();
+            }
+
+            answer.Content = am.Content;
+            answer.EditDate = DateTime.Now;
+
+            try
+            {
+                _context.Update(answer);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!AnswerExists(am.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            
+            return RedirectToAction("Details", "Question", new { answer.QuestionId } );
         }
 
         // GET: Answer/Delete/5
@@ -150,14 +151,14 @@ namespace QAWebsite.Controllers
         {
             if (id == null)
             {
-                return View("SoLost");
+                return NotFound();
             }
 
             var answer = await _context.Answer
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (answer == null)
             {
-                return View("SoLost");
+                return NotFound();
             }
 
             return View(answer);
@@ -181,18 +182,10 @@ namespace QAWebsite.Controllers
 
         public List<AnswerViewModel> GetAnswerList(string id)
         {
-            var answer = _context.Answer.Where(a => a.QuestionId == id).OrderBy(o => o.CreationDate).ToList();
-
-            List<AnswerViewModel> avm = new List<AnswerViewModel>();
-
-            answer.ForEach(a =>
-            {
-                string name = _context.Users.Where(u => u.Id == a.AuthorId).Select(x => x.UserName).SingleOrDefault();
-                var cvm = new CommentController(_context, _userManager).GetAnmswerCommentList(a.Id);
-                avm.Add(new AnswerViewModel(a, name, cvm));
-            });
-
-            return avm;
+            var answers = _context.Answer.Where(a => a.QuestionId == id).ToList();
+            return answers.Select(a => new AnswerViewModel(a, _context.Users.Where(u => u.Id == a.AuthorId).Select(x => x.UserName).SingleOrDefault(), 
+                    RatingController.GetRating(_context.AnswerRating, a.Id), 
+                    new CommentController(_context, _userManager).GetAnmswerCommentList(a.Id))).OrderBy(o => o.CreationDate).ToList();
         }
     }
 }
