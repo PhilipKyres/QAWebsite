@@ -265,6 +265,7 @@ namespace QAWebsite.Controllers
             List<QuestionEditListItem> editsListings = new List<QuestionEditListItem>();
             await _context.QuestionEdits.Where(edit => edit.QuestionId == id).OrderByDescending(edit=>edit.EditDate).ForEachAsync(
                 edit => editsListings.Add(new QuestionEditListItem(edit, _context.Users.FirstOrDefault(user => user.Id == edit.EditorId).UserName)));
+            editsListings.RemoveAt(editsListings.Count-1);
             return View(new QuestionEditsListViewModel { QuestionId = id, Edits = editsListings});
         }
 
