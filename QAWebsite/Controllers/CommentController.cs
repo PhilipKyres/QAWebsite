@@ -33,7 +33,7 @@ namespace QAWebsite.Controllers
             foreach (Comment c in comments)
             {
                 string name = _context.Users.Where(u => u.Id == c.AuthorId).Select(x => x.UserName).SingleOrDefault();
-                cvm.Add(new CommentViewModel(c, name, id));
+                cvm.Add(new CommentViewModel(c, name));
             }
 
             return cvm;
@@ -81,39 +81,55 @@ namespace QAWebsite.Controllers
             return RedirectToAction("Details", "Question", new { dvm.Id });
         }
 
-      /*
-       // GET: Comment/Delete/5
-       public async Task<IActionResult> Delete(string id)
-       {
-           if (id == null)
-           {
-               return NotFound();
-           }
+        public async Task<IActionResult> Delete(string id, string questionId, CommentTypes type)
+        {
+            if (id == null)
+                return NotFound();
 
-           var comment = await _context.Comment
-               .SingleOrDefaultAsync(m => m.Id == id);
-           if (comment == null)
-           {
-               return NotFound();
-           }
+            Comment comment;
 
-           return View(comment);
-       }
+            if (type == CommentTypes.Question)
+                comment = await _context.QuestionComment.SingleOrDefaultAsync(c => c.Id == id);
 
-       // POST: Comment/Delete/5
-       [HttpPost, ActionName("Delete")]
-       [ValidateAntiForgeryToken]
-       public async Task<IActionResult> DeleteConfirmed(string id)
-       {
-           var comment = await _context.Comment.SingleOrDefaultAsync(m => m.Id == id);
-           _context.Comment.Remove(comment);
-           await _context.SaveChangesAsync();
-           return RedirectToAction(nameof(Index));
-       }
+            else
+                comment = await _context.AnswerComment.SingleOrDefaultAsync(c => c.Id == id);             
 
-       private bool CommentExists(string id)
-       {
-           return _context.Comment.Any(e => e.Id == id);
-       }*/
+            if (comment == null)
+                return NotFound();
+
+            string name = _context.Users.Where(u => u.Id == comment.AuthorId).Select(x => x.UserName).SingleOrDefault();
+            CommentViewModel cvm = new CommentViewModel(comment, name)
+            {
+                Type = type,
+                ParentId = questionId               
+            };
+            return View(cvm);
+        }
+
+
+        // POST: Comment/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id, string parentId, CommentTypes type)
+        {
+
+            if (id == null || parentId == null)
+                return NotFound();
+
+            if (type == CommentTypes.Question)
+            {
+               var comment = await _context.QuestionComment.SingleOrDefaultAsync(c => c.Id == id);
+                _context.QuestionComment.Remove(comment);
+            }
+
+            else
+            {
+                var comment = await _context.AnswerComment.SingleOrDefaultAsync(c => c.Id == id);
+                _context.AnswerComment.Remove(comment);
+            }
+                    
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", "Question", new { id = parentId });
+        }     
     }
 }

@@ -1,4 +1,4 @@
-﻿@model QAWebsite.Models.QuestionModels.Comment
+﻿@model QAWebsite.Models.QuestionViewModels.CommentViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -24,16 +24,18 @@
             @Html.DisplayFor(model => model.CreationDate)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.AuthorId)
+            @Html.DisplayNameFor(model => model.AuthorName)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.AuthorId)
+            @Html.DisplayFor(model => model.AuthorName)
         </dd>
     </dl>
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="ParentId" />
+        <input type="hidden" asp-for="Type" />
         <input type="submit" value="Delete" class="btn btn-default" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Details" asp-controller="Question" asp-route-id="@Model.ParentId">Back to Question</a>
     </form>
 </div>

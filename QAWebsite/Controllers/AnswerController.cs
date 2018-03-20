@@ -171,7 +171,7 @@ namespace QAWebsite.Controllers
             var answer = await _context.Answer.SingleOrDefaultAsync(m => m.Id == id);
             _context.Answer.Remove(answer);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Question");
+            return RedirectToAction("details", "Question", new { id = answer.QuestionId });
         }
 
         private bool AnswerExists(string id)
