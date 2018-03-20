@@ -10,6 +10,7 @@ using QAWebsite.Models;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.QuestionViewModels;
+using QAWebsite.Services;
 
 namespace QAWebsite.Controllers
 {
@@ -17,11 +18,13 @@ namespace QAWebsite.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAchievementDistributor achievementDistributor;
 
-        public CommentController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public CommentController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAchievementDistributor achievementDistributor)
         {
             _context = context;
             _userManager = userManager;
+            this.achievementDistributor = achievementDistributor;
         }
 
         public List<CommentViewModel> GetComments<T>(DbSet<T> dbSet, string id) where T : Comment
@@ -45,7 +48,7 @@ namespace QAWebsite.Controllers
         {
             if (dvm.Comment == null || dvm.Comment.Trim().Length == 0 || parentId == null || type != CommentTypes.Question && type != CommentTypes.Answer)
             {
-                var newDvm = await new QuestionController(_context, _userManager).GetDetailsViewModel(dvm.Id);
+                var newDvm = await new QuestionController(_context, _userManager, achievementDistributor).GetDetailsViewModel(dvm.Id);
                 newDvm.AnswerContent = dvm.AnswerContent;
                 return View("~/Views/Question/Details.cshtml", newDvm);
             }

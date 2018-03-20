@@ -12,5 +12,7 @@ namespace QAWebsite.Models
         public virtual byte[] UserImage { get; set; }
 
         public virtual string AboutMe { get; set; }
+
+        public virtual ICollection<ApplicationUserAchievements> UserAchievements { get; set; }
     }
 }
