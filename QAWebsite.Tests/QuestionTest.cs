@@ -48,7 +48,8 @@ namespace QAWebsite.Tests
             var serviceProvider = services.BuildServiceProvider();
             _context = serviceProvider.GetRequiredService<ApplicationDbContext>();
             _userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            _AchievementDistributor = serviceProvider.GetRequiredService<AchievementDistributor>();
+            _AchievementDistributor = new AchievementDistributor();
+
 
             _questionController = new QuestionController(_context, _userManager, _AchievementDistributor)
             {
