@@ -11,6 +11,7 @@ using QAWebsite.Models;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.QuestionViewModels;
+using QAWebsite.Services;
 
 namespace QAWebsite.Controllers
 {
@@ -19,12 +20,14 @@ namespace QAWebsite.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private IAchievementDistributor achievementDistributor;
         private readonly TagController _tagController;
 
-        public QuestionController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public QuestionController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAchievementDistributor achievementDistributor)
         {
             _context = context;
             _userManager = userManager;
+            this.achievementDistributor = achievementDistributor;
             _tagController = new TagController(context);
         }
 
@@ -78,8 +81,8 @@ namespace QAWebsite.Controllers
                 return null;
             }
 
-            var avm = new AnswerController(_context, _userManager).GetAnswerList(questionId);
-            var cvm = new CommentController(_context, _userManager).GetQuestionCommentsList(questionId);
+            var avm = new AnswerController(_context, _userManager, achievementDistributor).GetAnswerList(questionId);
+            var cvm = new CommentController(_context, _userManager, achievementDistributor).GetQuestionCommentsList(questionId);
 
             return new DetailsViewModel(question, 
                 _context.Users.Where(u => u.Id == question.AuthorId).Select(x => x.UserName).SingleOrDefault(), 
@@ -147,7 +150,7 @@ namespace QAWebsite.Controllers
             await _context.SaveChangesAsync();
 
             await _tagController.CreateQuestionTags(question, tagNames);
-
+            achievementDistributor.check(question.AuthorId, _context, AchievementType.QuestionCreation);
             return RedirectToAction(nameof(Index));
         }
 
@@ -241,6 +244,7 @@ namespace QAWebsite.Controllers
                     }
 
                     _context.Update(question);
+                    achievementDistributor.check(currentUser.Id, _context, AchievementType.QuestionEditing);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

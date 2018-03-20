@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using QAWebsite.Models;
 using QAWebsite.Models.Enums;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace QAWebsite.Data
 	        .SetBasePath(Directory.GetCurrentDirectory())
 	        .AddJsonFile("seedingData.json")
 	        .Build();
-            
+
             var userRole = roleManager.Roles.FirstOrDefault(role => role.NormalizedName == Roles.USER.ToString());
 
             if (userRole == null)
@@ -45,6 +46,38 @@ namespace QAWebsite.Data
                 await userManager.CreateAsync(user, adminSection["AdministratorPassword"]);
                 await userManager.AddToRoleAsync(user, Roles.ADMINISTRATOR.ToString());
             }
+            
+            config.GetSection("Achievements").GetChildren().ToList().ForEach(achievement =>
+            {
+                if (context.Achievement.Where(a => a.Title == achievement["title"]).FirstOrDefault() == null)
+                {
+                    try
+                    {
+                        FileInfo fileInfo = new FileInfo(Directory.GetCurrentDirectory() + achievement["AchievementImage"]);
+                        byte[] imageData = new byte[fileInfo.Length];
+                        using (FileStream fs = fileInfo.OpenRead())
+                        {
+                            fs.Read(imageData, 0, imageData.Length);
+                        }
+
+                        context.Achievement.Add(
+                            new Achievement
+                            {
+                                Id = Guid.NewGuid().ToString(),
+                                Title = achievement["title"],
+                                Comparator = (Comparators)Enum.Parse(typeof(Comparators), achievement["comparator"]),
+                                Threshold = Int32.Parse(achievement["Threshold"]),
+                                AchievementImage = imageData,
+                                Type = (AchievementType)Enum.Parse(typeof(AchievementType), achievement["AchievementType"]),
+                            });
+                    }
+                    catch (Exception exception)
+                    { //parsing issue move on to next
+                    }
+                }
+            });
+
+
 
             await context.SaveChangesAsync().ConfigureAwait(false);
         }

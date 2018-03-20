@@ -38,6 +38,7 @@ namespace QAWebsite
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+            services.AddTransient<IAchievementDistributor, AchievementDistributor>();
 
             services.AddMvc();
         }

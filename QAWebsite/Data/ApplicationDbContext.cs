@@ -43,6 +43,16 @@ namespace QAWebsite.Data
                .HasMany(x => x.Comments)
                .WithOne(x => x.Question)
                .HasForeignKey(x => x.QuestionId);
+
+            builder.Entity<ApplicationUser>()
+               .HasMany(x => x.UserAchievements)
+               .WithOne(x => x.User)
+               .HasForeignKey(x => x.UserId);
+
+            builder.Entity<ApplicationUserAchievements>()
+               .HasOne(x => x.Achievement)
+               .WithMany(x => x.UserAchievements)
+               .HasForeignKey(x => x.AchievementId);
         }
 
         public DbSet<Question> Question { get; set; }
@@ -55,6 +65,8 @@ namespace QAWebsite.Data
         public DbSet<QuestionEdit> QuestionEdits { get; set; }
         public DbSet<AnswerComment> AnswerComment { get; set; }
         public DbSet<QuestionComment> QuestionComment { get; set; }
+        public DbSet<ApplicationUserAchievements> UserAchievements { get; set; }
+        public DbSet<Achievement> Achievement { get; set; }
 
     }
 }
