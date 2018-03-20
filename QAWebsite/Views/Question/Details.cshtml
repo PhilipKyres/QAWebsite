@@ -191,7 +191,7 @@
             @Html.Raw("|")
             @Html.ActionLink("Downvote", "RateAnswer", "Rating", new { answerId = answer.Id, rateValue = Ratings.Downvote })
         </div>
-        if (User.Identity.IsAuthenticated && answer.AuthorId == UserManager.GetUserId(User))
+        if (User.Identity.IsAuthenticated && answer.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
         {
             <a asp-action="Edit" asp-controller="Answer" asp-route-id="@answer.Id">Edit</a> @Html.Raw("|")
             <a asp-action="Delete" asp-controller="Answer" asp-route-id="@answer.Id">Delete</a>
