@@ -12,21 +12,19 @@ using QAWebsite.Controllers;
 using QAWebsite.Data;
 using QAWebsite.Models;
 using QAWebsite.Models.QuestionViewModels;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace QAWebsite.Tests
 {
     [TestFixture]
-    public class QuestionTest
+    public class RatingTest
     {
         private const string UserNameIdentifier = "testId";
         private const string UserName = "testName";
 
         private ApplicationDbContext _context;
         private UserManager<ApplicationUser> _userManager;
+        private RatingController _ratingController;
         private QuestionController _questionController;
-        private TagController _tagController;
 
         [SetUp]
         public void SetUp()
@@ -50,93 +48,50 @@ namespace QAWebsite.Tests
             _context = serviceProvider.GetRequiredService<ApplicationDbContext>();
             _userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            _tagController = new TagController(_context)
+            _ratingController = new RatingController(_context, _userManager)
             {
                 ControllerContext = new ControllerContext() { HttpContext = context }
             };
             _questionController = new QuestionController(_context, _userManager)
             {
-                ControllerContext = new ControllerContext() {HttpContext = context}
+                ControllerContext = new ControllerContext() { HttpContext = context }
             };
         }
 
+
         [Test]
-        public async Task CreateQuestion()
+        public async Task UpvoteQuestion()
         {
             // Arrange
 
             // Act
-            var vm = new CreateViewModel() {Title = "Test Title", Content = "Test content", Tags = "test, another tag"};
-            await _questionController.Create(vm);
-
-            // Assert
-            var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title");
-            Assert.IsNotNull(question);
-            Assert.AreEqual(question.AuthorId, UserNameIdentifier);
-            Assert.AreEqual(question.Content, vm.Content);
-            Assert.AreEqual(question.QuestionTags.Count, 2);
-        }
-
-        [Test]
-        public async Task EditQuestionTag()
-        {
-            // Arrange
-
-            // Act
-            var vm = new CreateViewModel() { Title = "Test Title", Content = "Test content", Tags = "JustOneTag" };
+            var vm = new CreateViewModel() { Title = "Test Title", Content = "Test content", Tags = "test, another tag" };
             await _questionController.Create(vm);
             var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title");
-
-            IEnumerable<string> newTagNames = new string[] { "test1", "test2" };
-            var names = new HashSet<string>(newTagNames);
-            var toRemove = question.QuestionTags.Where(x => !names.Contains(x.Tag.Name));
-            _context.QuestionTag.RemoveRange(toRemove);
-            await _tagController.CreateQuestionTags(question, names.Except(question.QuestionTags.Select(x => x.Tag.Name)));
-
+            await _ratingController.RateQuestion(question.Id, Models.Enums.Ratings.Upvote);
+            var rating = await _context.QuestionRating.SingleOrDefaultAsync(x => x.FkId == question.Id);
             // Assert
 
             Assert.IsNotNull(question);
-            Assert.AreEqual(question.QuestionTags.Count, 2);
-        }
+            Assert.AreEqual(rating.RatingValue, Models.Enums.Ratings.Upvote);
 
+        }
         [Test]
-        public void EditQuestion()
+        public async Task DownvoteQuestion()
         {
             // Arrange
 
             // Act
-
+            var vm = new CreateViewModel() { Title = "Test Title", Content = "Test content", Tags = "test, another tag" };
+            await _questionController.Create(vm);
+            var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title");
+            await _ratingController.RateQuestion(question.Id, Models.Enums.Ratings.Downvote);
+            var rating = await _context.QuestionRating.SingleOrDefaultAsync(x => x.FkId == question.Id);
             // Assert
-        }
 
-        [Test]
-        public void VoteQuestion()
-        {
-            // Arrange
+            Assert.IsNotNull(question);
+            Assert.AreEqual(rating.RatingValue, Models.Enums.Ratings.Downvote);
 
-            // Act
-
-            // Assert
-        }
-
-        [Test]
-        public void BestAnswer()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
-        }
-
-        [Test]
-        public void DeleteQuestion()
-        {
-            // Arrange
-
-            // Act
-
-            // Assert
         }
     }
 }
