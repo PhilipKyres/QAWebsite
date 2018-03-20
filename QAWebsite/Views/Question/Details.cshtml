@@ -106,7 +106,7 @@
         </dd>
     </dl>
 
-    if (User.Identity.IsAuthenticated && comment.AuthorId == UserManager.GetUserId(User))
+    if (User.Identity.IsAuthenticated && comment.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
     {
         <a asp-action="Delete" asp-controller="Comment" asp-route-id="@comment.Id" asp-route-questionId="@Model.Id" asp-route-type="@CommentTypes.Question">Delete</a>
     }
@@ -240,7 +240,7 @@
                     @Html.DisplayFor(modelItem => aComment.CreationDate)
                 </dd>
             </dl>
-            if (User.Identity.IsAuthenticated && aComment.AuthorId == UserManager.GetUserId(User))
+            if (User.Identity.IsAuthenticated && aComment.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
             {
                 <a asp-action="Delete" asp-controller="Comment" asp-route-id="@aComment.Id" asp-route-questionId="@Model.Id" asp-route-type="@CommentTypes.Answer">Delete</a>
             }

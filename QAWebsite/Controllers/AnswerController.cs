@@ -119,7 +119,8 @@ namespace QAWebsite.Controllers
             }
 
             var answer = await _context.Answer.SingleOrDefaultAsync(a => a.Id == id);
-            if (answer == null || answer.AuthorId != _userManager.GetUserId(User))
+            var currentUser = _userManager.GetUserAsync(User).Result;
+            if (answer == null || answer.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
             {
                 return NotFound();
             }
