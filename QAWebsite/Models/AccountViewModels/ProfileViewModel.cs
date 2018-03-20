@@ -8,22 +8,13 @@ namespace QAWebsite.Models.AccountViewModels
     {
         public string Id { get; set; }
 
-        public virtual byte[] UserImage { get; set; }
+        public string UserImage { get; set; }
 
-        [Display(Name = "Upvote")]
-        public virtual int QuestionUpvotes { get; set; }
-
-        [Display(Name = "Downvote")]
-        public virtual int QuestionDownvotes { get; set; }
-
-        [Display(Name = "Upvote")]
-        public virtual int AnswerUpvotes { get; set; }
-
-        [Display(Name = "Downvote")]
-        public virtual int AnswerDownvotes { get; set; }
+        [Display(Name = "Rating")]
+        public int Rating { get; set; }
 
         [Display(Name = "About Me")]
-        public virtual string AboutMe { get; set; }
+        public string AboutMe { get; set; }
 
         [Required]
         [EmailAddress]

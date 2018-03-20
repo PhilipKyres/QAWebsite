@@ -27,7 +27,6 @@ namespace QAWebsite.Models.QuestionViewModels
             this.Comments = comments;
         }
 
-        [MaxLength(8)]
         [ReadOnly(true)]
         public string Id { get; set; }
 
@@ -49,6 +48,7 @@ namespace QAWebsite.Models.QuestionViewModels
         [Display(Name = "Author")]
         public string AuthorName { get; set; }
 
+        [Display(Name = "Rating")]
         public int Rating { get; set; }
 
         [Required]

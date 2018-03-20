@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,38 +38,45 @@ namespace QAWebsite.Controllers
         public async Task<IActionResult> Profile(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user != null)
-            { 
-                var QuestionIdList = await _context.Question.Where(q => q.AuthorId == id).Select(question => question.Id).ToListAsync();
-                var AnswerIdList = await _context.Answer.Where(q => q.AuthorId == id).Select(answer => answer.Id).ToListAsync();
-
-                var profileViewModel = new ProfileViewModel
-                {
-                    Id = user.Id,
-                    Username = user.UserName,
-                    Email = user.Email,
-                    QuestionUpvotes = GetRatingCount(_context.QuestionRating, QuestionIdList, Ratings.Upvote),
-                    QuestionDownvotes = GetRatingCount(_context.QuestionRating, QuestionIdList, Ratings.Downvote),
-                    AnswerUpvotes = GetRatingCount(_context.AnswerRating, AnswerIdList, Ratings.Upvote),
-                    AnswerDownvotes = GetRatingCount(_context.AnswerRating, AnswerIdList, Ratings.Downvote),
-                    AboutMe = user.AboutMe ?? Resources.aboutMeNullString,
-                    QuestionList = await _context.Question.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync(),
-                    AnswerList = await _context.Answer.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync()
-                };
-
-                if (user.UserImage != null)
-                {
-                    profileViewModel.UserImage = user.UserImage;
-                }
-                else using (var memStream = new MemoryStream())
-                {
-                    Resources.defaultUserImage.Save(memStream, Resources.defaultUserImage.RawFormat);
-                    profileViewModel.UserImage = memStream.ToArray();
-                }
-                return View("Profile", profileViewModel);
+            if (user == null)
+            {
+                return NotFound();
             }
-            
-            return NotFound();
+
+            var questionIdList = await _context.Question.Where(q => q.AuthorId == id).Select(question => question.Id).ToListAsync();
+            var answerIdList = await _context.Answer.Where(q => q.AuthorId == id).Select(answer => answer.Id).ToListAsync();
+
+            int rating = GetRatingCount(_context.QuestionRating, questionIdList, Ratings.Upvote) -
+                         GetRatingCount(_context.QuestionRating, questionIdList, Ratings.Downvote) +
+                         GetRatingCount(_context.AnswerRating, answerIdList, Ratings.Upvote) -
+                         GetRatingCount(_context.AnswerRating, answerIdList, Ratings.Downvote);
+
+            var profileViewModel = new ProfileViewModel
+            {
+                Id = user.Id,
+                Username = user.UserName,
+                Email = user.Email,
+                Rating = rating,
+                AboutMe = user.AboutMe ?? Resources.aboutMeNullString,
+                QuestionList = await _context.Question.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync(),
+                AnswerList = await _context.Answer.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync()
+            };
+
+            byte[] img;
+            if (user.UserImage != null)
+            {
+                img = user.UserImage;
+            }
+            else using (var memStream = new MemoryStream())
+            {
+                Resources.defaultUserImage.Save(memStream, Resources.defaultUserImage.RawFormat);
+                img = memStream.ToArray();
+            }
+
+            profileViewModel.UserImage = "data:image/gif;base64," + Convert.ToBase64String(img);
+
+            return View("Profile", profileViewModel);
+
         }
     }
 }
