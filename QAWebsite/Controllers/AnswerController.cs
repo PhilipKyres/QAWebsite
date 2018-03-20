@@ -142,8 +142,7 @@ namespace QAWebsite.Controllers
                     throw;
                 }
             }
-            
-            return RedirectToAction("Details", "Question", new { answer.QuestionId } );
+            return RedirectToAction("Details", "Question", new { Id = answer.QuestionId });
         }
 
         // GET: Answer/Delete/5
@@ -172,7 +171,7 @@ namespace QAWebsite.Controllers
             var answer = await _context.Answer.SingleOrDefaultAsync(m => m.Id == id);
             _context.Answer.Remove(answer);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Question");
         }
 
         private bool AnswerExists(string id)
@@ -183,9 +182,9 @@ namespace QAWebsite.Controllers
         public List<AnswerViewModel> GetAnswerList(string id)
         {
             var answers = _context.Answer.Where(a => a.QuestionId == id).ToList();
-            return answers.Select(a => new AnswerViewModel(a, _context.Users.Where(u => u.Id == a.AuthorId).Select(x => x.UserName).SingleOrDefault(), 
-                    RatingController.GetRating(_context.AnswerRating, a.Id), 
-                    new CommentController(_context, _userManager).GetAnmswerCommentList(a.Id))).OrderBy(o => o.CreationDate).ToList();
+            return answers.Select(a => new AnswerViewModel(a, _context.Users.Where(u => u.Id == a.AuthorId).Select(x => x.UserName).SingleOrDefault(),
+                    RatingController.GetRating(_context.AnswerRating, a.Id),
+                    new CommentController(_context, _userManager).GetComments(_context.AnswerComment, a.Id))).ToList();
         }
     }
 }

@@ -37,5 +37,9 @@ namespace QAWebsite.Models.QuestionModels
         public string BestAnswerId { get; set; }
 
         public virtual ICollection<QuestionTag> QuestionTags { get; set; }
+
+        public virtual ICollection<Answer> Answers { get; set; }
+
+        public virtual ICollection<QuestionComment> Comments { get; set; }
     }
 }

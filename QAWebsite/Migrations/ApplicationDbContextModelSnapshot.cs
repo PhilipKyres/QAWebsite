@@ -205,9 +205,12 @@ namespace QAWebsite.Migrations
                     b.Property<DateTime>("EditDate");
 
                     b.Property<string>("QuestionId")
+                        .IsRequired()
                         .HasMaxLength(8);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
 
                     b.ToTable("Answer");
                 });
@@ -218,9 +221,6 @@ namespace QAWebsite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(36);
 
-                    b.Property<string>("Answerid")
-                        .HasMaxLength(36);
-
                     b.Property<string>("AuthorId")
                         .HasMaxLength(450);
 
@@ -229,7 +229,12 @@ namespace QAWebsite.Migrations
 
                     b.Property<DateTime>("CreationDate");
 
+                    b.Property<string>("FkId")
+                        .IsRequired();
+
                     b.HasKey("Id");
+
+                    b.HasIndex("FkId");
 
                     b.ToTable("AnswerComment");
                 });
@@ -316,10 +321,12 @@ namespace QAWebsite.Migrations
 
                     b.Property<DateTime>("CreationDate");
 
-                    b.Property<string>("QuestionId")
-                        .HasMaxLength(36);
+                    b.Property<string>("FkId")
+                        .IsRequired();
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FkId");
 
                     b.ToTable("QuestionComment");
                 });
@@ -437,6 +444,30 @@ namespace QAWebsite.Migrations
                     b.HasOne("QAWebsite.Models.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.Answer", b =>
+                {
+                    b.HasOne("QAWebsite.Models.QuestionModels.Question", "Question")
+                        .WithMany("Answers")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.AnswerComment", b =>
+                {
+                    b.HasOne("QAWebsite.Models.QuestionModels.Answer", "Answer")
+                        .WithMany("Comments")
+                        .HasForeignKey("FkId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionComment", b =>
+                {
+                    b.HasOne("QAWebsite.Models.QuestionModels.Question", "Question")
+                        .WithMany("Comments")
+                        .HasForeignKey("FkId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

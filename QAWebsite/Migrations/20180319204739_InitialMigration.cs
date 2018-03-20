@@ -10,37 +10,6 @@ namespace QAWebsite.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Answer",
-                columns: table => new
-                {
-                    Id = table.Column<string>(maxLength: 36, nullable: false),
-                    AuthorId = table.Column<string>(maxLength: 450, nullable: true),
-                    Content = table.Column<string>(nullable: false),
-                    CreationDate = table.Column<DateTime>(nullable: false),
-                    EditDate = table.Column<DateTime>(nullable: false),
-                    QuestionId = table.Column<string>(maxLength: 8, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Answer", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AnswerComment",
-                columns: table => new
-                {
-                    Id = table.Column<string>(maxLength: 36, nullable: false),
-                    Answerid = table.Column<string>(maxLength: 36, nullable: true),
-                    AuthorId = table.Column<string>(maxLength: 450, nullable: true),
-                    Content = table.Column<string>(nullable: false),
-                    CreationDate = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AnswerComment", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AnswerRating",
                 columns: table => new
                 {
@@ -127,21 +96,6 @@ namespace QAWebsite.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Question", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "QuestionComment",
-                columns: table => new
-                {
-                    Id = table.Column<string>(maxLength: 36, nullable: false),
-                    AuthorId = table.Column<string>(maxLength: 450, nullable: true),
-                    Content = table.Column<string>(nullable: false),
-                    CreationDate = table.Column<DateTime>(nullable: false),
-                    QuestionId = table.Column<string>(maxLength: 36, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_QuestionComment", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -293,6 +247,49 @@ namespace QAWebsite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Answer",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 36, nullable: false),
+                    AuthorId = table.Column<string>(maxLength: 450, nullable: true),
+                    Content = table.Column<string>(nullable: false),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    EditDate = table.Column<DateTime>(nullable: false),
+                    QuestionId = table.Column<string>(maxLength: 8, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Answer", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Answer_Question_QuestionId",
+                        column: x => x.QuestionId,
+                        principalTable: "Question",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "QuestionComment",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 36, nullable: false),
+                    AuthorId = table.Column<string>(maxLength: 450, nullable: true),
+                    Content = table.Column<string>(nullable: false),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    FkId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QuestionComment", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_QuestionComment_Question_FkId",
+                        column: x => x.FkId,
+                        principalTable: "Question",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "QuestionTag",
                 columns: table => new
                 {
@@ -315,6 +312,37 @@ namespace QAWebsite.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "AnswerComment",
+                columns: table => new
+                {
+                    Id = table.Column<string>(maxLength: 36, nullable: false),
+                    AuthorId = table.Column<string>(maxLength: 450, nullable: true),
+                    Content = table.Column<string>(nullable: false),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    FkId = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AnswerComment", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AnswerComment_Answer_FkId",
+                        column: x => x.FkId,
+                        principalTable: "Answer",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Answer_QuestionId",
+                table: "Answer",
+                column: "QuestionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AnswerComment_FkId",
+                table: "AnswerComment",
+                column: "FkId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -356,6 +384,11 @@ namespace QAWebsite.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_QuestionComment_FkId",
+                table: "QuestionComment",
+                column: "FkId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_QuestionTag_TagId",
                 table: "QuestionTag",
                 column: "TagId");
@@ -369,9 +402,6 @@ namespace QAWebsite.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Answer");
-
             migrationBuilder.DropTable(
                 name: "AnswerComment");
 
@@ -409,16 +439,19 @@ namespace QAWebsite.Migrations
                 name: "QuestionTag");
 
             migrationBuilder.DropTable(
+                name: "Answer");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Question");
+                name: "Tag");
 
             migrationBuilder.DropTable(
-                name: "Tag");
+                name: "Question");
         }
     }
 }

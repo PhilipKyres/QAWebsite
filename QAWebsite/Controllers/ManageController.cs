@@ -79,7 +79,6 @@ namespace QAWebsite.Controllers
             var user = await _userManager.GetUserAsync(User);
             user.AboutMe = model.AboutMe;
             user.Email = model.Email;
-            user.AboutMe = model.AboutMe;
 
             if (model.UserImage != null)
             {

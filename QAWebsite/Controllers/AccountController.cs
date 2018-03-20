@@ -237,45 +237,45 @@ namespace QAWebsite.Controllers
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(model);
-            }
-
-            var user = new ApplicationUser { UserName = model.Username, Email = model.Email, };
-            if (model.UserImage != null)
-            {
-                using (var memoryStream = new MemoryStream())
+                var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
+                if (model.UserImage != null)
                 {
-                    model.UserImage.CopyTo(memoryStream);
-                    user.UserImage = memoryStream.ToArray();
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        model.UserImage.CopyTo(memoryStream);
+                        user.UserImage = memoryStream.ToArray();
+                    }
                 }
-            }
+                var result = await _userManager.CreateAsync(user, model.Password);
 
-            var result = await _userManager.CreateAsync(user, model.Password);
+                var userRole = _roleManager.Roles.Where(role => role.NormalizedName == Roles.USER.ToString()).FirstOrDefault();
+                if (userRole == null)
+                {
+                    userRole = new ApplicationRole(Roles.USER.ToString());
+                    await _roleManager.CreateAsync(userRole);
+                }
 
-            if (!result.Succeeded)
-            {
+                if (result.Succeeded)
+                {
+
+                    await _userManager.AddToRoleAsync(user, Roles.USER.ToString());
+
+                    _logger.LogInformation("User created a new account with password.");
+
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+                    await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+                    
+                    _logger.LogInformation("User created a new account with password.");
+                    return RedirectToLocal(returnUrl);
+                }
                 AddErrors(result);
-                return View(model);
             }
 
-            var userRole = _roleManager.Roles.FirstOrDefault(role => role.NormalizedName == Roles.User);
-            if (userRole == null)
-            {
-                userRole = new ApplicationRole(Roles.User);
-                await _roleManager.CreateAsync(userRole);
-            }
-
-            await _userManager.AddToRoleAsync(user, Roles.User);
-
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
-            await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
-
-            //await _signInManager.SignInAsync(user, isPersistent: false);
-            _logger.LogInformation("User created a new account with password.");
-            return RedirectToLocal(returnUrl);
+            // If we got this far, something failed, redisplay form
+            return View(model);
         }
 
         [HttpPost]
