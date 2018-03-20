@@ -47,6 +47,9 @@ namespace QAWebsite.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Search(string search)
         {
+            if (search == null)
+                return RedirectToAction("Index");
+
             var split = search.Trim().ToLower().Split(' ');
 
             var questions = await _context.Question
@@ -55,6 +58,7 @@ namespace QAWebsite.Controllers
                 .Where(x => split.Any(s => x.Title.ToLower().Contains(s) || x.Content.ToLower().Contains(s) || x.QuestionTags.Any(qt => qt.Tag.Name.ToLower().Contains(s))))
                 .ToListAsync();
 
+            // TODO remove repeated code
             var vms = questions.Select(q => new IndexViewModel(q,
                 _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
                 RatingController.GetRating(_context.QuestionRating, q.Id)));
