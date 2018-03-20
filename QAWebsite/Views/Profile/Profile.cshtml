@@ -7,13 +7,9 @@
 <h2><i>@Html.DisplayFor(model => model.Username)</i></h2>
 
 <div>
-    <p>
-
-    </p>
     <div id="profileLeftContainer">
-        @{var base64 = Convert.ToBase64String(@Model.UserImage);
-            var imgSrc = String.Format("data:image/gif;base64,{0}", base64); }
-        <img src="@imgSrc" alt="Employee Photo" class="userImage" />
+        <img src="@Model.UserImage" alt="Employee Photo" class="userImage" />
+        <h4 class="text-center" style="width:90%"><b>@Html.DisplayFor(model => model.Rating) &nbsp;&nbsp;</b> Reputation</h4>
     </div>
     <div id="profileRightContainer">
         <h3>@Html.DisplayNameFor(model => model.AboutMe)</h3>
@@ -29,51 +25,93 @@
                 @Html.DisplayFor(model => model.Email)
             </p>
         </div>
-        <h3>Reputation</h3>
-        <div id="userReputation">
-            <p>
-                @Html.DisplayNameFor(model => model.Upvotes)
-                @Html.DisplayFor(model => model.Upvotes)
-                @Html.DisplayNameFor(model => model.Downvotes)
-                @Html.DisplayFor(model => model.Downvotes)
-            </p>
-        </div>
-        <h3>Recent Questions</h3>
-        <div id="profileRecentQuestions">
-            @{if (Model.QuestionList.Count > 0)
-                {
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    @Html.DisplayNameFor(model => Model.QuestionList[0].Title)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => Model.QuestionList[0].CreationDate)
-                                </th>
-                            </tr>
-                        </thead>
-                        @foreach (var question in Model.QuestionList)
-                        {
-                            <tr>
-                                <td>
-                                    @Html.DisplayFor(modelItem => question.Title)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => question.CreationDate)
-                                </td>
-                                <td>
-                                    @Html.ActionLink("Details", "Details", "Question", new { id = question.Id })
-                                </td>
-                            </tr>
-                        }
-                    </table>
-                }
-                else
-                {
-                    <p>No question activity available for this user</p>
+        <h3>Recent Activity</h3>
+        <div id="recentContentContainer">
+            <div id="tabs">
+                <ul>
+                    <li><a href="#tabs-1">Recent Questions</a></li>
+                    <li><a href="#tabs-2">Recent Answers</a></li>
+                </ul>
+                <div id="tabs-1">
+                    @if (Model.QuestionList.Count > 0)
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => Model.QuestionList[0].Title)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => Model.QuestionList[0].CreationDate)
+                                    </th>
+                                </tr>
+                            </thead>
+                            @foreach (var question in Model.QuestionList)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => question.Title)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => question.CreationDate)
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Details", "Details", "Question", new { id = question.Id })
+                                    </td>
+                                </tr>
+                            }
+                        </table>
                     }
-                }
+                    else
+                    {
+                        <p class="text-center">No question activity available for this user</p>
+                    }
+                </div>
+                <div id="tabs-2">
+                    @if (Model.AnswerList.Count > 0)
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => Model.AnswerList[0].Content)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => Model.AnswerList[0].CreationDate)
+                                    </th>
+                                </tr>
+                            </thead>
+                            @foreach (var answer in Model.AnswerList)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => answer.Content)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => answer.CreationDate)
+                                    </td>
+                                    <td>
+                                        @Html.ActionLink("Question Details", "Details", "Question", new { id = answer.QuestionId })
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    }
+                    else
+                    {
+                        <p class="text-center">No answer activity available for this user</p>
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<link rel="stylesheet" href="~/css/jquery-ui.css">
+<script src="~/js/jquery-1.12.4.js"></script>
+<script src="~/js/jquery-ui.js"></script>
+
+<script>
+    $("#tabs").tabs();
+    $("#repTabs").tabs();
+</script>

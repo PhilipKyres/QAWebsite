@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
+using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.QuestionViewModels;
 
@@ -118,7 +119,8 @@ namespace QAWebsite.Controllers
             }
 
             var answer = await _context.Answer.SingleOrDefaultAsync(a => a.Id == id);
-            if (answer == null || answer.AuthorId != _userManager.GetUserId(User))
+            var currentUser = _userManager.GetUserAsync(User).Result;
+            if (answer == null || answer.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
             {
                 return NotFound();
             }
@@ -168,10 +170,22 @@ namespace QAWebsite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
             var answer = await _context.Answer.SingleOrDefaultAsync(m => m.Id == id);
+
+            var currentUser = _userManager.GetUserAsync(User).Result;
+            if (answer == null || answer.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
+            {
+                return NotFound();
+            }
+
             _context.Answer.Remove(answer);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", "Question");
+            return RedirectToAction("details", "Question", new { id = answer.QuestionId });
         }
 
         private bool AnswerExists(string id)
