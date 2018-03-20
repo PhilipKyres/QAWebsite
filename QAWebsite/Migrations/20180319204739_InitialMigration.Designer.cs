@@ -12,7 +12,7 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180319184241_InitialMigration")]
+    [Migration("20180319204739_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -222,10 +222,6 @@ namespace QAWebsite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(36);
 
-                    b.Property<string>("Answerid")
-                        .IsRequired()
-                        .HasMaxLength(36);
-
                     b.Property<string>("AuthorId")
                         .HasMaxLength(450);
 
@@ -234,9 +230,12 @@ namespace QAWebsite.Migrations
 
                     b.Property<DateTime>("CreationDate");
 
+                    b.Property<string>("FkId")
+                        .IsRequired();
+
                     b.HasKey("Id");
 
-                    b.HasIndex("Answerid");
+                    b.HasIndex("FkId");
 
                     b.ToTable("AnswerComment");
                 });
@@ -323,13 +322,12 @@ namespace QAWebsite.Migrations
 
                     b.Property<DateTime>("CreationDate");
 
-                    b.Property<string>("QuestionId")
-                        .IsRequired()
-                        .HasMaxLength(8);
+                    b.Property<string>("FkId")
+                        .IsRequired();
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionId");
+                    b.HasIndex("FkId");
 
                     b.ToTable("QuestionComment");
                 });
@@ -462,7 +460,7 @@ namespace QAWebsite.Migrations
                 {
                     b.HasOne("QAWebsite.Models.QuestionModels.Answer", "Answer")
                         .WithMany("Comments")
-                        .HasForeignKey("Answerid")
+                        .HasForeignKey("FkId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -470,7 +468,7 @@ namespace QAWebsite.Migrations
                 {
                     b.HasOne("QAWebsite.Models.QuestionModels.Question", "Question")
                         .WithMany("Comments")
-                        .HasForeignKey("QuestionId")
+                        .HasForeignKey("FkId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

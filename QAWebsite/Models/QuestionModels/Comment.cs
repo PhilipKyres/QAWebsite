@@ -21,6 +21,7 @@ namespace QAWebsite.Models.QuestionModels
         [MaxLength(450)]
         [ForeignKey("ApplicationUser")]
         public string AuthorId { get; set; }
-     
+
+        public abstract string FkId { get; set; }
     }
 }

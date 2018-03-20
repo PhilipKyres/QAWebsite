@@ -182,9 +182,9 @@ namespace QAWebsite.Controllers
         public List<AnswerViewModel> GetAnswerList(string id)
         {
             var answers = _context.Answer.Where(a => a.QuestionId == id).ToList();
-            return answers.Select(a => new AnswerViewModel(a, _context.Users.Where(u => u.Id == a.AuthorId).Select(x => x.UserName).SingleOrDefault(), 
-                    RatingController.GetRating(_context.AnswerRating, a.Id), 
-                    new CommentController(_context, _userManager).GetAnmswerCommentList(a.Id))).OrderBy(o => o.CreationDate).ToList();
+            return answers.Select(a => new AnswerViewModel(a, _context.Users.Where(u => u.Id == a.AuthorId).Select(x => x.UserName).SingleOrDefault(),
+                    RatingController.GetRating(_context.AnswerRating, a.Id),
+                    new CommentController(_context, _userManager).GetComments(_context.AnswerComment, a.Id))).ToList();
         }
     }
 }
