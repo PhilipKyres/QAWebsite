@@ -4,5 +4,63 @@
     "AdministratorUsername": "Admin@QAWebsite.ca",
     "AdministratorEmail": "Admin@QAWebsite.ca",
     "AdministratorPassword": "!Qaz2wsx"
+  },
+  "Achievements": {
+    "1":{
+      "title": "What is this?",
+      "comparator": "greaterThanEquals",
+      "Threshold": 1,
+      "AchievementImage": "/Resources/AchievementImages/WhatIsThis.png",
+      "AchievementType": "QuestionCreation"
+    },
+    "2":{
+      "title": "Lost at Sea",
+      "comparator": "greaterThanEquals",
+      "Threshold": 25,
+      "AchievementImage": "/Resources/AchievementImages/LostAtSea.jpg",
+      "AchievementType": "QuestionCreation"
+    },
+    "3":{
+      "title": "Where in the Desert am I?",
+      "comparator": "greaterThanEquals",
+      "Threshold": 50,
+      "AchievementImage": "/Resources/AchievementImages/WhereInTheDesertAmI.jpg",
+      "AchievementType": "QuestionCreation"
+    },
+    "4":{
+      "title": "That's what it is!",
+      "comparator": "greaterThanEquals",
+      "Threshold": 1,
+      "AchievementImage": "/Resources/AchievementImages/ThatsWhatItIs.png",
+      "AchievementType": "AnswerCreation"
+    },
+    "5":{
+      "title": "Dropping Knowledge",
+      "comparator": "greaterThanEquals",
+      "Threshold": 25,
+      "AchievementImage": "/Resources/AchievementImages/DroppingKnowledge.jpg",
+      "AchievementType": "AnswerCreation"
+    },
+    "6":{
+      "title": "Obi-wan",
+      "comparator": "greaterThanEquals",
+      "Threshold": 50,
+      "AchievementImage": "/Resources/AchievementImages/ObiWan.jpg",
+      "AchievementType": "AnswerCreation"
+    },
+    "7":{
+      "title": "Not so sure",
+      "comparator": "greaterThanEquals",
+      "Threshold": 1,
+      "AchievementImage": "/Resources/AchievementImages/NotSoSure.jpg",
+      "AchievementType": "QuestionEditing"
+    },
+    "8":{
+      "title": "Self-Doubter",
+      "comparator": "greaterThanEquals",
+      "Threshold": 15,
+      "AchievementImage": "/Resources/AchievementImages/SelfDoubt.jpg",
+      "AchievementType": "QuestionEditing"
+    }
   }
 }

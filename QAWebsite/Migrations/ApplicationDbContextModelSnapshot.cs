@@ -105,6 +105,26 @@ namespace QAWebsite.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("QAWebsite.Models.Achievement", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<byte[]>("AchievementImage");
+
+                    b.Property<int>("Comparator");
+
+                    b.Property<int>("Threshold");
+
+                    b.Property<string>("Title");
+
+                    b.Property<int>("Type");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Achievement");
+                });
+
             modelBuilder.Entity("QAWebsite.Models.ApplicationRole", b =>
                 {
                     b.Property<string>("Id")
@@ -150,6 +170,8 @@ namespace QAWebsite.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
+                    b.Property<bool>("IsEnabled");
+
                     b.Property<bool>("LockoutEnabled");
 
                     b.Property<DateTimeOffset?>("LockoutEnd");
@@ -186,6 +208,24 @@ namespace QAWebsite.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.ApplicationUserAchievements", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("AchievementId");
+
+                    b.Property<string>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AchievementId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserAchievements");
                 });
 
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.Answer", b =>
@@ -445,6 +485,17 @@ namespace QAWebsite.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.ApplicationUserAchievements", b =>
+                {
+                    b.HasOne("QAWebsite.Models.Achievement", "Achievement")
+                        .WithMany("UserAchievements")
+                        .HasForeignKey("AchievementId");
+
+                    b.HasOne("QAWebsite.Models.ApplicationUser", "User")
+                        .WithMany("UserAchievements")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.Answer", b =>

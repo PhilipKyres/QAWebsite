@@ -10,6 +10,22 @@ namespace QAWebsite.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Achievement",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    AchievementImage = table.Column<byte[]>(nullable: true),
+                    Comparator = table.Column<int>(nullable: false),
+                    Threshold = table.Column<int>(nullable: false),
+                    Title = table.Column<string>(nullable: true),
+                    Type = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Achievement", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AnswerRating",
                 columns: table => new
                 {
@@ -49,6 +65,7 @@ namespace QAWebsite.Migrations
                     ConcurrencyStamp = table.Column<string>(nullable: true),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(nullable: false),
+                    IsEnabled = table.Column<bool>(nullable: false),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
@@ -247,6 +264,31 @@ namespace QAWebsite.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserAchievements",
+                columns: table => new
+                {
+                    Id = table.Column<string>(nullable: false),
+                    AchievementId = table.Column<string>(nullable: true),
+                    UserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAchievements", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserAchievements_Achievement_AchievementId",
+                        column: x => x.AchievementId,
+                        principalTable: "Achievement",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserAchievements_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Answer",
                 columns: table => new
                 {
@@ -398,6 +440,16 @@ namespace QAWebsite.Migrations
                 table: "Tag",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAchievements_AchievementId",
+                table: "UserAchievements",
+                column: "AchievementId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAchievements_UserId",
+                table: "UserAchievements",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -439,16 +491,22 @@ namespace QAWebsite.Migrations
                 name: "QuestionTag");
 
             migrationBuilder.DropTable(
+                name: "UserAchievements");
+
+            migrationBuilder.DropTable(
                 name: "Answer");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Tag");
 
             migrationBuilder.DropTable(
-                name: "Tag");
+                name: "Achievement");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Question");
