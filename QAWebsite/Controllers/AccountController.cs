@@ -67,38 +67,45 @@ namespace QAWebsite.Controllers
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var user = _userManager.Users.Where(usr => usr.Email == model.Email).FirstOrDefault();
-                bool authenticationError = false;
-                if (user != null)
+                if (user != null && !user.IsEnabled)
                 {
-                    var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
-                    if (result.Succeeded)
+                    ModelState.AddModelError(string.Empty, "This account has been suspended.");
+                    return View(model);
+                }
+                else {
+                    bool authenticationError = false;
+                    if (user != null)
                     {
-                        _logger.LogInformation("User logged in.");
-                        return RedirectToLocal(returnUrl);
-                    }
-                    if (result.RequiresTwoFactor)
-                    {
-                        return RedirectToAction(nameof(LoginWith2fa), new { returnUrl, model.RememberMe });
-                    }
-                    if (result.IsLockedOut)
-                    {
-                        _logger.LogWarning("User account locked out.");
-                        return RedirectToAction(nameof(Lockout));
+                        var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
+                        if (result.Succeeded)
+                        {
+                            _logger.LogInformation("User logged in.");
+                            return RedirectToLocal(returnUrl);
+                        }
+                        if (result.RequiresTwoFactor)
+                        {
+                            return RedirectToAction(nameof(LoginWith2fa), new { returnUrl, model.RememberMe });
+                        }
+                        if (result.IsLockedOut)
+                        {
+                            _logger.LogWarning("User account locked out.");
+                            return RedirectToAction(nameof(Lockout));
+                        }
+                        else
+                        {
+                            authenticationError = true;
+                        }
                     }
                     else
                     {
                         authenticationError = true;
                     }
-                }
-                else
-                {
-                    authenticationError = true;
-                }
 
-                if (authenticationError)
-                {
-                    ModelState.AddModelError(string.Empty, "Error occured while authenticating.");
-                    return View(model);
+                    if (authenticationError)
+                    {
+                        ModelState.AddModelError(string.Empty, "Error occured while authenticating.");
+                        return View(model);
+                    }
                 }
             }
 
@@ -239,7 +246,7 @@ namespace QAWebsite.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Username, Email = model.Email, IsEnabled = true };
                 if (model.UserImage != null)
                 {
                     using (var memoryStream = new MemoryStream())
@@ -267,7 +274,7 @@ namespace QAWebsite.Controllers
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
                     await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
-                    
+
                     _logger.LogInformation("User created a new account with password.");
                     return RedirectToLocal(returnUrl);
                 }
@@ -473,6 +480,49 @@ namespace QAWebsite.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Suspend(string id)
+        {
+            if (id == null || !User.IsInRole(Roles.ADMINISTRATOR.ToString()))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+            
+            user.IsEnabled = false;
+            await _userManager.UpdateAsync(user);
+            return RedirectToAction("Profile","Profile", new { id = id });
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Unsuspend(string id)
+        {
+            if (id == null || !User.IsInRole(Roles.ADMINISTRATOR.ToString()))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.IsEnabled = true;
+            await _userManager.UpdateAsync(user);
+            return RedirectToAction("Profile", "Profile", new { id = id });
+            
+        }
         #region Helpers
 
         private void AddErrors(IdentityResult result)
@@ -497,4 +547,5 @@ namespace QAWebsite.Controllers
 
         #endregion
     }
+
 }

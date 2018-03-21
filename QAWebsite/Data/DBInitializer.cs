@@ -40,7 +40,8 @@ namespace QAWebsite.Data
                 {
                     UserName = adminSection["AdministratorUsername"],
                     Email = adminSection["AdministratorEmail"],
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    IsEnabled = true
                 };
 
                 await userManager.CreateAsync(user, adminSection["AdministratorPassword"]);

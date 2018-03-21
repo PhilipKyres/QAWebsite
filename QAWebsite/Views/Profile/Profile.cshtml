@@ -1,10 +1,21 @@
 ﻿@model QAWebsite.Models.AccountViewModels.ProfileViewModel
+@using QAWebsite.Models.Enums
 
 @{
     ViewData["Title"] = "Profile";
 }
-
 <h2><i>@Html.DisplayFor(model => model.Username)</i></h2>
+<div id="suspendButtonContainer">
+    @if (User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
+    {
+        if (Model.isEnabled)
+        {<a asp-action="Suspend" asp-controller="Account" asp-route-id="@Model.Id" class="btn btn-default">Suspend</a>}
+
+        else
+        {<a asp-action="Unsuspend" asp-controller="Account" asp-route-id="@Model.Id" class="btn btn-default">Unsuspend</a>}
+
+    }
+</div>
 
 <div>
     <div id="profileLeftContainer">

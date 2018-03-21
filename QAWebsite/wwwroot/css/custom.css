@@ -54,3 +54,7 @@
 .homeHeading {
     padding-left: 8px;
 }
+
+#suspendButtonContainer {
+    text-align:right;
+}
