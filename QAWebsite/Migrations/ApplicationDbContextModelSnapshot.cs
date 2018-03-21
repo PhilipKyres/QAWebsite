@@ -145,7 +145,7 @@ namespace QAWebsite.Migrations
 
                     b.Property<bool>("EmailConfirmed");
 
-                    b.Property<bool?>("IsEnabled");
+                    b.Property<bool>("IsEnabled");
 
                     b.Property<bool>("LockoutEnabled");
 

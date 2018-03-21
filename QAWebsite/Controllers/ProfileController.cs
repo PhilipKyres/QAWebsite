@@ -103,7 +103,7 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            if (user.IsEnabled.HasValue && user.IsEnabled.Value == true)
+            if (user.IsEnabled)
             {
                 user.IsEnabled = false;
                 await _userManager.UpdateAsync(user);

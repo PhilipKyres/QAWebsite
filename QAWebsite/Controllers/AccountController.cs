@@ -63,19 +63,18 @@ namespace QAWebsite.Controllers
                 //Check if account is enabled by email
                 var user = _userManager.FindByEmailAsync(model.Email).Result;
 
-                if(user.IsEnabled == false)
+                if(user != null && !user.IsEnabled)
                 {
-                    _logger.LogWarning("User account locked out.");
-                    return RedirectToAction(nameof(Lockout));
+                    ModelState.AddModelError(string.Empty, "This account has been suspended.");
+                    return View(model);
                 }
-
                 else
                 {
                     // This doesn't count login failures towards account lockout
                     // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                     var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
 
-                    if (result.Succeeded && user.IsEnabled.HasValue && user.IsEnabled.Value == true)
+                    if (result.Succeeded &&  user.IsEnabled)
                     {
                         _logger.LogInformation("User logged in.");
                         return RedirectToLocal(returnUrl);
