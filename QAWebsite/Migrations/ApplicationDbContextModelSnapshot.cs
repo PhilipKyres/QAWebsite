@@ -331,6 +331,8 @@ namespace QAWebsite.Migrations
 
                     b.Property<int>("Comparator");
 
+                    b.Property<string>("Description");
+
                     b.Property<int>("Threshold");
 
                     b.Property<string>("Title");

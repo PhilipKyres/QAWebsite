@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,7 +29,7 @@ namespace QAWebsite.Controllers
             _userManager = userManager;
         }
 
-        public static int GetRatingCount<T>(DbSet<T> dbSet,IList idList, Ratings ratingType) where T : Rating
+        public static int GetRatingCount<T>(DbSet<T> dbSet, IList idList, Ratings ratingType) where T : Rating
         {
             return dbSet.Count(item => idList.Contains(item.FkId) && item.RatingValue == ratingType);
         }
@@ -69,15 +70,35 @@ namespace QAWebsite.Controllers
                 img = user.UserImage;
             }
             else using (var memStream = new MemoryStream())
-            {
-                Resources.defaultUserImage.Save(memStream, Resources.defaultUserImage.RawFormat);
-                img = memStream.ToArray();
-            }
+                {
+                    Resources.defaultUserImage.Save(memStream, Resources.defaultUserImage.RawFormat);
+                    img = memStream.ToArray();
+                }
 
             profileViewModel.UserImage = "data:image/gif;base64," + Convert.ToBase64String(img);
 
             return View("Profile", profileViewModel);
 
+        }
+
+        [AllowAnonymous]
+        public IActionResult Achievements(string id, string name)
+        {
+            var achievementPairs = _context.UserAchievements.Where(achievement => achievement.UserId == id).Select(ua =>
+                new AchievementDisplayContainer
+                {
+                    Image = "data:image/gif;base64," + Convert.ToBase64String(ua.Achievement.AchievementImage),
+                    Title = ua.Achievement.Title,
+                    Description = ua.Achievement.Description,
+                }).ToList();
+                
+            var viewModel = new AchievementViewModel
+            {
+                Id = id,
+                Username = name,
+                Achievements = achievementPairs
+            };
+            return View(viewModel);
         }
     }
 }

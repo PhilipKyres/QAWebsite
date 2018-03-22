@@ -67,6 +67,7 @@ namespace QAWebsite.Data
                             {
                                 Id = Guid.NewGuid().ToString(),
                                 Title = achievement["title"],
+                                Description = achievement["description"],
                                 Comparator = (Comparators)Enum.Parse(typeof(Comparators), achievement["comparator"]),
                                 Threshold = Int32.Parse(achievement["Threshold"]),
                                 AchievementImage = imageData,

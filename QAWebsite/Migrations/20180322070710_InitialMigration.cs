@@ -16,6 +16,7 @@ namespace QAWebsite.Migrations
                     Id = table.Column<string>(nullable: false),
                     AchievementImage = table.Column<byte[]>(nullable: true),
                     Comparator = table.Column<int>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
                     Threshold = table.Column<int>(nullable: false),
                     Title = table.Column<string>(nullable: true),
                     Type = table.Column<int>(nullable: false)

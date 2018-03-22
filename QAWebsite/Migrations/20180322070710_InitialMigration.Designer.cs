@@ -12,7 +12,7 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180322061359_InitialMigration")]
+    [Migration("20180322070710_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -331,6 +331,8 @@ namespace QAWebsite.Migrations
                     b.Property<byte[]>("AchievementImage");
 
                     b.Property<int>("Comparator");
+
+                    b.Property<string>("Description");
 
                     b.Property<int>("Threshold");
 

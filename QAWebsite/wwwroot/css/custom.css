@@ -76,3 +76,21 @@
 #suspendButtonContainer {
     text-align:right;
 }
+
+.achievementImageContainer {
+    display: inline-block !important;
+    text-align:center;
+    width: 60%;
+}
+.achievementInformationContainer {
+    display: inline-block !important;
+}
+.achievementImage {
+    border-radius: 20%;
+    max-height: 250px;
+    min-height: 250px;
+}
+.achievementListContainer {
+    height:25%;
+    padding: 3%;
+}
