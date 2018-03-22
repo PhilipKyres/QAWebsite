@@ -26,5 +26,10 @@ namespace QAWebsite.Models.QuestionModels
         [MaxLength(8)]
         [Required]
         public string QuestionId { get; set; }
+
+        [MaxLength(450)]
+        [ForeignKey("ApplicationUser")]
+        [Display(Name = "Author")]
+        public string AuthorId { get; set; }
     }
 }

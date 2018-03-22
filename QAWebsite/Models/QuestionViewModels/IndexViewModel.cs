@@ -9,6 +9,10 @@ namespace QAWebsite.Models.QuestionViewModels
 {
     public class IndexViewModel
     {
+        public IndexViewModel(Question question, string authorName, int rating, int flags) : this(question, authorName, rating)
+        {
+            this.Flags = flags;
+        }
         public IndexViewModel(Question question, string authorName, int rating)
         {
             this.AuthorId = question.AuthorId;
@@ -52,6 +56,8 @@ namespace QAWebsite.Models.QuestionViewModels
 
         [Required]
         public int Rating { get; set; }
+
+        public int Flags { get; set; }
 
         public ICollection<QuestionTag> QuestionTags { get; set; }
     }

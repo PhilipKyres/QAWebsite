@@ -62,9 +62,16 @@
             <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> @Html.Raw("|")
             <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> @Html.Raw("|")
         }
-        else
+        if (!(Model.AuthorId == UserManager.GetUserId(User)))
         {
             <a asp-action="Create" asp-controller="Flags" asp-route-id="@Model.Id">Flag</a> @Html.Raw("|")
+        }
+        if (User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
+        {
+            @if (Model.Flags > 0)
+            {
+            <a asp-action="FlagsByQuestion" asp-controller="Flags" asp-route-id="@Model.Id">Flags: @Model.Flags</a> @Html.Raw("|")
+            }
         }
     }
     <a asp-action="EditHistory" asp-route-id="@Model.Id">Edits History</a> @Html.Raw("|")
