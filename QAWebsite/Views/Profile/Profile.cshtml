@@ -20,7 +20,7 @@
     <div id="profileLeftContainer" style="text-align:center;">
         <img src="@Model.UserImage" alt="Employee Photo" class="userImage" />
         <h4 class="text-center" style="width:100%"><b>@Html.DisplayFor(model => model.Rating) &nbsp;&nbsp;</b> Reputation</h4>
-        <a asp-action="Achievements" asp-controller="Profile" asp-route-id="@Model.Id" asp-route-name="@Model.Username" class="btn btn-default">My Achievements</a>
+        <a asp-action="Achievements" asp-controller="Profile" asp-route-id="@Model.Id" class="btn btn-default">My Achievements</a>
     </div>
     <div id="profileRightContainer">
         <h3>@Html.DisplayNameFor(model => model.AboutMe)</h3>
