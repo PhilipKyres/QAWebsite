@@ -82,8 +82,14 @@ namespace QAWebsite.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Achievements(string id, string name)
+        public async Task<IActionResult> Achievements(string id)
         {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
             var achievementPairs = _context.UserAchievements.Where(achievement => achievement.UserId == id).Select(ua =>
                 new AchievementDisplayContainer
                 {
@@ -95,9 +101,10 @@ namespace QAWebsite.Controllers
             var viewModel = new AchievementViewModel
             {
                 Id = id,
-                Username = name,
+                Username = user.UserName,
                 Achievements = achievementPairs
             };
+
             return View(viewModel);
         }
     }
