@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Models;
 using QAWebsite.Models.QuestionModels;
+using QAWebsite.Models.UserModels;
 
 namespace QAWebsite.Data
 {

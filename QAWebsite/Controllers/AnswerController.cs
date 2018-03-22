@@ -11,6 +11,7 @@ using QAWebsite.Models;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.QuestionViewModels;
+using QAWebsite.Models.UserModels;
 using QAWebsite.Services;
 
 namespace QAWebsite.Controllers

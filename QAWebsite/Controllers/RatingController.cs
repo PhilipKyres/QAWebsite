@@ -8,6 +8,7 @@ using QAWebsite.Data;
 using QAWebsite.Models;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
+using QAWebsite.Models.UserModels;
 
 namespace QAWebsite.Controllers
 {

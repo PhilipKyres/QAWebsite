@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using QAWebsite.Data;
 using QAWebsite.Models;
+using QAWebsite.Models.UserModels;
 using QAWebsite.Services;
 
 namespace QAWebsite

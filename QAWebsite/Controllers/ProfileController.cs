@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
-using QAWebsite.Models;
 using QAWebsite.Models.AccountViewModels;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
+using QAWebsite.Models.UserModels;
 using QAWebsite.Properties;
 
 namespace QAWebsite.Controllers
@@ -34,7 +34,7 @@ namespace QAWebsite.Controllers
         }
 
         [AllowAnonymous]
-        [Route("/Profile/{id}")]
+        [Route("/Profile/{id}")] //TODO change to unique username
         public async Task<IActionResult> Profile(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
