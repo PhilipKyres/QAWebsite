@@ -1,12 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Query.Internal;
-using QAWebsite.Models.Enums;
-using System;
+﻿using QAWebsite.Models.Enums;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace QAWebsite.Models
+namespace QAWebsite.Models.UserModels
 {
     public class Achievement
     {

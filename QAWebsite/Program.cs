@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using QAWebsite.Data;
 using QAWebsite.Models;
+using QAWebsite.Models.UserModels;
 
 namespace QAWebsite
 {

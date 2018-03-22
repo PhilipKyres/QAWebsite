@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using System.Linq;
 using QAWebsite.Data;
-using QAWebsite.Models;
 using QAWebsite.Models.Enums;
+using QAWebsite.Models.UserModels;
 
 namespace QAWebsite.Services
 {
@@ -13,7 +9,7 @@ namespace QAWebsite.Services
     {
         public void check(string userId, ApplicationDbContext dBContext, AchievementType type)
         {
-            var userAchievementIdList = dBContext.UserAchievements.Where(UserAchievement => UserAchievement.UserId == userId).Select(UserAchievement => UserAchievement.AchievementId).ToList();
+            var userAchievementIdList = dBContext.UserAchievements.Where(userAchievement => userAchievement.UserId == userId).Select(userAchievement => userAchievement.AchievementId).ToList();
 
             var unobtainedAchievementList = dBContext.Achievement.Where(achievement => achievement.Type == type && !userAchievementIdList.Contains(achievement.Id))
                                             .OrderBy(achievement => achievement.Threshold).ToList();
@@ -22,17 +18,17 @@ namespace QAWebsite.Services
             {
                 case AchievementType.QuestionCreation:
                     {
-                        count = dBContext.Question.Where(question => question.AuthorId == userId).Count();
+                        count = dBContext.Question.Count(question => question.AuthorId == userId);
                         break;
                     }
                 case AchievementType.AnswerCreation:
                     {
-                        count = dBContext.Answer.Where(answer => answer.AuthorId == userId).Count();
+                        count = dBContext.Answer.Count(answer => answer.AuthorId == userId);
                         break;
                     }
                 case AchievementType.QuestionEditing:
                     {
-                        count = dBContext.QuestionEdits.Where(questionEdit => questionEdit.EditorId == userId).Count();
+                        count = dBContext.QuestionEdits.Count(questionEdit => questionEdit.EditorId == userId);
                         break;
                     }
             }

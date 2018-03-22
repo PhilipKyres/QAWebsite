@@ -37,25 +37,30 @@
             </p>
         </div>
         <h3>Recent Activity</h3>
-        <div id="recentContentContainer">
-            <div id="tabs">
-                <ul>
-                    <li><a href="#tabs-1">Recent Questions</a></li>
-                    <li><a href="#tabs-2">Recent Answers</a></li>
-                </ul>
-                <div id="tabs-1">
+        
+        <div class="container-fluid container-background">	
+            <ul class="nav nav-pills container-background-secondary">
+                <li class="active">
+                    <a href="#1a" data-toggle="tab">Recent Questions</a>
+                </li>
+                <li><a href="#2a" data-toggle="tab">Recent Answers</a>
+                </li>
+            </ul>
+
+            <div class="tab-content clearfix">
+                <div class="tab-pane active" id="1a">
                     @if (Model.QuestionList.Count > 0)
                     {
-                        <table class="table">
+                        <table class="table table-condensed">
                             <thead>
-                                <tr>
-                                    <th>
-                                        @Html.DisplayNameFor(model => Model.QuestionList[0].Title)
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => Model.QuestionList[0].CreationDate)
-                                    </th>
-                                </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => Model.QuestionList[0].Title)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => Model.QuestionList[0].CreationDate)
+                                </th>
+                            </tr>
                             </thead>
                             @foreach (var question in Model.QuestionList)
                             {
@@ -75,22 +80,22 @@
                     }
                     else
                     {
-                        <p class="text-center">No question activity available for this user</p>
+                        <p class="text-center padding-top-bottom">No question activity available for this user</p>
                     }
                 </div>
-                <div id="tabs-2">
+                <div class="tab-pane" id="2a">
                     @if (Model.AnswerList.Count > 0)
                     {
-                        <table class="table">
+                        <table class="table table-condensed">
                             <thead>
-                                <tr>
-                                    <th>
-                                        @Html.DisplayNameFor(model => Model.AnswerList[0].Content)
-                                    </th>
-                                    <th>
-                                        @Html.DisplayNameFor(model => Model.AnswerList[0].CreationDate)
-                                    </th>
-                                </tr>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => Model.AnswerList[0].Content)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => Model.AnswerList[0].CreationDate)
+                                </th>
+                            </tr>
                             </thead>
                             @foreach (var answer in Model.AnswerList)
                             {
@@ -110,19 +115,10 @@
                     }
                     else
                     {
-                        <p class="text-center">No answer activity available for this user</p>
+                        <p class="text-center padding-top-bottom">No answer activity available for this user</p>
                     }
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<link rel="stylesheet" href="~/css/jquery-ui.css">
-<script src="~/js/jquery-1.12.4.js"></script>
-<script src="~/js/jquery-ui.js"></script>
-
-<script>
-    $("#tabs").tabs();
-    $("#repTabs").tabs();
-</script>

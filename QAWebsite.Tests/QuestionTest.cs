@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using QAWebsite.Controllers;
 using QAWebsite.Data;
-using QAWebsite.Models;
 using QAWebsite.Models.QuestionViewModels;
+using QAWebsite.Models.UserModels;
 using QAWebsite.Services;
 
 namespace QAWebsite.Tests
@@ -24,7 +24,7 @@ namespace QAWebsite.Tests
 
         private ApplicationDbContext _context;
         private UserManager<ApplicationUser> _userManager;
-        private AchievementDistributor _AchievementDistributor;
+        private AchievementDistributor _achievementDistributor;
         private QuestionController _questionController;
 
         [SetUp]
@@ -48,10 +48,10 @@ namespace QAWebsite.Tests
             var serviceProvider = services.BuildServiceProvider();
             _context = serviceProvider.GetRequiredService<ApplicationDbContext>();
             _userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            _AchievementDistributor = new AchievementDistributor();
+            _achievementDistributor = new AchievementDistributor();
 
 
-            _questionController = new QuestionController(_context, _userManager, _AchievementDistributor)
+            _questionController = new QuestionController(_context, _userManager, _achievementDistributor)
             {
                 ControllerContext = new ControllerContext() {HttpContext = context}
             };

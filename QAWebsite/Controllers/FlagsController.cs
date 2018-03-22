@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
-using QAWebsite.Models;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.QuestionViewModels;
+using QAWebsite.Models.UserModels;
 
 namespace QAWebsite.Controllers
 {
