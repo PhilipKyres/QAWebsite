@@ -6,55 +6,53 @@
 
 <h2>Edit History</h2>
 
-<table class="table">
-    <div id="QuestionEditsHistory">
-        @{if (Model.Edits.Count() > 0)
-            {
+<div>
+    @if (Model.Edits.Any())
+    {
         <table class="table">
             <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Edits.First().EditedBy)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Edits.First().TitleChanged)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Edits.First().ContentChanged)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Edits.First().EditDate)
-                    </th>
-                </tr>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Edits.First().EditedBy)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Edits.First().TitleChanged)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Edits.First().ContentChanged)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Edits.First().EditDate)
+                </th>
+            </tr>
             </thead>
             @foreach (var edit in Model.Edits)
             {
-            <tr>
-                <td>
-                    <a asp-action="Profile" asp-controller="Profile" asp-route-id="@edit.EditorId">@Html.DisplayFor(modelItem => edit.EditedBy)</a>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => edit.TitleChanged)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => edit.ContentChanged)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => edit.EditDate)
-                </td>
-                <td>
-                    <a asp-action="EditDetails" asp-route-id="@edit.EditId">Details</a>
-                </td>
-            </tr>
+                <tr>
+                    <td>
+                        <a asp-action="Profile" asp-controller="Profile" asp-route-id="@edit.EditorId">@Html.DisplayFor(modelItem => edit.EditedBy)</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => edit.TitleChanged)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => edit.ContentChanged)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => edit.EditDate)
+                    </td>
+                    <td>
+                        <a asp-action="EditDetails" asp-route-id="@edit.EditId">Details</a>
+                    </td>
+                </tr>
             }
         </table>
-            }
-            else
-            {
+    }
+    else
+    {
         <p>No edits were performed on this question</p>
-                }
-            }
-
-        <div>
-            <a asp-action="Details" asp-route-id="@Model.QuestionId">Back To Question Details</a>
-        </div>
+    }
+    <div>
+        <a asp-action="Details" asp-route-id="@Model.QuestionId">Back To Question Details</a>
+    </div>
+</div>

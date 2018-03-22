@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using QAWebsite.Models.Enums
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -34,6 +35,10 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-area="" asp-controller="Question" asp-action="Index">Questions</a></li>
                     <li><a asp-area="" asp-controller="Tag" asp-action="Index">Tags</a></li>
+                    @if(User.Identity.IsAuthenticated && User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
+                    {    
+                        <li><a asp-area="" asp-controller="Flags" asp-action="Index">Flags</a></li>
+                    }
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                     <li>
@@ -45,7 +50,7 @@
                         </form>
                     </li>
                 </ul>
-                
+
                 @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>

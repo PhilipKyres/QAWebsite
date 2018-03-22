@@ -180,6 +180,9 @@ namespace QAWebsite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(36);
 
+                    b.Property<string>("AuthorId")
+                        .HasMaxLength(450);
+
                     b.Property<string>("Content")
                         .IsRequired();
 

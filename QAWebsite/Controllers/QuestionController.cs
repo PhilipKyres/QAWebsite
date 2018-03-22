@@ -42,8 +42,9 @@ namespace QAWebsite.Controllers
                 .ToListAsync();
 
             var vms = questions.Select(q => new IndexViewModel(q,
-                _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
-                RatingController.GetRating(_context.QuestionRating, q.Id)));
+               _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
+               RatingController.GetRating(_context.QuestionRating, q.Id),
+               _context.Flag.Where(f => f.QuestionId == q.Id).Count()));
 
             return View(vms);
         }
@@ -65,7 +66,8 @@ namespace QAWebsite.Controllers
             // TODO remove repeated code
             var vms = questions.Select(q => new IndexViewModel(q,
                 _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
-                RatingController.GetRating(_context.QuestionRating, q.Id)));
+                RatingController.GetRating(_context.QuestionRating, q.Id),
+                _context.Flag.Where(f => f.QuestionId == q.Id).Count()));
 
             return View("Index", vms);
         }
@@ -90,7 +92,9 @@ namespace QAWebsite.Controllers
 
             return new DetailsViewModel(question, 
                 _context.Users.Where(u => u.Id == question.AuthorId).Select(x => x.UserName).SingleOrDefault(), 
-                RatingController.GetRating(_context.QuestionRating, question.Id), avm, cvm);
+                RatingController.GetRating(_context.QuestionRating, question.Id),
+               _context.Flag.Where(f => f.QuestionId == questionId).Count(),
+                avm, cvm);
         }
 
         // GET: Question/Details/5
@@ -173,7 +177,6 @@ namespace QAWebsite.Controllers
 
             var currentUser = _userManager.GetUserAsync(User).Result;
             if (question == null || question.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
-           // if (question == null || question.AuthorId != _userManager.GetUserId(User))
             {
                 return NotFound();
             }
