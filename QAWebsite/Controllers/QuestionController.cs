@@ -38,18 +38,18 @@ namespace QAWebsite.Controllers
             _commentController = new CommentController(context, userManager, achievementDistributor, dbContextOptions);
         }
 
-        public IEnumerable<IndexViewModel> GetQuestionList(Expression<Func<Question, bool>> where = null)
+        public IEnumerable<IndexViewModel> GetQuestionList(Func<Question, bool> where = null)
         {
-            IQueryable<Question> questions = _context.Question
+            var questions = _context.Question
                 .Include(x => x.Author)
                 .Include(x => x.Flags)
                 .Include(x => x.QuestionTags)
-                .ThenInclude(x => x.Tag);
+                .ThenInclude(x => x.Tag)
+                .AsEnumerable(); //TODO remove in core 2.1 when IQueryable bug is fixed
 
             if (where != null)
             {
                 questions = questions.Where(where);
-                //var test = questions.Where(where).ToList();
             }
 
             return  questions.Select(q => new IndexViewModel(q,
@@ -78,7 +78,7 @@ namespace QAWebsite.Controllers
                 split.Any(s => x.Title.Normalize().Contains(s) || 
                                x.Content.Normalize().Contains(s) || 
                                x.QuestionTags.Any(qt => qt.Tag.Name.Normalize().Contains(s)) || 
-                               s == x.Author.UserName));
+                               s == x.Author.UserName.Normalize()));
 
             return View("Index", vms);
         }
