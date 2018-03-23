@@ -6,14 +6,28 @@
 }
 <h2><i>@Html.DisplayFor(model => model.Username)</i></h2>
 <div id="suspendButtonContainer">
-    @if (User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
+    @if (User.IsInRole(@Roles.ADMINISTRATOR.ToString()) && Model.Id != UserManager.GetUserId(User))
     {
-        if (Model.isEnabled)
-        {<a asp-action="Suspend" asp-controller="Account" asp-route-id="@Model.Id" class="btn btn-default">Suspend</a>}
+        if (!UserManager.IsInRoleAsync(UserManager.FindByIdAsync(Model.Id).Result, Roles.ADMINISTRATOR.ToString()).Result)
+        {
+            if (Model.isEnabled)
+            {
+                <a asp-action="Suspend" asp-controller="Account" asp-route-id="@Model.Id" class="btn btn-default">Suspend</a>
+                <a asp-action="Promote" asp-controller="Account" asp-route-id="@Model.Id" class="btn btn-default">Promote</a>
+            }
+
+            else
+            {
+                <a asp-action="Unsuspend" asp-controller="Account" asp-route-id="@Model.Id" class="btn btn-default">Unsuspend</a>
+            }
+        }
 
         else
-        {<a asp-action="Unsuspend" asp-controller="Account" asp-route-id="@Model.Id" class="btn btn-default">Unsuspend</a>}
+        {
+            <a asp-action="Demote" asp-controller="Account" asp-route-id="@Model.Id" class="btn btn-default">Demote</a>
+        }
     }
+
 </div>
 
 <div>

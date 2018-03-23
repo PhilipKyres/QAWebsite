@@ -512,6 +512,45 @@ namespace QAWebsite.Controllers
             return RedirectToAction("Profile", "Profile", new { id = id });
             
         }
+
+        public async Task<IActionResult> Promote(string id)
+        {          
+            if (id == null || !User.IsInRole(Roles.ADMINISTRATOR.ToString()))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            await _userManager.AddToRoleAsync(user, Roles.ADMINISTRATOR.ToString());
+            await _userManager.UpdateAsync(user);
+            return RedirectToAction("Profile", "Profile", new { id = id });
+        }
+
+        public async Task<IActionResult> Demote(string id)
+        {
+            if (id == null || !User.IsInRole(Roles.ADMINISTRATOR.ToString()))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            await _userManager.RemoveFromRoleAsync(user, Roles.ADMINISTRATOR.ToString());
+            await _userManager.UpdateAsync(user);
+            return RedirectToAction("Profile", "Profile", new { id = id});
+        }
+        
         #region Helpers
 
         private void AddErrors(IdentityResult result)
