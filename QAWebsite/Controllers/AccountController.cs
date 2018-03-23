@@ -72,6 +72,12 @@ namespace QAWebsite.Controllers
                 return View(model);
             }
 
+            if (!user.EmailConfirmed)
+            {
+                ModelState.AddModelError(string.Empty, "Verify email address");
+                return View(model);
+            }
+
             if (!user.IsEnabled)
             {
                 ModelState.AddModelError(string.Empty, "This account has been suspended.");
