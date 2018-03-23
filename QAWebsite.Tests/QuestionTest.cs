@@ -122,7 +122,7 @@ namespace QAWebsite.Tests
             var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title" && x.Content == "Test content");
 
             // Act
-            await _flagController.Create(new FlagViewModel(question) {SelectedReason = Models.Enums.FlagType.Inappropriate, Content = "Test Content Report" });
+            await _flagController.Create(new FlagViewModel(question.Id) {SelectedReason = Models.Enums.FlagType.Inappropriate, Content = "Test Content Report" });
             var flag = _context.Flag.Where(f => f.QuestionId == question.Id && f.Content == "Test Content Report" 
             && f.Reason == (int)Models.Enums.FlagType.Inappropriate).FirstOrDefault();
            

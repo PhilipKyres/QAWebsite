@@ -11,15 +11,13 @@ using Moq;
 using NUnit.Framework;
 using QAWebsite.Controllers;
 using QAWebsite.Data;
-using QAWebsite.Models;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionViewModels;
+using QAWebsite.Models.UserModels;
 using QAWebsite.Services;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
@@ -36,6 +34,7 @@ namespace QAWebsite.Tests
         private ManageController _manageController;
         private AccountController _accountController;
         private UrlEncoder _urlEncoder;
+        private AchievementDistributor _achievementDistributor;
         private TagController _tagController;
         private QuestionController _questionController;
         private FlagsController _flagController;
@@ -78,6 +77,7 @@ namespace QAWebsite.Tests
             var mLogger = serviceProvider.GetRequiredService<ILogger<ManageController>>();
             var aLogger = serviceProvider.GetRequiredService<ILogger<AccountController>>();
             _urlEncoder = serviceProvider.GetRequiredService<UrlEncoder>();
+            _achievementDistributor = new AchievementDistributor();
 
             Mock<IEmailSender> emailSender = new Mock<IEmailSender>();
             emailSender.Setup(x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>())).Returns(Task.CompletedTask);
@@ -107,7 +107,7 @@ namespace QAWebsite.Tests
             {
                 ControllerContext = new ControllerContext() { HttpContext = httpContext }
             };
-            _questionController = new QuestionController(_context, _userManager)
+            _questionController = new QuestionController(_context, _userManager, _achievementDistributor)
             {
                 ControllerContext = new ControllerContext() { HttpContext = httpContext }
             };
