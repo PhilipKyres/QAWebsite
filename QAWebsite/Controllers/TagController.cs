@@ -10,6 +10,7 @@ using QAWebsite.Data;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Extensions;
 using QAWebsite.Models.QuestionViewModels;
+using QAWebsite.Models.Enums;
 
 namespace QAWebsite.Controllers
 {
@@ -74,7 +75,7 @@ namespace QAWebsite.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(string id)
         {
-            if (id == null)
+            if (id == null || !User.IsInRole(Roles.ADMINISTRATOR.ToString()))
             {
                 return NotFound();
             }
@@ -95,6 +96,11 @@ namespace QAWebsite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+            if (id == null || !User.IsInRole(Roles.ADMINISTRATOR.ToString()))
+            {
+                return NotFound();
+            }
+
             var tag = await _context.Tag.SingleOrDefaultAsync(m => m.Id == id);
             _context.Tag.Remove(tag);
             await _context.SaveChangesAsync();
