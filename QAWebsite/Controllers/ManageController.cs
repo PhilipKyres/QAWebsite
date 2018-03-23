@@ -6,13 +6,11 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using QAWebsite.Models;
 using QAWebsite.Models.ManageViewModels;
-using QAWebsite.Properties;
+using QAWebsite.Models.UserModels;
 using QAWebsite.Services;
 
 namespace QAWebsite.Controllers
@@ -88,11 +86,10 @@ namespace QAWebsite.Controllers
                     model.UserImage.CopyTo(memoryStream);
                     userImage = memoryStream.ToArray();
                 }
-
-                    user.UserImage = userImage;
+                user.UserImage = userImage;
             }
             
-               await _userManager.UpdateAsync(user);
+            await _userManager.UpdateAsync(user);
 
             StatusMessage = "Your profile has been updated";
             return RedirectToAction(nameof(Index));
@@ -104,7 +101,7 @@ namespace QAWebsite.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                return View(nameof(Index), model);
             }
 
             var user = await _userManager.GetUserAsync(User);

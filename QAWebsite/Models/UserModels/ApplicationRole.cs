@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace QAWebsite.Models
+namespace QAWebsite.Models.UserModels
 {
     public class ApplicationRole : IdentityRole
     {
-        public ApplicationRole() : base()
+        public ApplicationRole()
         {
             this.CreatedDate = DateTime.Now;
         }

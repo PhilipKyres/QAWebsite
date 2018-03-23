@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -6,10 +7,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
-using QAWebsite.Models;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.QuestionViewModels;
+using QAWebsite.Models.UserModels;
 
 namespace QAWebsite.Controllers
 {
@@ -27,23 +28,14 @@ namespace QAWebsite.Controllers
 
         #region User Functionality
         // GET: Flags/Create
-        public async Task<IActionResult> Create(string id)
+        public IActionResult Create(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var question = await _context.Question.SingleOrDefaultAsync(m => m.Id == id);
-            if (question == null)
-            {
-                return NotFound();
-            }
-
-            var flagModel = new FlagViewModel(question)
-            {
-                SelectedReason = FlagType.OffTopic
-            };
+            var flagModel = new FlagViewModel(id);
 
             return View(flagModel);
         }
@@ -64,6 +56,7 @@ namespace QAWebsite.Controllers
                     Content = fm.Content,
                     CreationDate = DateTime.Now,
                     QuestionId = fm.QuestionId,
+                    AuthorId = _userManager.GetUserId(User)
                 };
 
                 _context.Add(flag);
@@ -78,31 +71,62 @@ namespace QAWebsite.Controllers
         // GET: Flags
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Flag.ToListAsync());
+            if (!this.IsAdmin())
+                return NotFound();
+
+            var flags = await _context.Flag.ToListAsync();
+
+            return View(this.GetFlagViewModel(flags));
+        }
+
+        public async Task<IActionResult> FlagsByQuestion(string id)
+        {
+            if (!this.IsAdmin() || id == null)
+                return NotFound();
+                
+            var flags = await _context.Flag.Where(f => f.QuestionId == id).ToListAsync();           
+
+            return View("Index", this.GetFlagViewModel(flags));
+        }
+
+        private List<FlagViewModel> GetFlagViewModel(List<Flag> flags)
+        {
+            List<FlagViewModel> flagList = new List<FlagViewModel>();
+
+            flags.ForEach(f =>
+            {
+                flagList.Add(new FlagViewModel(f, f.QuestionId, _context.Users.Where(u => u.Id == f.AuthorId).Select(x => x.UserName).SingleOrDefault()));
+            });
+
+            return flagList;
         }
 
         // GET: Flags/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            if (id == null)
+
+            if (id == null || !this.IsAdmin())
             {
                 return NotFound();
             }
 
             var flag = await _context.Flag
                 .SingleOrDefaultAsync(m => m.Id == id);
+
             if (flag == null)
             {
                 return NotFound();
             }
 
-            return View(flag);
+            var fvm = new FlagViewModel(flag, flag.QuestionId, _context.Users.Where(u => u.Id == flag.AuthorId).Select(x => x.UserName).SingleOrDefault());
+
+            return View(fvm);
         }        
  
         // GET: Flags/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
-            if (id == null)
+            if (id == null || !this.IsAdmin())
             {
                 return NotFound();
             }
@@ -113,8 +137,9 @@ namespace QAWebsite.Controllers
             {
                 return NotFound();
             }
+            var fvm = new FlagViewModel(flag, flag.QuestionId, _context.Users.Where(u => u.Id == flag.AuthorId).Select(x => x.UserName).SingleOrDefault());
 
-            return View(flag);
+            return View(fvm);
         }
 
         // POST: Flags/Delete/5
@@ -122,15 +147,24 @@ namespace QAWebsite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+            if (id == null || !this.IsAdmin())
+            {
+                return NotFound();
+            }
+
             var flag = await _context.Flag.SingleOrDefaultAsync(m => m.Id == id);
             _context.Flag.Remove(flag);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
+        
         private bool FlagExists(string id)
         {
             return _context.Flag.Any(e => e.Id == id);
+        }
+        private bool IsAdmin()
+        {          
+           return _userManager.IsInRoleAsync(_userManager.GetUserAsync(User).Result, Roles.ADMINISTRATOR.ToString()).Result;
         }
     }
     #endregion

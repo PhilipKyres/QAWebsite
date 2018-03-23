@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
@@ -8,12 +7,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using QAWebsite.Models;
 using QAWebsite.Models.AccountViewModels;
 using QAWebsite.Models.Enums;
+using QAWebsite.Models.UserModels;
 using QAWebsite.Services;
 
 namespace QAWebsite.Controllers
@@ -62,47 +60,43 @@ namespace QAWebsite.Controllers
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var user = _userManager.Users.Where(usr => usr.Email == model.Email).FirstOrDefault();
-                bool authenticationError = false;
-                if (user != null)
-                {
-                    var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
-                    if (result.Succeeded)
-                    {
-                        _logger.LogInformation("User logged in.");
-                        return RedirectToLocal(returnUrl);
-                    }
-                    if (result.RequiresTwoFactor)
-                    {
-                        return RedirectToAction(nameof(LoginWith2fa), new { returnUrl, model.RememberMe });
-                    }
-                    if (result.IsLockedOut)
-                    {
-                        _logger.LogWarning("User account locked out.");
-                        return RedirectToAction(nameof(Lockout));
-                    }
-                    else
-                    {
-                        authenticationError = true;
-                    }
-                }
-                else
-                {
-                    authenticationError = true;
-                }
-
-                if (authenticationError)
-                {
-                    ModelState.AddModelError(string.Empty, "Error occured while authenticating.");
-                    return View(model);
-                }
+                return View(model);
             }
 
-            // If we got this far, something failed, redisplay form
+            var user = _userManager.Users.FirstOrDefault(usr => usr.Email == model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError(string.Empty, "Invalid username or password");
+                return View(model);
+            }
+
+            if (!user.IsEnabled)
+            {
+                ModelState.AddModelError(string.Empty, "This account has been suspended.");
+                return View(model);
+            }
+
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+            var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
+            if (result.Succeeded)
+            {
+                _logger.LogInformation("User logged in.");
+                return RedirectToLocal(returnUrl);
+            }
+            if (result.RequiresTwoFactor)
+            {
+                return RedirectToAction(nameof(LoginWith2fa), new { returnUrl, model.RememberMe });
+            }
+            if (result.IsLockedOut)
+            {
+                _logger.LogWarning("User account locked out.");
+                return RedirectToAction(nameof(Lockout));
+            }
+
+            ModelState.AddModelError(string.Empty, "Invalid username or password.");
             return View(model);
         }
 
@@ -115,7 +109,7 @@ namespace QAWebsite.Controllers
 
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load two-factor authentication user.");
+                throw new ApplicationException("Unable to load two-factor authentication user.");
             }
 
             var model = new LoginWith2faViewModel { RememberMe = rememberMe };
@@ -170,7 +164,7 @@ namespace QAWebsite.Controllers
             var user = await _signInManager.GetTwoFactorAuthenticationUserAsync();
             if (user == null)
             {
-                throw new ApplicationException($"Unable to load two-factor authentication user.");
+                throw new ApplicationException("Unable to load two-factor authentication user.");
             }
 
             ViewData["ReturnUrl"] = returnUrl;
@@ -237,42 +231,44 @@ namespace QAWebsite.Controllers
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
-                if (model.UserImage != null)
-                {
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        model.UserImage.CopyTo(memoryStream);
-                        user.UserImage = memoryStream.ToArray();
-                    }
-                }
-                var result = await _userManager.CreateAsync(user, model.Password);
-
-                var userRole = _roleManager.Roles.Where(role => role.NormalizedName == Roles.USER.ToString()).FirstOrDefault();
-                if (userRole == null)
-                {
-                    userRole = new ApplicationRole(Roles.USER.ToString());
-                    await _roleManager.CreateAsync(userRole);
-                }
-
-                if (result.Succeeded)
-                {
-
-                    await _userManager.AddToRoleAsync(user, Roles.USER.ToString());
-
-                    _logger.LogInformation("User created a new account with password.");
-
-                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
-                    await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
-                    
-                    _logger.LogInformation("User created a new account with password.");
-                    return RedirectToLocal(returnUrl);
-                }
-                AddErrors(result);
+                return View(model);
             }
+
+            var user = new ApplicationUser { UserName = model.Username, Email = model.Email, IsEnabled = true };
+            if (model.UserImage != null)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    model.UserImage.CopyTo(memoryStream);
+                    user.UserImage = memoryStream.ToArray();
+                }
+            }
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            var userRole = _roleManager.Roles.FirstOrDefault(role => role.NormalizedName == Roles.USER.ToString());
+            if (userRole == null)
+            {
+                userRole = new ApplicationRole(Roles.USER.ToString());
+                await _roleManager.CreateAsync(userRole);
+            }
+
+            if (result.Succeeded)
+            {
+
+                await _userManager.AddToRoleAsync(user, Roles.USER.ToString());
+
+                _logger.LogInformation("User created a new account with password.");
+
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+                await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
+
+                _logger.LogInformation("User created a new account with password.");
+                return RedirectToLocal(returnUrl);
+            }
+            AddErrors(result);
 
             // If we got this far, something failed, redisplay form
             return View(model);
@@ -473,6 +469,88 @@ namespace QAWebsite.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Suspend(string id)
+        {
+            if (id == null || !User.IsInRole(Roles.ADMINISTRATOR.ToString()))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+            
+            user.IsEnabled = false;
+            await _userManager.UpdateAsync(user);
+            return RedirectToAction("Profile","Profile", new { id = id });
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Unsuspend(string id)
+        {
+            if (id == null || !User.IsInRole(Roles.ADMINISTRATOR.ToString()))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.IsEnabled = true;
+            await _userManager.UpdateAsync(user);
+            return RedirectToAction("Profile", "Profile", new { id = id });
+            
+        }
+
+        public async Task<IActionResult> Promote(string id)
+        {          
+            if (id == null || !User.IsInRole(Roles.ADMINISTRATOR.ToString()))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            await _userManager.AddToRoleAsync(user, Roles.ADMINISTRATOR.ToString());
+            await _userManager.UpdateAsync(user);
+            return RedirectToAction("Profile", "Profile", new { id = id });
+        }
+
+        public async Task<IActionResult> Demote(string id)
+        {
+            if (id == null || !User.IsInRole(Roles.ADMINISTRATOR.ToString()))
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            await _userManager.RemoveFromRoleAsync(user, Roles.ADMINISTRATOR.ToString());
+            await _userManager.UpdateAsync(user);
+            return RedirectToAction("Profile", "Profile", new { id = id});
+        }
+        
         #region Helpers
 
         private void AddErrors(IdentityResult result)
@@ -497,4 +575,5 @@ namespace QAWebsite.Controllers
 
         #endregion
     }
+
 }

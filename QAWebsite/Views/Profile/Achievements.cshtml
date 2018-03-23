@@ -1,0 +1,30 @@
+﻿@model QAWebsite.Models.AccountViewModels.AchievementViewModel
+
+@{
+    ViewData["Title"] = "Achievements";
+}
+
+<h2>@Model.Username's Achievements</h2>
+
+@if (Model.Achievements.Count() == 0) { 
+    <div style="text-align:center; height:500px;"><h3 style="line-height:500px;">@Model.Username has no achievements</h3></div>
+}
+
+@foreach (var item in Model.Achievements)
+{
+    <div class="achievementListContainer">
+        <div class="achievementImageContainer">
+            <img src="@item.Image" alt="Achievement Image" class="achievementImage" />
+        </div>
+
+        <div class="achievementInformationContainer">
+            <h2><b>@Html.DisplayFor(modelItem => item.Title)</b></h2>
+
+            <p><i>@Html.DisplayFor(modelItem => item.Description)</i></p>
+        </div>
+    </div>
+}
+<div>
+    <a asp-action="Profile" asp-controller="Profile" asp-route-id="@Model.Id">Back to Profile</a>
+</div>
+

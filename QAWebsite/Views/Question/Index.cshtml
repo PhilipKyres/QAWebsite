@@ -31,7 +31,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.Rating)
             </th>
-            <th></th>
+            @if (User.Identity.IsAuthenticated && User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.Flags)
+                </th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -56,6 +61,21 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.Rating)
                 </td>
+              
+                @if (User.Identity.IsAuthenticated && User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
+                {
+                     <td>
+                         @if (item.Flags > 0)
+                         {
+                            <a asp-action="Index" asp-controller="Flags" asp-route-id="@item.Id">@item.Flags</a>
+                         }
+                         else
+                         {
+                                <p>0</p>
+                         }
+                    </td>               
+                }
+                              
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                     @if (User.Identity.IsAuthenticated && item.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))

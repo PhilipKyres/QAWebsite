@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
-using QAWebsite.Models;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.QuestionViewModels;
+using QAWebsite.Models.UserModels;
+using QAWebsite.Services;
 
 namespace QAWebsite.Controllers
 {
@@ -17,11 +18,13 @@ namespace QAWebsite.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAchievementDistributor _achievementDistributor;
 
-        public CommentController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public CommentController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAchievementDistributor achievementDistributor)
         {
             _context = context;
             _userManager = userManager;
+            _achievementDistributor = achievementDistributor;
         }
 
         public List<CommentViewModel> GetComments<T>(DbSet<T> dbSet, string id) where T : Comment
@@ -30,7 +33,7 @@ namespace QAWebsite.Controllers
 
             List<CommentViewModel> cvm = new List<CommentViewModel>();
 
-            foreach (Comment c in comments)
+            foreach (T c in comments)
             {
                 string name = _context.Users.Where(u => u.Id == c.AuthorId).Select(x => x.UserName).SingleOrDefault();
                 cvm.Add(new CommentViewModel(c, name));
@@ -45,7 +48,7 @@ namespace QAWebsite.Controllers
         {
             if (dvm.Comment == null || dvm.Comment.Trim().Length == 0 || parentId == null || type != CommentTypes.Question && type != CommentTypes.Answer)
             {
-                var newDvm = await new QuestionController(_context, _userManager).GetDetailsViewModel(dvm.Id);
+                var newDvm = await new QuestionController(_context, _userManager, _achievementDistributor).GetDetailsViewModel(dvm.Id);
                 newDvm.AnswerContent = dvm.AnswerContent;
                 return View("~/Views/Question/Details.cshtml", newDvm);
             }

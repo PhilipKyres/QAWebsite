@@ -10,11 +10,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using QAWebsite.Controllers;
 using QAWebsite.Data;
-using QAWebsite.Models;
 using QAWebsite.Models.QuestionViewModels;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using QAWebsite.Models.UserModels;
+using QAWebsite.Services;
 
 namespace QAWebsite.Tests
 {
@@ -26,6 +27,7 @@ namespace QAWebsite.Tests
 
         private ApplicationDbContext _context;
         private UserManager<ApplicationUser> _userManager;
+        private AchievementDistributor _achievementDistributor;
         private QuestionController _questionController;
         private FlagsController _flagController;
         private TagController _tagController;
@@ -51,12 +53,14 @@ namespace QAWebsite.Tests
             var serviceProvider = services.BuildServiceProvider();
             _context = serviceProvider.GetRequiredService<ApplicationDbContext>();
             _userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            _achievementDistributor = new AchievementDistributor();
 
             _tagController = new TagController(_context)
             {
                 ControllerContext = new ControllerContext() { HttpContext = context }
             };
-            _questionController = new QuestionController(_context, _userManager)
+
+            _questionController = new QuestionController(_context, _userManager, _achievementDistributor)
             {
                 ControllerContext = new ControllerContext() {HttpContext = context}
             };

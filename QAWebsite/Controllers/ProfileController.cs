@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,10 +9,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
-using QAWebsite.Models;
 using QAWebsite.Models.AccountViewModels;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
+using QAWebsite.Models.UserModels;
 using QAWebsite.Properties;
 
 namespace QAWebsite.Controllers
@@ -28,13 +29,13 @@ namespace QAWebsite.Controllers
             _userManager = userManager;
         }
 
-        public static int GetRatingCount<T>(DbSet<T> dbSet,IList idList, Ratings ratingType) where T : Rating
+        public static int GetRatingCount<T>(DbSet<T> dbSet, IList idList, Ratings ratingType) where T : Rating
         {
             return dbSet.Count(item => idList.Contains(item.FkId) && item.RatingValue == ratingType);
         }
 
         [AllowAnonymous]
-        [Route("/Profile/{id}")]
+        [Route("/Profile/{id}")] //TODO change to unique username
         public async Task<IActionResult> Profile(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -56,6 +57,7 @@ namespace QAWebsite.Controllers
                 Id = user.Id,
                 Username = user.UserName,
                 Email = user.Email,
+                isEnabled = user.IsEnabled,
                 Rating = rating,
                 AboutMe = user.AboutMe ?? Resources.aboutMeNullString,
                 QuestionList = await _context.Question.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync(),
@@ -68,15 +70,42 @@ namespace QAWebsite.Controllers
                 img = user.UserImage;
             }
             else using (var memStream = new MemoryStream())
-            {
-                Resources.defaultUserImage.Save(memStream, Resources.defaultUserImage.RawFormat);
-                img = memStream.ToArray();
-            }
+                {
+                    Resources.defaultUserImage.Save(memStream, Resources.defaultUserImage.RawFormat);
+                    img = memStream.ToArray();
+                }
 
             profileViewModel.UserImage = "data:image/gif;base64," + Convert.ToBase64String(img);
 
             return View("Profile", profileViewModel);
 
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> Achievements(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var achievementPairs = _context.UserAchievements.Where(achievement => achievement.UserId == id).Select(ua =>
+                new AchievementDisplayContainer
+                {
+                    Image = "data:image/gif;base64," + Convert.ToBase64String(ua.Achievement.AchievementImage),
+                    Title = ua.Achievement.Title,
+                    Description = ua.Achievement.Description,
+                }).ToList();
+                
+            var viewModel = new AchievementViewModel
+            {
+                Id = id,
+                Username = user.UserName,
+                Achievements = achievementPairs
+            };
+
+            return View(viewModel);
         }
     }
 }

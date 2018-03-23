@@ -1,5 +1,6 @@
 ﻿@model QAWebsite.Models.QuestionViewModels.FlagViewModel
 @using QAWebsite.Models.Enums;
+@using QAWebsite.Models.UserModels
 
 @{
     ViewData["Title"] = "Flag";
@@ -16,7 +17,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="QuestionId" />
             <div class="form-group">
-                <select asp-for="SelectedReason" asp-items="Html.GetEnumSelectList<FlagType>()"></select>
+                <select class="form-control" asp-for="SelectedReason" asp-items="Html.GetEnumSelectList<FlagType>()"></select>
                 <span asp-validation-for="SelectedReason" class="text-danger"></span>
             </div>
             <div class="form-group">

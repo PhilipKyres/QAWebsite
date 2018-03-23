@@ -1,4 +1,6 @@
-﻿@model QAWebsite.Models.QuestionModels.Flag
+﻿@model QAWebsite.Models.QuestionViewModels.FlagViewModel
+@using QAWebsite.Models.Enums;
+
 
 @{
     ViewData["Title"] = "Details";
@@ -17,6 +19,12 @@
             @Html.DisplayFor(model => model.Reason)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.Author)
+        </dt>
+        <dd>
+          <a asp-action="Profile" asp-controller="Profile" asp-route-id="@Model.AuthorId">@Html.DisplayFor(model => model.Author)</a>
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Content)
         </dt>
         <dd>
@@ -32,5 +40,6 @@
 </div>
 <div>
     <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> |
+    <a asp-action="Details" asp-controller="Question" asp-route-id="@Model.QuestionId">See Question</a>  |
     <a asp-action="Index">Back to List</a>
 </div>

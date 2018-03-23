@@ -1,4 +1,4 @@
-﻿@model QAWebsite.Models.QuestionModels.Flag
+﻿@model QAWebsite.Models.QuestionViewModels.FlagViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -18,6 +18,12 @@
             @Html.DisplayFor(model => model.Reason)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.Author)
+        </dt>
+        <dd>
+            <a asp-action="Profile" asp-controller="Profile" asp-route-id="@Model.AuthorId">@Html.DisplayFor(model => model.Author)</a>
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Content)
         </dt>
         <dd>
@@ -34,6 +40,6 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-default" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Details" asp-route-id="@Model.Id">Back</a>
     </form>
 </div>

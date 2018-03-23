@@ -1,4 +1,5 @@
-﻿@model QAWebsite.Models.AccountViewModels.RegisterViewModel
+﻿@using QAWebsite.Models.UserModels
+@model QAWebsite.Models.AccountViewModels.RegisterViewModel
 @{
     ViewData["Title"] = "Register";
 }
@@ -31,10 +32,8 @@
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <div class="col-md-10">
-                    <label asp-for="UserImage"></label>
-                    <input asp-for="UserImage" type="file" name="userImage" />
-                </div>
+                <label asp-for="UserImage"></label>
+                <input asp-for="UserImage" type="file" class="btn btn-default" name="userImage" />
             </div>
             <button type="submit" class="btn btn-default">Register</button>
         </form>

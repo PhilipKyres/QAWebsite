@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
 using QAWebsite.Models;
 using QAWebsite.Models.QuestionViewModels;
+using QAWebsite.Models.UserModels;
 
 namespace QAWebsite.Controllers
 {
