@@ -24,6 +24,7 @@ namespace QAWebsite.Tests
         private const string UserName = "testName";
 
         private ApplicationDbContext _context;
+        private DbContextOptions<ApplicationDbContext> _dbContextOptions;
         private UserManager<ApplicationUser> _userManager;
         private AchievementDistributor _achievementDistributor;
         private RatingController _ratingController;
@@ -48,15 +49,17 @@ namespace QAWebsite.Tests
             context.User = user;
             services.AddSingleton<IHttpContextAccessor>(h => new HttpContextAccessor { HttpContext = context });
             var serviceProvider = services.BuildServiceProvider();
+
             _context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            _dbContextOptions = serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
             _userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             _achievementDistributor = new AchievementDistributor();
 
-            _ratingController = new RatingController(_context, _userManager)
+            _ratingController = new RatingController(_context, _userManager, _dbContextOptions)
             {
                 ControllerContext = new ControllerContext() { HttpContext = context }
             };
-            _questionController = new QuestionController(_context, _userManager, _achievementDistributor)
+            _questionController = new QuestionController(_context, _userManager, _achievementDistributor, _dbContextOptions)
             {
                 ControllerContext = new ControllerContext() { HttpContext = context }
             };

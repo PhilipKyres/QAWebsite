@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
-using QAWebsite.Models;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.QuestionViewModels;
@@ -21,13 +20,19 @@ namespace QAWebsite.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IAchievementDistributor achievementDistributor;
+        private readonly IAchievementDistributor _achievementDistributor;
+        private readonly DbContextOptions<ApplicationDbContext> _dbContextOptions;
+        private readonly RatingController _ratingController;
+        private readonly CommentController _commentController;
 
-        public AnswerController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAchievementDistributor achievementDistributor)
+        public AnswerController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAchievementDistributor achievementDistributor, DbContextOptions<ApplicationDbContext> dbContextOptions)
         {
             _context = context;
             _userManager = userManager;
-            this.achievementDistributor = achievementDistributor;
+            _achievementDistributor = achievementDistributor;
+            _dbContextOptions = dbContextOptions;
+            _ratingController = new RatingController(context, userManager, dbContextOptions);
+            _commentController = new CommentController(_context, userManager, achievementDistributor, dbContextOptions);
         }
 
         // GET: Answer
@@ -69,7 +74,7 @@ namespace QAWebsite.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var newDvm = await new QuestionController(_context, _userManager, achievementDistributor).GetDetailsViewModel(dvm.Id);
+                var newDvm = await new QuestionController(_context, _userManager, _achievementDistributor, _dbContextOptions).GetDetailsViewModel(dvm.Id);
                 newDvm.AnswerContent = dvm.AnswerContent;
                 return View("~/Views/Question/Details.cshtml", newDvm);
             }
@@ -86,7 +91,7 @@ namespace QAWebsite.Controllers
 
             _context.Add(answer);
             await _context.SaveChangesAsync();
-            achievementDistributor.check(answer.AuthorId, _context, AchievementType.AnswerCreation);
+            _achievementDistributor.check(answer.AuthorId, _context, AchievementType.AnswerCreation);
             return RedirectToAction("Details", "Question", new { dvm.Id });
         }
 
@@ -201,9 +206,10 @@ namespace QAWebsite.Controllers
         public List<AnswerViewModel> GetAnswerList(string id)
         {
             var answers = _context.Answer.Where(a => a.QuestionId == id).ToList();
-			return answers.Select(a => new AnswerViewModel(a, _context.Users.Where(u => u.Id == a.AuthorId).Select(x => x.UserName).SingleOrDefault(),
-                    RatingController.GetRating(_context.AnswerRating, a.Id),
-                    new CommentController(_context, _userManager, achievementDistributor).GetComments(_context.AnswerComment, a.Id))).ToList();
+			return answers.Select(a => new AnswerViewModel(a, 
+			    _context.Users.Where(u => u.Id == a.AuthorId).Select(x => x.UserName).SingleOrDefault(), 
+			    _ratingController.GetRating<AnswerRating>(a.Id),
+			    _commentController.GetComments<AnswerComment>(a.Id))).ToList();
         }
     }
 }

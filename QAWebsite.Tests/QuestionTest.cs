@@ -26,6 +26,7 @@ namespace QAWebsite.Tests
         private const string Password = "!Qaz2wsx";
 
         private ApplicationDbContext _context;
+        private DbContextOptions<ApplicationDbContext> _dbContextOptions;
         private UserManager<ApplicationUser> _userManager;
         private AchievementDistributor _achievementDistributor;
         private QuestionController _questionController;
@@ -62,6 +63,7 @@ namespace QAWebsite.Tests
             httpContext.RequestServices = serviceProvider;
 
             _context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            _dbContextOptions = serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
             _userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             _achievementDistributor = new AchievementDistributor();
 
@@ -70,7 +72,7 @@ namespace QAWebsite.Tests
                 ControllerContext = new ControllerContext() { HttpContext = httpContext }
             };
 
-            _questionController = new QuestionController(_context, _userManager, _achievementDistributor)
+            _questionController = new QuestionController(_context, _userManager, _achievementDistributor, _dbContextOptions)
             {
                 ControllerContext = new ControllerContext() {HttpContext = httpContext }
             };
@@ -80,8 +82,7 @@ namespace QAWebsite.Tests
                 ControllerContext = new ControllerContext() { HttpContext = httpContext }
             };
 
-
-            _answerController = new AnswerController(_context, _userManager, _achievementDistributor)
+            _answerController = new AnswerController(_context, _userManager, _achievementDistributor, _dbContextOptions)
             {
                 ControllerContext = new ControllerContext() { HttpContext = httpContext }
             };
@@ -222,27 +223,26 @@ namespace QAWebsite.Tests
             await _questionController.Create(unique1);
 
             // Search by Tag
-            var resultTag1 = await _questionController.Search("Programming") as ViewResult;
+            var resultTag1 = _questionController.Search("Programming") as ViewResult;
             var vmsTag1 = resultTag1.Model as IEnumerable<IndexViewModel>;
-            var resultTag2 = await _questionController.Search("testing") as ViewResult;
+            var resultTag2 = _questionController.Search("testing") as ViewResult;
             var vmsTag2 = resultTag2.Model as IEnumerable<IndexViewModel>;
 
             // Search by Title
-            var resultTitle1 = await _questionController.Search("Definition of RESTAPI") as ViewResult;
+            var resultTitle1 = _questionController.Search("Definition of RESTAPI") as ViewResult;
             var vmsTitle1 = resultTitle1.Model as IEnumerable<IndexViewModel>;
-            var resultTitle2 = await _questionController.Search("How to Hello World?") as ViewResult;
+            var resultTitle2 = _questionController.Search("How to Hello World?") as ViewResult;
             var vmsTitle2 = resultTitle1.Model as IEnumerable<IndexViewModel>;
 
             // Search by Content
-            var resultContent1 = await _questionController.Search("What exactly is RESTAPI?") as ViewResult;
+            var resultContent1 = _questionController.Search("What exactly is RESTAPI?") as ViewResult;
             var vmsContent1 = resultContent1.Model as IEnumerable<IndexViewModel>;
-            var resultContent2 = await _questionController.Search("Show me how to to automate some tests using Python.") as ViewResult;
+            var resultContent2 = _questionController.Search("Show me how to to automate some tests using Python.") as ViewResult;
             var vmsContent2 = resultContent2.Model as IEnumerable<IndexViewModel>;
 
             // Search by Username
             //var resultUser = await _questionController.Search("testName") as ViewResult;
             //var vmsUser = resultUser.Model as IEnumerable<IndexViewModel>;
-
 
             // Assert
             Assert.AreEqual(vmsTag1.Count(), 2); // Number of questions in db with multiple matching Tags

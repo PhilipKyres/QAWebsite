@@ -57,25 +57,23 @@ namespace QAWebsite.Controllers
                 Id = user.Id,
                 Username = user.UserName,
                 Email = user.Email,
-                isEnabled = user.IsEnabled,
+                IsEnabled = user.IsEnabled,
                 Rating = rating,
                 AboutMe = user.AboutMe ?? Resources.aboutMeNullString,
                 QuestionList = await _context.Question.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync(),
                 AnswerList = await _context.Answer.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync()
             };
 
-            byte[] img;
             if (user.UserImage != null)
             {
-                img = user.UserImage;
+                profileViewModel.UserImage = "data:image/gif;base64," + Convert.ToBase64String(user.UserImage);
             }
-            else using (var memStream = new MemoryStream())
+/*            else using (var memStream = new MemoryStream())
                 {
                     Resources.defaultUserImage.Save(memStream, Resources.defaultUserImage.RawFormat);
                     img = memStream.ToArray();
-                }
+                }*/
 
-            profileViewModel.UserImage = "data:image/gif;base64," + Convert.ToBase64String(img);
 
             return View("Profile", profileViewModel);
 

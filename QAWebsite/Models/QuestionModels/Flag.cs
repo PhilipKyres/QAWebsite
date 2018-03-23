@@ -31,5 +31,7 @@ namespace QAWebsite.Models.QuestionModels
         [ForeignKey("ApplicationUser")]
         [Display(Name = "Author")]
         public string AuthorId { get; set; }
+
+        public virtual Question Question { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace QAWebsite.Models.AccountViewModels
 
         public string UserImage { get; set; }
 
-        public bool isEnabled { get; set; }
+        public bool IsEnabled { get; set; }
 
         [Display(Name = "Rating")]
         public int Rating { get; set; }

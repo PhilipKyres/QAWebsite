@@ -1,14 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
-using QAWebsite.Models;
-using QAWebsite.Models.QuestionViewModels;
 using QAWebsite.Models.UserModels;
+using QAWebsite.Services;
 
 namespace QAWebsite.Controllers
 {
@@ -16,30 +14,23 @@ namespace QAWebsite.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAchievementDistributor _achievementDistributor;
         private readonly RatingController _ratingController;
+        private readonly QuestionController _questionController;
 
-        public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAchievementDistributor achievementDistributor, DbContextOptions<ApplicationDbContext> dbContextOptions)
         {
             _context = context;
             _userManager = userManager;
-            _ratingController = new RatingController(context, userManager);
+            _achievementDistributor = achievementDistributor;
+            _ratingController = new RatingController(context, userManager, dbContextOptions);
+            _questionController = new QuestionController(context, userManager, achievementDistributor, dbContextOptions);
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var questions = await _context.Question
-                   .Include(x => x.QuestionTags)
-                   .ThenInclude(x => x.Tag)
-                   .OrderByDescending(q => q.CreationDate)
-                   .Take(10)
-                   .ToListAsync();
-
-            IEnumerable<IndexViewModel> vms = questions.Select(q => new IndexViewModel(q,
-                _context.Users.Where(u => u.Id == q.AuthorId).Select(x => x.UserName).SingleOrDefault(),
-                RatingController.GetRating(_context.QuestionRating, q.Id)));
-
-            return View(vms);
+            return View(_questionController.GetQuestionList().Take(10));
         }
 
         public IActionResult About()

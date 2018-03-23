@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QAWebsite.Data;
-using QAWebsite.Models;
 using QAWebsite.Models.Enums;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.UserModels;
@@ -16,19 +15,28 @@ namespace QAWebsite.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly DbContextOptions<ApplicationDbContext> _dbContextOptions;
 
-        public RatingController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public RatingController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, DbContextOptions<ApplicationDbContext> dbContextOptions)
         {
             _context = context;
             _userManager = userManager;
+            _dbContextOptions = dbContextOptions;
         }
 
-        public static int GetRating<T>(DbSet<T> dbSet, string id) where T : Rating
+        public int GetRating<T>(string id) where T : Rating
         {
-            int up = dbSet.Count(qr => qr.FkId == id && qr.RatingValue == Ratings.Upvote);
-            int down = dbSet.Count(qr => qr.FkId == id && qr.RatingValue == Ratings.Downvote);
 
-            return up - down;
+            //new DbContextOptionsBuilder<ApplicationDbContext>().UseSqlServer(Startup.Configuration.GetConnectionStringSecureValue("DefaultConnection"));
+            using (var contextInstance = new ApplicationDbContext(_dbContextOptions))
+            {
+                var dbSet = contextInstance.Set<T>();
+
+                int up = dbSet.Count(qr => qr.FkId == id && qr.RatingValue == Ratings.Upvote);
+                int down = dbSet.Count(qr => qr.FkId == id && qr.RatingValue == Ratings.Downvote);
+
+                return up - down;
+            }
         }
 
         private async Task Rate<T>(DbSet<T> dbSet, Rating newRating) where T : Rating

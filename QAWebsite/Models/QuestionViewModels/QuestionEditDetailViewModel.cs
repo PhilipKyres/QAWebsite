@@ -1,9 +1,6 @@
 ﻿using QAWebsite.Models.QuestionModels;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace QAWebsite.Models.QuestionViewModels
 {
@@ -49,7 +46,7 @@ namespace QAWebsite.Models.QuestionViewModels
         public String InitialContent { get; set; }
 
         [Required]
-        [Display(Name = "Initial Content")]
+        [Display(Name = "New Content")]
         public String NewContent { get; set; }
 
         [Required]

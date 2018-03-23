@@ -30,6 +30,7 @@ namespace QAWebsite.Tests
         private const string Password = "!Qaz2wsx";
 
         private ApplicationDbContext _context;
+        private DbContextOptions<ApplicationDbContext> _dbContextOptions;
         private UserManager<ApplicationUser> _userManager;
         private ManageController _manageController;
         private AccountController _accountController;
@@ -70,6 +71,7 @@ namespace QAWebsite.Tests
             httpContext.RequestServices = serviceProvider;
 
             _context = serviceProvider.GetRequiredService<ApplicationDbContext>();
+            _dbContextOptions = serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>();
             _userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             var signInManager = serviceProvider.GetRequiredService<SignInManager<ApplicationUser>>();
@@ -97,6 +99,7 @@ namespace QAWebsite.Tests
                 Url = urlHelper.Object,
                 ControllerContext = { HttpContext = httpContext }
             };
+
             var appUser = new ApplicationUser { Id = UserNameIdentifier, UserName = UserNameIdentifier, Email = UserNameIdentifier, EmailConfirmed = true };
             await _userManager.CreateAsync(appUser, Password);
             await _userManager.AddClaimsAsync(appUser, claims);
@@ -107,15 +110,16 @@ namespace QAWebsite.Tests
             {
                 ControllerContext = new ControllerContext() { HttpContext = httpContext }
             };
-            _questionController = new QuestionController(_context, _userManager, _achievementDistributor)
-            {
-                ControllerContext = new ControllerContext() { HttpContext = httpContext }
-            };
-            _flagController = new FlagsController(_context, _userManager)
+
+            _questionController = new QuestionController(_context, _userManager, _achievementDistributor, _dbContextOptions)
             {
                 ControllerContext = new ControllerContext() { HttpContext = httpContext }
             };
 
+            _flagController = new FlagsController(_context, _userManager)
+            {
+                ControllerContext = new ControllerContext() { HttpContext = httpContext }
+            };
         }
 
         [Test]
@@ -179,12 +183,10 @@ namespace QAWebsite.Tests
                 await _tagController.DeleteConfirmed(questionTags.First().TagId);
             }
            
-
             _context.SaveChanges();
 
-
             // Assert
-            Assert.IsTrue(_context.Tag.Where(tag => tagsList.Contains(tag.Name)).Count() == 0);
+            Assert.IsTrue(!_context.Tag.Any(tag => tagsList.Contains(tag.Name)));
         }
 
         [Test]
@@ -200,11 +202,13 @@ namespace QAWebsite.Tests
             await _tagController.UpdateQuestionTags(question, _tagController.ValidateParseTags("Tag1,Tag2", modelState));
             var questionTags = question.QuestionTags.Select(questionTag => questionTag.Tag.Name).ToList();
 
-            Assert.IsTrue(questionTags.Count() > 0);
+            Assert.IsTrue(questionTags.Any());
+
             // Act
             await _tagController.UpdateQuestionTags(question, _tagController.ValidateParseTags("ByeOldTag,HiNewTag", modelState));
 
             var postEditQuestionTags = _context.Question.SingleOrDefaultAsync(x => x.Id == question.Id).Result.QuestionTags.Select(qt => qt.Tag.Name);
+
             // Assert
             Assert.IsTrue(postEditQuestionTags.Count() == 2 && postEditQuestionTags.Intersect(questionTags).Count() == 0);
         }
