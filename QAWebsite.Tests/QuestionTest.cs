@@ -49,12 +49,8 @@ namespace QAWebsite.Tests
             _context = serviceProvider.GetRequiredService<ApplicationDbContext>();
             _userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             _achievementDistributor = new AchievementDistributor();
-
-
-            _questionController = new QuestionController(_context, _userManager, _achievementDistributor)
-            {
-                ControllerContext = new ControllerContext() {HttpContext = context}
-            };
+            _questionController = serviceProvider.GetRequiredService<QuestionController>();
+            _questionController.ControllerContext = new ControllerContext() {HttpContext = context};
         }
 
         [Test]

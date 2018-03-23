@@ -9,11 +9,7 @@ namespace QAWebsite.Models.QuestionViewModels
 {
     public class IndexViewModel
     {
-        public IndexViewModel(Question question, string authorName, int rating, int flags) : this(question, authorName, rating)
-        {
-            this.Flags = flags;
-        }
-        public IndexViewModel(Question question, string authorName, int rating)
+        public IndexViewModel(Question question, int rating)
         {
             this.AuthorId = question.AuthorId;
             this.Id = question.Id;
@@ -21,9 +17,14 @@ namespace QAWebsite.Models.QuestionViewModels
             this.Content = question.Content;
             this.CreationDate = question.CreationDate;
             this.EditDate = question.EditDate;
-            this.AuthorName = authorName;
             this.Rating = rating;
             this.QuestionTags = question.QuestionTags;
+
+            if (question.Author != null)
+                this.AuthorName = question.Author.UserName;
+
+            if (question.Flags != null)
+                this.Flags = question.Flags.Count;
         }
 
         [MaxLength(8)]

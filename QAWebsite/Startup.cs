@@ -8,8 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using QAWebsite.Controllers;
 using QAWebsite.Data;
-using QAWebsite.Models;
 using QAWebsite.Models.UserModels;
 using QAWebsite.Services;
 
@@ -27,6 +27,7 @@ namespace QAWebsite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //DbContextOptions<ApplicationDbContext> tt = new DbContextOptions<ApplicationDbContext>();
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -39,7 +40,7 @@ namespace QAWebsite
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
-            services.AddTransient<IAchievementDistributor, AchievementDistributor>();
+            services.AddSingleton<IAchievementDistributor, AchievementDistributor>();
 
             services.AddMvc();
         }

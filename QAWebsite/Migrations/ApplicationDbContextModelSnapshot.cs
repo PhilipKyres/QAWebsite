@@ -122,7 +122,6 @@ namespace QAWebsite.Migrations
                     b.Property<DateTime>("EditDate");
 
                     b.Property<string>("QuestionId")
-                        .IsRequired()
                         .HasMaxLength(8);
 
                     b.HasKey("Id");
@@ -196,6 +195,8 @@ namespace QAWebsite.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("QuestionId");
+
                     b.ToTable("Flag");
                 });
 
@@ -223,6 +224,8 @@ namespace QAWebsite.Migrations
                         .HasMaxLength(300);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Question");
                 });
@@ -496,8 +499,7 @@ namespace QAWebsite.Migrations
                 {
                     b.HasOne("QAWebsite.Models.QuestionModels.Question", "Question")
                         .WithMany("Answers")
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("QuestionId");
                 });
 
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.AnswerComment", b =>
@@ -506,6 +508,21 @@ namespace QAWebsite.Migrations
                         .WithMany("Comments")
                         .HasForeignKey("FkId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.Flag", b =>
+                {
+                    b.HasOne("QAWebsite.Models.QuestionModels.Question", "Question")
+                        .WithMany("Flags")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("QAWebsite.Models.QuestionModels.Question", b =>
+                {
+                    b.HasOne("QAWebsite.Models.UserModels.ApplicationUser", "Author")
+                        .WithMany("Questions")
+                        .HasForeignKey("AuthorId");
                 });
 
             modelBuilder.Entity("QAWebsite.Models.QuestionModels.QuestionComment", b =>

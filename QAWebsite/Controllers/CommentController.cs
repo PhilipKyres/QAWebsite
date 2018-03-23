@@ -19,27 +19,21 @@ namespace QAWebsite.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAchievementDistributor _achievementDistributor;
+        private readonly DbContextOptions<ApplicationDbContext> _dbContextOptions;
 
-        public CommentController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAchievementDistributor achievementDistributor)
+        public CommentController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAchievementDistributor achievementDistributor, DbContextOptions<ApplicationDbContext> dbContextOptions)
         {
             _context = context;
             _userManager = userManager;
             _achievementDistributor = achievementDistributor;
+            _dbContextOptions = dbContextOptions;
         }
 
-        public List<CommentViewModel> GetComments<T>(DbSet<T> dbSet, string id) where T : Comment
+        public List<CommentViewModel> GetComments<T>(string id) where T : Comment
         {
-            var comments = dbSet.Where(c => c.FkId == id).OrderBy(o => o.CreationDate).ToList();
-
-            List<CommentViewModel> cvm = new List<CommentViewModel>();
-
-            foreach (T c in comments)
-            {
-                string name = _context.Users.Where(u => u.Id == c.AuthorId).Select(x => x.UserName).SingleOrDefault();
-                cvm.Add(new CommentViewModel(c, name));
-            }
-
-            return cvm;
+            return _context.Set<T>().Where(c => c.FkId == id)
+                .Select(c => new CommentViewModel(c, _context.Users.Where(u => u.Id == c.AuthorId).Select(x => x.UserName).SingleOrDefault()))
+                .OrderBy(o => o.CreationDate).ToList();
         }
 
         [HttpPost]
@@ -48,7 +42,7 @@ namespace QAWebsite.Controllers
         {
             if (dvm.Comment == null || dvm.Comment.Trim().Length == 0 || parentId == null || type != CommentTypes.Question && type != CommentTypes.Answer)
             {
-                var newDvm = await new QuestionController(_context, _userManager, _achievementDistributor).GetDetailsViewModel(dvm.Id);
+                var newDvm = await new QuestionController(_context, _userManager, _achievementDistributor, _dbContextOptions).GetDetailsViewModel(dvm.Id);
                 newDvm.AnswerContent = dvm.AnswerContent;
                 return View("~/Views/Question/Details.cshtml", newDvm);
             }

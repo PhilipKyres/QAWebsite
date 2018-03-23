@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using QAWebsite.Models.UserModels;
 
 namespace QAWebsite.Models.QuestionModels
 {
@@ -36,10 +37,14 @@ namespace QAWebsite.Models.QuestionModels
         [ForeignKey("Answer")]
         public string BestAnswerId { get; set; }
 
+        public virtual ApplicationUser Author { get; set; }
+
         public virtual ICollection<QuestionTag> QuestionTags { get; set; }
 
         public virtual ICollection<Answer> Answers { get; set; }
 
         public virtual ICollection<QuestionComment> Comments { get; set; }
+
+        public virtual ICollection<Flag> Flags { get; set; }
     }
 }

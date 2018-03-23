@@ -17,8 +17,32 @@ namespace QAWebsite.Data
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Tag>().HasIndex(x => x.Name).IsUnique();
-            builder.Entity<QuestionTag>().HasKey(qt => new { qt.QuestionId, qt.TagId });
+            builder.Entity<Question>()
+                .HasOne(x => x.Author)
+                .WithMany(x => x.Questions)
+                .HasForeignKey(x => x.AuthorId);
+
+            builder.Entity<Question>()
+                .HasMany(x => x.Answers)
+                .WithOne(x => x.Question)
+                .HasForeignKey(x => x.QuestionId);
+
+            builder.Entity<Question>()
+                .HasMany(x => x.Comments)
+                .WithOne(x => x.Question)
+                .HasForeignKey(x => x.FkId);
+
+            builder.Entity<Question>()
+                .HasMany(x => x.Flags)
+                .WithOne(x => x.Question)
+                .HasForeignKey(x => x.QuestionId);
+
+            builder.Entity<Tag>()
+                .HasIndex(x => x.Name)
+                .IsUnique();
+
+            builder.Entity<QuestionTag>()
+                .HasKey(qt => new { qt.QuestionId, qt.TagId });
 
             builder.Entity<QuestionTag>()
                 .HasOne(q => q.Question)
@@ -30,19 +54,9 @@ namespace QAWebsite.Data
                 .WithMany(qt => qt.QuestionTags)
                 .HasForeignKey(t => t.TagId);
 
-            builder.Entity<Question>()
-                .HasMany(x => x.Answers)
-                .WithOne(x => x.Question)
-                .HasForeignKey(x => x.QuestionId);
-
             builder.Entity<Answer>()
                .HasMany(x => x.Comments)
                .WithOne(x => x.Answer)
-               .HasForeignKey(x => x.FkId);
-
-            builder.Entity<Question>()
-               .HasMany(x => x.Comments)
-               .WithOne(x => x.Question)
                .HasForeignKey(x => x.FkId);
 
             builder.Entity<ApplicationUser>()

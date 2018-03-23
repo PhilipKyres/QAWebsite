@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
+using QAWebsite.Models.QuestionModels;
 
 namespace QAWebsite.Models.UserModels
 {
@@ -11,6 +12,8 @@ namespace QAWebsite.Models.UserModels
         public string AboutMe { get; set; }
 
         public bool IsEnabled { get; set; }
+
+        public virtual ICollection<Question> Questions { get; set; }
 
         public virtual ICollection<ApplicationUserAchievements> UserAchievements { get; set; }
     }
