@@ -14,6 +14,7 @@ using QAWebsite.Models;
 using QAWebsite.Models.QuestionViewModels;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace QAWebsite.Tests
 {
@@ -26,6 +27,7 @@ namespace QAWebsite.Tests
         private ApplicationDbContext _context;
         private UserManager<ApplicationUser> _userManager;
         private QuestionController _questionController;
+        private FlagsController _flagController;
         private TagController _tagController;
 
         [SetUp]
@@ -58,6 +60,10 @@ namespace QAWebsite.Tests
             {
                 ControllerContext = new ControllerContext() {HttpContext = context}
             };
+            _flagController = new FlagsController(_context, _userManager)
+            {
+                ControllerContext = new ControllerContext() { HttpContext = context }
+            };
         }
 
         [Test]
@@ -70,7 +76,7 @@ namespace QAWebsite.Tests
             await _questionController.Create(vm);
 
             // Assert
-            var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title");
+            var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title" && x.Content == "Test content");
             Assert.IsNotNull(question);
             Assert.AreEqual(question.AuthorId, UserNameIdentifier);
             Assert.AreEqual(question.Content, vm.Content);
@@ -83,20 +89,41 @@ namespace QAWebsite.Tests
             // Arrange
 
             // Act
-            var vm = new CreateViewModel() { Title = "Test Title", Content = "Test content", Tags = "JustOneTag" };
+            var vm = new CreateViewModel() { Title = "Test Title", Content = "Test content", Tags = "InitialTag" };
             await _questionController.Create(vm);
-            var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title");
+            var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title" && x.Content == "Test content");
 
-            IEnumerable<string> newTagNames = new string[] { "test1", "test2" };
-            var names = new HashSet<string>(newTagNames);
-            var toRemove = question.QuestionTags.Where(x => !names.Contains(x.Tag.Name));
-            _context.QuestionTag.RemoveRange(toRemove);
-            await _tagController.CreateQuestionTags(question, names.Except(question.QuestionTags.Select(x => x.Tag.Name)));
+            ModelStateDictionary modelState = new ModelStateDictionary();
+            var tagsList = _tagController.ValidateParseTags("ChangedTag,NewTag", modelState);
+            await _tagController.UpdateQuestionTags(question, tagsList);
+            
+            var questionAltered = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title" && x.Content == "Test content");
+
+            var alteredTagList = questionAltered.QuestionTags.Select(a => a.Tag.Name);
 
             // Assert
+            Assert.IsNotNull(questionAltered);
+            Assert.AreEqual(questionAltered.Id, question.Id);
+            Assert.IsTrue(tagsList.All(alteredTagList.Contains) && alteredTagList.All(tagsList.Contains));
 
-            Assert.IsNotNull(question);
-            Assert.AreEqual(question.QuestionTags.Count, 2);
+        }
+
+        [Test]
+        public async Task ReportQuestion()
+        {
+            // Arrange
+
+            var vm = new CreateViewModel() { Title = "Test Title", Content = "Test content", Tags = "InitialTag" };
+            await _questionController.Create(vm);
+            var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title" && x.Content == "Test content");
+
+            // Act
+            await _flagController.Create(new FlagViewModel(question) {SelectedReason = Models.Enums.FlagType.Inappropriate, Content = "Test Content Report" });
+            var flag = _context.Flag.Where(f => f.QuestionId == question.Id && f.Content == "Test Content Report" 
+            && f.Reason == (int)Models.Enums.FlagType.Inappropriate).FirstOrDefault();
+           
+            // Assert
+            Assert.IsNotNull(flag);
         }
 
         [Test]

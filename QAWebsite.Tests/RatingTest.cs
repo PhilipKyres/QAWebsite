@@ -67,12 +67,13 @@ namespace QAWebsite.Tests
             // Act
             var vm = new CreateViewModel() { Title = "Test Title", Content = "Test content", Tags = "test, another tag" };
             await _questionController.Create(vm);
-            var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title");
+            var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title" && x.Content == "Test content");
             await _ratingController.RateQuestion(question.Id, Models.Enums.Ratings.Upvote);
-            var rating = await _context.QuestionRating.SingleOrDefaultAsync(x => x.FkId == question.Id);
+            var rating = await _context.QuestionRating.SingleOrDefaultAsync(x => x.FkId == question.Id && x.RatedBy == UserNameIdentifier);
             // Assert
 
             Assert.IsNotNull(question);
+            Assert.IsNotNull(rating);
             Assert.AreEqual(rating.RatingValue, Models.Enums.Ratings.Upvote);
 
         }
@@ -84,12 +85,13 @@ namespace QAWebsite.Tests
             // Act
             var vm = new CreateViewModel() { Title = "Test Title", Content = "Test content", Tags = "test, another tag" };
             await _questionController.Create(vm);
-            var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title");
+            var question = await _context.Question.SingleOrDefaultAsync(x => x.Title == "Test Title" && x.Content == "Test content");
             await _ratingController.RateQuestion(question.Id, Models.Enums.Ratings.Downvote);
-            var rating = await _context.QuestionRating.SingleOrDefaultAsync(x => x.FkId == question.Id);
+            var rating = await _context.QuestionRating.SingleOrDefaultAsync(x => x.FkId == question.Id && x.RatedBy == UserNameIdentifier);
             // Assert
 
             Assert.IsNotNull(question);
+            Assert.IsNotNull(rating);
             Assert.AreEqual(rating.RatingValue, Models.Enums.Ratings.Downvote);
 
         }
