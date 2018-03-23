@@ -450,6 +450,12 @@ namespace QAWebsite.Migrations
                 column: "AuthorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Question_Title",
+                table: "Question",
+                column: "Title",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_QuestionComment_FkId",
                 table: "QuestionComment",
                 column: "FkId");

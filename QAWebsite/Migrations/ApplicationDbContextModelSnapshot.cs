@@ -227,6 +227,9 @@ namespace QAWebsite.Migrations
 
                     b.HasIndex("AuthorId");
 
+                    b.HasIndex("Title")
+                        .IsUnique();
+
                     b.ToTable("Question");
                 });
 

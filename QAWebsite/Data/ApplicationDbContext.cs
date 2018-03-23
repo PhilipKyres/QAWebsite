@@ -18,6 +18,10 @@ namespace QAWebsite.Data
             base.OnModelCreating(builder);
 
             builder.Entity<Question>()
+                .HasIndex(x => x.Title)
+                .IsUnique();
+
+            builder.Entity<Question>()
                 .HasOne(x => x.Author)
                 .WithMany(x => x.Questions)
                 .HasForeignKey(x => x.AuthorId);

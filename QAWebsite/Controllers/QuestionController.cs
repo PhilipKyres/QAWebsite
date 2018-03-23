@@ -139,6 +139,11 @@ namespace QAWebsite.Controllers
             //Validate here
             var tagNames = _tagController.ValidateParseTags(vm.Tags, ModelState);
 
+            if (_context.Question.Any(x => x.Title == vm.Title.Trim()))
+            {
+                ModelState.AddModelError("Title", "A question with that title already exists");
+            }
+
             if (!ModelState.IsValid)
             {
                 return View(vm);
@@ -147,8 +152,8 @@ namespace QAWebsite.Controllers
             var question = new Question
             {
                 Id = Guid.NewGuid().ToString().Substring(0, 8),
-                Title = vm.Title,
-                Content = vm.Content,
+                Title = vm.Title.Trim(),
+                Content = vm.Content.Trim(),
                 CreationDate = DateTime.Now,
                 EditDate = DateTime.Now,
                 AuthorId = _userManager.GetUserId(User)
@@ -164,13 +169,13 @@ namespace QAWebsite.Controllers
                 EditDate = question.EditDate
             };
                 
-            _context.Add(question);
+            var q = _context.Add(question);
             _context.Add(edit);
             await _context.SaveChangesAsync();
 
             await _tagController.CreateQuestionTags(question, tagNames);
             _achievementDistributor.check(question.AuthorId, _context, AchievementType.QuestionCreation);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Details), new { id = q.Entity.Id });
         }
 
         // GET: Question/Edit/5
@@ -208,77 +213,81 @@ namespace QAWebsite.Controllers
 
             var tagNames = _tagController.ValidateParseTags(vm.Tags, ModelState);
 
-            if (ModelState.IsValid)
+            if (_context.Question.Any(x => x.Id != id && x.Title == vm.Title.Trim()))
             {
-                var question = await _context.Question
-                    .Include(x => x.QuestionTags)
-                    .ThenInclude(x => x.Tag)
-                    .SingleOrDefaultAsync(m => m.Id == id);
+                ModelState.AddModelError("Title", "A question with that title already exists");
+            }
 
-                var currentUser = _userManager.GetUserAsync(User).Result;
-                if (question == null || question.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            var question = await _context.Question
+                .Include(x => x.QuestionTags)
+                .ThenInclude(x => x.Tag)
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            var currentUser = _userManager.GetUserAsync(User).Result;
+            if (question == null || question.AuthorId != currentUser.Id && !_userManager.IsInRoleAsync(currentUser, Roles.ADMINISTRATOR.ToString()).Result)
+            {
+                return NotFound();
+            }
+
+            var initialTitle = question.Title;
+            var initialContent = question.Content;
+
+            question.Title = vm.Title.Trim();
+            question.Content = vm.Content.Trim();
+            question.EditDate = DateTime.Now;
+
+            QuestionEdit edit = new QuestionEdit
+            {
+                Id = Guid.NewGuid().ToString(),
+                QuestionId = question.Id,
+                EditorId = currentUser.Id,
+            };
+
+            bool editMade = false;
+
+            if (!initialTitle.Equals(question.Title))
+            {
+                edit.NewTitle = question.Title;
+                editMade = true;
+            }
+
+            if (!initialContent.Equals(question.Content))
+            {
+                edit.NewContent = question.Content;
+                editMade = true;
+            }
+
+            try
+            {
+                await _tagController.UpdateQuestionTags(question, tagNames);
+
+                if (editMade)
+                {
+                    edit.EditDate = question.EditDate;
+                    _context.Add(edit);
+                }
+
+                var q = _context.Update(question);
+                _achievementDistributor.check(currentUser.Id, _context, AchievementType.QuestionEditing);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Details), new { id = q.Entity.Id });
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!QuestionExists(vm.Id))
                 {
                     return NotFound();
                 }
-
-
-                var initialTitle = question.Title;
-                var initialContent = question.Content;
-
-                question.Title = vm.Title;
-                question.Content = vm.Content;
-                question.EditDate = DateTime.Now;
-
-                QuestionEdit edit = new QuestionEdit
+                else
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    QuestionId = question.Id,
-                    EditorId = currentUser.Id,
-                };
-
-                bool editMade = false;
-
-                if (!initialTitle.Equals(question.Title))
-                {
-                    edit.NewTitle = question.Title;
-                    editMade = true;
+                    throw;
                 }
-
-                if (!initialContent.Equals(question.Content))
-                {
-                    edit.NewContent = question.Content;
-                    editMade = true;
-                }
-
-                try
-                {
-
-                    await _tagController.UpdateQuestionTags(question, tagNames);
-
-                    if (editMade)
-                    {
-                        edit.EditDate = question.EditDate;
-                        _context.Add(edit);
-                    }
-
-                    _context.Update(question);
-                    _achievementDistributor.check(currentUser.Id, _context, AchievementType.QuestionEditing);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!QuestionExists(vm.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
-            return View(vm);
         }
 
         [AllowAnonymous]

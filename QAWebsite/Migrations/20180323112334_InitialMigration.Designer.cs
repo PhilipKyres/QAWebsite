@@ -12,7 +12,7 @@ using System;
 namespace QAWebsite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180323034639_InitialMigration")]
+    [Migration("20180323112334_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -227,6 +227,9 @@ namespace QAWebsite.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("Title")
+                        .IsUnique();
 
                     b.ToTable("Question");
                 });

@@ -14,6 +14,7 @@ namespace QAWebsite.Models.QuestionModels
 
         [Required]
         [MaxLength(300)]
+        [MinLength(15)]
         [Display(Name = "Title")]
         public string Title { get; set; }
 
