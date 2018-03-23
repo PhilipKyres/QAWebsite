@@ -8,7 +8,7 @@
 <div id="suspendButtonContainer">
     @if (User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
     {
-        if (Model.isEnabled)
+        if (Model.IsEnabled)
         {<a asp-action="Suspend" asp-controller="Account" asp-route-id="@Model.Id" class="btn btn-default">Suspend</a>}
 
         else
@@ -18,7 +18,7 @@
 
 <div>
     <div id="profileLeftContainer" style="text-align:center;">
-        <img src="@Model.UserImage" alt="Employee Photo" class="userImage" />
+        <img src="@(Model.UserImage ?? "/images/defaultUserImage.jpg")" alt="Employee Photo" class="userImage" />
         <h4 class="text-center" style="width:100%"><b>@Html.DisplayFor(model => model.Rating) &nbsp;&nbsp;</b> Reputation</h4>
         <a asp-action="Achievements" asp-controller="Profile" asp-route-id="@Model.Id" class="btn btn-default">My Achievements</a>
     </div>
@@ -37,13 +37,14 @@
             </p>
         </div>
         <h3>Recent Activity</h3>
-        
-        <div class="container-fluid container-background">	
+
+        <div class="container-fluid container-background">
             <ul class="nav nav-pills container-background-secondary">
                 <li class="active">
                     <a href="#1a" data-toggle="tab">Recent Questions</a>
                 </li>
-                <li><a href="#2a" data-toggle="tab">Recent Answers</a>
+                <li>
+                    <a href="#2a" data-toggle="tab">Recent Answers</a>
                 </li>
             </ul>
 
@@ -53,14 +54,14 @@
                     {
                         <table class="table table-condensed">
                             <thead>
-                            <tr>
-                                <th>
-                                    @Html.DisplayNameFor(model => Model.QuestionList[0].Title)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => Model.QuestionList[0].CreationDate)
-                                </th>
-                            </tr>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => Model.QuestionList[0].Title)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => Model.QuestionList[0].CreationDate)
+                                    </th>
+                                </tr>
                             </thead>
                             @foreach (var question in Model.QuestionList)
                             {
@@ -88,14 +89,14 @@
                     {
                         <table class="table table-condensed">
                             <thead>
-                            <tr>
-                                <th>
-                                    @Html.DisplayNameFor(model => Model.AnswerList[0].Content)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => Model.AnswerList[0].CreationDate)
-                                </th>
-                            </tr>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => Model.AnswerList[0].Content)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => Model.AnswerList[0].CreationDate)
+                                    </th>
+                                </tr>
                             </thead>
                             @foreach (var answer in Model.AnswerList)
                             {
