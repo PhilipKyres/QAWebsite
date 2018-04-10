@@ -7,7 +7,6 @@ namespace QAWebsite.Models.AccountViewModels
 {
     public class AchievementViewModel
     {
-        public string Id { get; set; }
         public string Username { get; set; }
         public IEnumerable<AchievementDisplayContainer> Achievements { get; set; }
     }
