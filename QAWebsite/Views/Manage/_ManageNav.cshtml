@@ -7,7 +7,7 @@
 <ul class="nav nav-pills nav-stacked">
     <li class="@ManageNavPages.IndexNavClass(ViewContext)"><a asp-action="Index">Profile</a></li>
     <li class="@ManageNavPages.ChangePasswordNavClass(ViewContext)"><a asp-action="ChangePassword">Password</a></li>
-    <li class="@ManageNavPages.PublicProfileNavClass(ViewContext)">@Html.ActionLink("Public Profile", "Profile", "Profile", new { id = UserManager.GetUserId(User) }, null)</li>
+    <li class="@ManageNavPages.PublicProfileNavClass(ViewContext)">@Html.ActionLink("Public Profile", "Profile", "Profile", new { name = UserManager.GetUserName(User) }, null)</li>
     
 
         @if (hasExternalLogins)

@@ -35,17 +35,17 @@ namespace QAWebsite.Controllers
         }
 
         [AllowAnonymous]
-        [Route("/Profile/{id}")] //TODO change to unique username
-        public async Task<IActionResult> Profile(string id)
+        [Route("/Profile/{name}")]
+        public async Task<IActionResult> Profile(string name)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByNameAsync(name);
             if (user == null)
             {
                 return NotFound();
             }
 
-            var questionIdList = await _context.Question.Where(q => q.AuthorId == id).Select(question => question.Id).ToListAsync();
-            var answerIdList = await _context.Answer.Where(q => q.AuthorId == id).Select(answer => answer.Id).ToListAsync();
+            var questionIdList = await _context.Question.Where(q => q.AuthorId == user.Id).Select(question => question.Id).ToListAsync();
+            var answerIdList = await _context.Answer.Where(q => q.AuthorId == user.Id).Select(answer => answer.Id).ToListAsync();
 
             int rating = GetRatingCount(_context.QuestionRating, questionIdList, Ratings.Upvote) -
                          GetRatingCount(_context.QuestionRating, questionIdList, Ratings.Downvote) +
@@ -60,8 +60,8 @@ namespace QAWebsite.Controllers
                 IsEnabled = user.IsEnabled,
                 Rating = rating,
                 AboutMe = user.AboutMe ?? Resources.aboutMeNullString,
-                QuestionList = await _context.Question.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync(),
-                AnswerList = await _context.Answer.Where(q => q.AuthorId == id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync()
+                QuestionList = await _context.Question.Where(q => q.AuthorId == user.Id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync(),
+                AnswerList = await _context.Answer.Where(q => q.AuthorId == user.Id).OrderByDescending(q => q.CreationDate).Take(5).ToListAsync()
             };
 
             if (user.UserImage != null)
@@ -80,15 +80,16 @@ namespace QAWebsite.Controllers
         }
 
         [AllowAnonymous]
-        public async Task<IActionResult> Achievements(string id)
+        [Route("/Achievements/{name}")]
+        public async Task<IActionResult> Achievements(string name)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _userManager.FindByNameAsync(name);
             if (user == null)
             {
                 return NotFound();
             }
 
-            var achievementPairs = _context.UserAchievements.Where(achievement => achievement.UserId == id).Select(ua =>
+            var achievementPairs = _context.UserAchievements.Where(achievement => achievement.UserId == user.Id).Select(ua =>
                 new AchievementDisplayContainer
                 {
                     Image = "data:image/gif;base64," + Convert.ToBase64String(ua.Achievement.AchievementImage),
@@ -98,7 +99,6 @@ namespace QAWebsite.Controllers
                 
             var viewModel = new AchievementViewModel
             {
-                Id = id,
                 Username = user.UserName,
                 Achievements = achievementPairs
             };
