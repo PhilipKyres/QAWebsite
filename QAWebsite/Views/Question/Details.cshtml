@@ -12,32 +12,34 @@
     <div>
         <div>
             <div>
-                <h2 style="display:inline-block; width:70%;"><i>@Html.DisplayFor(model => model.Title)</i></h2><h3 style="display:inline-block;float:right;"><a asp-action="Profile" asp-controller="Profile" asp-route-name="@Model.AuthorName">@Html.DisplayFor(modelItem => modelItem.AuthorName)</a></h3>
+                <h2 style="display:inline-block; width:70%; overflow-wrap:break-word; "><i>@Html.DisplayFor(model => model.Title)</i></h2><h3 style="display:inline-block;float:right;"><a asp-action="Profile" asp-controller="Profile" asp-route-name="@Model.AuthorName">@Html.DisplayFor(modelItem => modelItem.AuthorName)</a></h3>
             </div>
+
             <div>
-                <table>
-                    <tr>
-                        <td style="width:10%;">
-                            @Html.DisplayFor(model => model.Rating)
-                            @if (Model.Rating < 0)
-                            {
-                                <span style="display:inline-block;  min-height:inherit;" class="glyphicon glyphicon-thumbs-down"></span>}
-                            else
-                            {
-                                <span class="glyphicon glyphicon-thumbs-up"></span>}
-                        </td>
-                        <td style="width:70%;"><span>@Html.DisplayFor(model => model.Content)</span></td>
-                    </tr>
-                </table>
+                <div>
+                    <div style="width: 11%; display: inline-block;">
 
+                        @Html.DisplayFor(model => Model.Rating)
+                        @if (Model.Rating < 0)
+                        {
+                            <span style="display: inline-block; min-height: inherit;" class="glyphicon glyphicon-thumbs-down"></span>
+                        }
+                        else
+                        {
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        }
+                    </div>
+                    <div style="display: inline-block; width: 80%;"><span style="word-wrap: break-word;">@Html.DisplayFor(modelItem => Model.Content)</span></div>
+                </div>
+                <div>
+                    <table>
+                        <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Created on:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => Model.CreationDate)</td></tr>
+                        <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Last edit:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => Model.EditDate)</td></tr>
 
-                <table>
-                    <tr><td style="width:20%; margin-right:5%;"><h4><i>Tags</i></h4></td><td style="width:70%;">@string.Join(", ", Model.QuestionTags.Select(x => x.Tag.Name))</td></tr>
-                    <tr><td style="width:20%; margin-right:5%;"><h4><i>Created on:</i></h4></td><td style="width:70%;">@Html.DisplayFor(model => model.CreationDate)</td></tr>
-                    <tr><td style="width:20%; margin-right:5%;"><h4><i>Last edit:</i></h4></td><td style="width:70%;">@Html.DisplayFor(model => model.EditDate)</td></tr>
-
-                </table>
+                    </table>
+                </div>
             </div>
+
             <div>
                 @Html.ActionLink("Upvote", "RateQuestion", "Rating", new { questionId = Model.Id, rateValue = Ratings.Upvote })
                 @Html.Raw("|")
@@ -144,11 +146,13 @@
                                         }
                                     </div>
                                     <div style="display: inline-block; width: 60%;"><span style="word-wrap: break-word;">@Html.DisplayFor(modelItem => answer.Content)</span></div>
-                                    <table>
-                                        <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Created on:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => answer.CreationDate)</td></tr>
-                                        <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Last edit:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => answer.EditDate)</td></tr>
+                                    <div>
+                                        <table>
+                                            <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Created on:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => answer.CreationDate)</td></tr>
+                                            <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Last edit:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => answer.EditDate)</td></tr>
 
-                                    </table>
+                                        </table>
+                                    </div>
                                 </div>
 
 
