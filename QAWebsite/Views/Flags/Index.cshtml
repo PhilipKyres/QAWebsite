@@ -34,7 +34,7 @@
                     @Html.DisplayFor(modelItem => item.Reason)
                 </td>
                  <td>
-                   <a asp-action="Profile" asp-controller="Profile" asp-route-id="@item.AuthorId">@Html.DisplayFor(model => item.Author)</a>
+                   <a asp-action="Profile" asp-controller="Profile" asp-route-name="@item.Author">@Html.DisplayFor(model => item.Author)</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Content)
@@ -43,8 +43,8 @@
                     @Html.DisplayFor(modelItem => item.CreationDate)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         }
