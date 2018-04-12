@@ -4,6 +4,16 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="TestResources\Images\shiba.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="TestResources\Images\shiba.jpg">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.0.1" />
     <packagereference Include="Microsoft.NET.Test.Sdk" Version="15.6.0"></packagereference>

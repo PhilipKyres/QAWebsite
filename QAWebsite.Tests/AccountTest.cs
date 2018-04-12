@@ -121,7 +121,7 @@ namespace QAWebsite.Tests
         public async Task ImageUpload()
         {
             // Arrange
-            string strPhoto = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../QAWebsite/wwwroot/images", "shiba.jpg");
+            string strPhoto = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName, "TestResources/Images/", "shiba.jpg");
             FileStream fs = new FileStream(strPhoto, FileMode.Open, FileAccess.Read);
 
             byte[] photoByte;

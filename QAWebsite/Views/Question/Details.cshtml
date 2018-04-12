@@ -10,189 +10,239 @@
 <hr />
 <div>
     <div>
-        <h2 style="display:inline-block; width:70%;"><i>@Html.DisplayFor(model => model.Title)</i></h2><h3 style="display:inline-block;float:right;"><a asp-action="Profile" asp-controller="Profile" asp-route-name="@Model.AuthorName">@Html.DisplayFor(modelItem => modelItem.AuthorName)</a></h3>
-    </div>
-    <div>
-        <table>
-            <tr>
-                <td style="width:10%;">
-                    @Html.DisplayFor(model => model.Rating)
-                    @if (Model.Rating < 0)
-                    {
-                        <span style="display:inline-block;  min-height:inherit;" class="glyphicon glyphicon-thumbs-down"></span>}
-                    else
-                    {
-                        <span class="glyphicon glyphicon-thumbs-up"></span>}
-                </td>
-                <td style="width:70%;"><span>@Html.DisplayFor(model => model.Content)</span></td>
-            </tr>
-        </table>
-
-
-        <table>
-            <tr><td style="width:20%; margin-right:5%;"><h4><i>Tags</i></h4></td><td style="width:70%;">@string.Join(", ", Model.QuestionTags.Select(x => x.Tag.Name))</td></tr>
-            <tr><td style="width:20%; margin-right:5%;"><h4><i>Created on:</i></h4></td><td style="width:70%;">@Html.DisplayFor(model => model.CreationDate)</td></tr>
-            <tr><td style="width:20%; margin-right:5%;"><h4><i>Last edit:</i></h4></td><td style="width:70%;">@Html.DisplayFor(model => model.EditDate)</td></tr>
-
-        </table>
-    </div>
-
-</div>
-
-<div>
-    @Html.ActionLink("Upvote", "RateQuestion", "Rating", new { questionId = Model.Id, rateValue = Ratings.Upvote })
-    @Html.Raw("|")
-    @Html.ActionLink("Downvote", "RateQuestion", "Rating", new { questionId = Model.Id, rateValue = Ratings.Downvote })
-</div>
-<br />
-<div>
-    @if (User.Identity.IsAuthenticated)
-    {
-        if (Model.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
-        {
-            <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> @Html.Raw("|")
-            <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> @Html.Raw("|")
-        }
-        if (Model.AuthorId != UserManager.GetUserId(User))
-        {
-            <a asp-action="Create" asp-controller="Flags" asp-route-id="@Model.Id">Flag</a> @Html.Raw("|")
-        }
-        if (User.IsInRole(@Roles.ADMINISTRATOR.ToString()) && Model.Flags > 0)
-        {
-            <a asp-action="FlagsByQuestion" asp-controller="Flags" asp-route-id="@Model.Id">Flags: @Model.Flags</a> @Html.Raw("|")
-        }
-    }
-    <a asp-action="EditHistory" asp-route-id="@Model.Id">Edits History</a> @Html.Raw("|")
-    <a asp-action="Index">Back to List</a>
-
-</div>
-
-<hr />
-<br />
-
-
-@foreach (var comment in Model.Comments)
-{
-    <div>
-        <div style="display:inline-block; width:60%;"><h4><i style="word-wrap:break-word;">@Html.DisplayFor(model => comment.Content)</i></h4></div>
-
-        <div style="display:inline;width:20%;">
-            <h4 style="display:inline;"><a asp-action="Profile" asp-controller="Profile" asp-route-name="@comment.AuthorName">@Html.DisplayFor(model => comment.AuthorName)</a>&nbsp;&nbsp;</h4><span><i>Created on: </i>@Html.DisplayFor(model => comment.CreationDate)</span>
-        </div>
-    </div>
-
-    if (User.Identity.IsAuthenticated && comment.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
-    {
-        <a asp-action="Delete" asp-controller="Comment" asp-route-id="@comment.Id" asp-route-questionId="@Model.Id" asp-route-type="@CommentTypes.Question">Delete</a>
-    }
-}
-
-@if (User.Identity.IsAuthenticated)
-{
-    <div class="row">
-        <div class="col-md-6">
-            <form asp-controller="Comment" asp-action="Create">
-                <input type="hidden" asp-for="Id" />
-                <input type="hidden" value="@Model.Id" , name="parentId" />
-                <input type="hidden" value="@CommentTypes.Question" , name="type" />
-                <div class="form-group">
-                    <label asp-for="Comment" class="control-label"></label>
-                    <textarea asp-for="Comment" rows="2" class="form-control"></textarea>
-                    <span asp-validation-for="Comment" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Submit" class="btn btn-default" />
-                </div>
-            </form>
-        </div>
-    </div>
-}
-
-<br />
-
-<div>
-    <h4> @Html.DisplayFor(model => model.Answers.Count) Answers</h4>
-    <hr />
-    @foreach (var answer in Model.Answers)
-    {
-        if (Model.BestAnswerId == answer.Id)
-        {
-            <h4><b>BEST ANSWER</b></h4>
-        }
-
-
         <div>
-            <h3 style="display:inline-block;float:right;"><a asp-action="Profile" asp-controller="Profile" asp-route-name="@answer.AuthorName">@Html.DisplayFor(modelItem => answer.AuthorName)</a></h3>
-                    <div style="width:10%; display:inline-block;">
-                        @Html.DisplayFor(model => answer.Rating)
+            <div>
+                <h2 style="display:inline-block; width:70%; overflow-wrap:break-word; "><i>@Html.DisplayFor(model => model.Title)</i></h2><h3 style="display:inline-block;float:right;"><a asp-action="Profile" asp-controller="Profile" asp-route-name="@Model.AuthorName">@Html.DisplayFor(modelItem => modelItem.AuthorName)</a></h3>
+            </div>
+
+            <div>
+                <div>
+                    <div style="width: 11%; display: inline-block;">
+
+                        @Html.DisplayFor(model => Model.Rating)
                         @if (Model.Rating < 0)
                         {
-                            <span style="display:inline-block;  min-height:inherit;" class="glyphicon glyphicon-thumbs-down"></span>}
+                            <span style="display: inline-block; min-height: inherit;" class="glyphicon glyphicon-thumbs-down"></span>
+                        }
                         else
                         {
-                            <span class="glyphicon glyphicon-thumbs-up"></span>}
+                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                        }
                     </div>
-                    <div style="display:inline-block; width:60%;"><span style="word-wrap:break-word;">@Html.DisplayFor(modelItem => answer.Content)</span></div>
-            <table>
-                <tr><td style="width:20%; margin-right:5%;"><h4><i>Created on:</i></h4></td><td style="width:70%;">@Html.DisplayFor(modelItem => answer.CreationDate)</td></tr>
-                <tr><td style="width:20%; margin-right:5%;"><h4><i>Last edit:</i></h4></td><td style="width:70%;">@Html.DisplayFor(modelItem => answer.EditDate)</td></tr>
+                    <div style="display: inline-block; width: 80%;"><span style="word-wrap: break-word;">@Html.DisplayFor(modelItem => Model.Content)</span></div>
+                </div>
+                <div>
+                    <table>
+                        <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Created on:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => Model.CreationDate)</td></tr>
+                        <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Last edit:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => Model.EditDate)</td></tr>
 
-            </table>
-        </div>
-
-
-        <div>
-            @Html.ActionLink("Upvote", "RateAnswer", "Rating", new { answerId = answer.Id, rateValue = Ratings.Upvote })
-            @Html.Raw("|")
-            @Html.ActionLink("Downvote", "RateAnswer", "Rating", new { answerId = answer.Id, rateValue = Ratings.Downvote })
-        </div>
-        if (User.Identity.IsAuthenticated && answer.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
-        {
-            <a asp-action="Edit" asp-controller="Answer" asp-route-id="@answer.Id">Edit</a> @Html.Raw("|")
-            <a asp-action="Delete" asp-controller="Answer" asp-route-id="@answer.Id">Delete</a>
-        }
-
-        if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
-        {
-            @Html.Raw("|")
-            if (Model.BestAnswerId == answer.Id)
-            {
-                <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id" asp-route-best="@null">Remove Best Answer</a>
-            }
-            else
-            {
-                <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id" asp-route-best="@answer.Id">Best Answer</a>
-            }
-        }
-        <hr />
-
-        foreach (var aComment in answer.Comments)
-        {
-            <div>
-                <div style="display:inline-block; width:60%;"><h4><i style="word-wrap:break-word;">@Html.DisplayFor(model => aComment.Content)</i></h4></div>
-
-                <div style="display:inline;width:20%;">
-                    <h4 style="display:inline;"><a asp-action="Profile" asp-controller="Profile" asp-route-name="@aComment.AuthorName">@Html.DisplayFor(modelItem => aComment.AuthorName)</a>&nbsp;&nbsp;</h4><span><i>Created on: </i>@Html.DisplayFor(model => aComment.CreationDate)</span>
+                    </table>
                 </div>
             </div>
-            if (User.Identity.IsAuthenticated && aComment.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
-            {
-                <a asp-action="Delete" asp-controller="Comment" asp-route-id="@aComment.Id" asp-route-questionId="@Model.Id" asp-route-type="@CommentTypes.Answer">Delete</a>
-            }
-        }
 
-        if (User.Identity.IsAuthenticated)
+            <div>
+                @Html.ActionLink("Upvote", "RateQuestion", "Rating", new { questionId = Model.Id, rateValue = Ratings.Upvote })
+                @Html.Raw("|")
+                @Html.ActionLink("Downvote", "RateQuestion", "Rating", new { questionId = Model.Id, rateValue = Ratings.Downvote })
+                <br />
+                @if (User.Identity.IsAuthenticated)
+                {
+                    if (Model.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> @Html.Raw("|")
+                        <a asp-action="Delete" asp-route-id="@Model.Id">Delete</a> @Html.Raw("|")
+                    }
+                    if (Model.AuthorId != UserManager.GetUserId(User))
+                    {
+                        <a asp-action="Create" asp-controller="Flags" asp-route-id="@Model.Id">Flag</a> @Html.Raw("|")
+                    }
+                    if (User.IsInRole(@Roles.ADMINISTRATOR.ToString()) && Model.Flags > 0)
+                    {
+                        <a asp-action="FlagsByQuestion" asp-controller="Flags" asp-route-id="@Model.Id">Flags: @Model.Flags</a> @Html.Raw("|")
+                    }
+                }
+                <a asp-action="EditHistory" asp-route-id="@Model.Id">Edits History</a> @Html.Raw("|")
+                <a asp-action="Index">Back to List</a>
+            </div>
+
+            <hr style="border: 1px solid #FFF" />
+        </div>
+        <div>
+            <div style="display:inline-block; width:15%;"></div>
+            <div style="display: inline-block; width: 83%;">
+
+                @foreach (var comment in Model.Comments)
+                {
+                    <div>
+                        <div style="display:inline-block; width:60%;"><h4><i style="word-wrap:break-word;">@Html.DisplayFor(model => comment.Content)</i></h4></div>
+
+                        <div style="display:inline-block; width:35%;">
+                            <h4 style="display:inline;"><a asp-action="Profile" asp-controller="Profile" asp-route-name="@comment.AuthorName">@Html.DisplayFor(model => comment.AuthorName)</a>&nbsp;&nbsp;</h4><br /><span><i>Created on: </i>@Html.DisplayFor(model => comment.CreationDate)</span>
+                        </div>
+                    </div>
+
+                    if (User.Identity.IsAuthenticated && comment.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
+                    {
+                        <a asp-action="Delete" asp-controller="Comment" asp-route-id="@comment.Id" asp-route-questionId="@Model.Id" asp-route-type="@CommentTypes.Question">Delete</a>
+                    }
+                }
+
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form asp-controller="Comment" asp-action="Create">
+                                <input type="hidden" asp-for="Id" />
+                                <input type="hidden" value="@Model.Id" , name="parentId" />
+                                <input type="hidden" value="@CommentTypes.Question" , name="type" />
+                                <div class="form-group">
+                                    <label asp-for="Comment" class="control-label"></label>
+                                    <textarea asp-for="Comment" rows="2" class="form-control"></textarea>
+                                    <span asp-validation-for="Comment" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <input type="submit" value="Submit" class="btn btn-default" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div>
+        <div>
+            <h4>
+                @Html.DisplayFor(model => model.Answers.Count) Answer@{if (Model.Answers.Count > 1)
+                    {<text>s</text>} }
+            </h4>
+            <hr style="border: 1px solid #FFF" />
+        </div>
+        <div>
+            @foreach (var answer in Model.Answers)
+            {
+                <div style="border: 1px solid #ccc !important; border-radius: 16px;">
+                    <div style=" margin: 3%;">
+                        <div style="display: inline-block; width: 10%;"></div>
+                        <div style="display: inline-block; width: 85%">
+                            <div>
+                                @if (Model.BestAnswerId == answer.Id)
+                                {
+                                    <h4><b>BEST ANSWER</b></h4>
+                                }
+
+
+                                <div>
+                                    <h3 style="display: inline-block; float: right;"><a asp-action="Profile" asp-controller="Profile" asp-route-name="@answer.AuthorName">@Html.DisplayFor(modelItem => answer.AuthorName)</a></h3>
+                                    <div style="width: 10%; display: inline-block;">
+                                        @Html.DisplayFor(model => answer.Rating)
+                                        @if (answer.Rating < 0)
+                                        {
+                                            <span style="display: inline-block; min-height: inherit;" class="glyphicon glyphicon-thumbs-down"></span>
+                                        }
+                                        else
+                                        {
+                                            <span class="glyphicon glyphicon-thumbs-up"></span>
+                                        }
+                                    </div>
+                                    <div style="display: inline-block; width: 60%;"><span style="word-wrap: break-word;">@Html.DisplayFor(modelItem => answer.Content)</span></div>
+                                    <div>
+                                        <table>
+                                            <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Created on:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => answer.CreationDate)</td></tr>
+                                            <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Last edit:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => answer.EditDate)</td></tr>
+
+                                        </table>
+                                    </div>
+                                </div>
+
+
+                                <div>
+                                    @Html.ActionLink("Upvote", "RateAnswer", "Rating", new { answerId = answer.Id, rateValue = Ratings.Upvote })
+                                    @Html.Raw("|")
+                                    @Html.ActionLink("Downvote", "RateAnswer", "Rating", new { answerId = answer.Id, rateValue = Ratings.Downvote })
+                                </div>
+                                @{ bool adminOrAuthor = User.Identity.IsAuthenticated && answer.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString());}
+                                @if (adminOrAuthor)
+                                {
+                                    <a asp-action="Edit" asp-controller="Answer" asp-route-id="@answer.Id">Edit</a>
+                                    @Html.Raw("|")
+                                    <a asp-action="Delete" asp-controller="Answer" asp-route-id="@answer.Id">Delete</a>
+                                }
+
+                                @if (User.Identity.IsAuthenticated && Model.AuthorId == UserManager.GetUserId(User))
+                                {
+                                    if (adminOrAuthor)
+                                    {
+                                        @Html.Raw("|")
+                                    }
+                                    if (Model.BestAnswerId == answer.Id)
+                                    {
+                                        <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id" asp-route-best="@null">Remove Best Answer</a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-action="SetBestAnswer" asp-controller="Question" asp-route-id="@answer.QuestionId" asp-route-answerId="@answer.Id" asp-route-best="@answer.Id">Best Answer</a>
+                                    }
+                                }
+                            </div>
+
+                            <hr style="border: 1px solid #FFF" />
+                            <div>
+                                <div style="display: inline-block; width: 10%;"></div>
+                                <div style="display: inline-block; width: 88%">
+                                    @foreach (var aComment in answer.Comments)
+                                    {
+                                        <div>
+                                            <div style="display: inline-block; width: 60%;"><h4><i style="word-wrap: break-word;">@Html.DisplayFor(model => aComment.Content)</i></h4></div>
+
+                                            <div style="display: inline-block; width: 35%;">
+                                                <h4 style="display: inline;"><a asp-action="Profile" asp-controller="Profile" asp-route-name="@aComment.AuthorName">@Html.DisplayFor(modelItem => aComment.AuthorName)</a>&nbsp;&nbsp;</h4><br /><span><i>Created on: </i>@Html.DisplayFor(model => aComment.CreationDate)</span>
+                                            </div>
+                                        </div>
+                                        if (User.Identity.IsAuthenticated && aComment.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
+                                        {
+                                            <a asp-action="Delete" asp-controller="Comment" asp-route-id="@aComment.Id" asp-route-questionId="@Model.Id" asp-route-type="@CommentTypes.Answer">Delete</a>
+                                        }
+                                    }
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <form asp-controller="Comment" asp-action="Create">
+                                                    <input type="hidden" asp-for="Id" />
+                                                    <input type="hidden" value="@answer.Id" , name="parentId" />
+                                                    <input type="hidden" value="@CommentTypes.Answer" , name="type" />
+                                                    <div class="form-group">
+                                                        <label asp-for="Comment" class="control-label"></label>
+                                                        <textarea asp-for="Comment" rows="2" class="form-control"></textarea>
+                                                        <span asp-validation-for="Comment" class="text-danger"></span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <input type="submit" value="Submit" class="btn btn-default" />
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br /><br />
+            }
+        </div>
+
+        @if (User.Identity.IsAuthenticated && Model.Answers.All(a => a.AuthorId != UserManager.GetUserId(User)))
         {
             <div class="row">
-                <div class="col-md-6">
-                    <form asp-controller="Comment" asp-action="Create">
+                <div class="col-md-4">
+                    <form asp-controller="Answer" asp-action="Create">
                         <input type="hidden" asp-for="Id" />
-                        <input type="hidden" value="@answer.Id" , name="parentId" />
-                        <input type="hidden" value="@CommentTypes.Answer" , name="type" />
                         <div class="form-group">
-                            <label asp-for="Comment" class="control-label"></label>
-                            <textarea asp-for="Comment" rows="2" class="form-control"></textarea>
-                            <span asp-validation-for="Comment" class="text-danger"></span>
+                            <label asp-for="AnswerContent" class="control-label"></label>
+                            <textarea asp-for="AnswerContent" rows="5" class="form-control"></textarea>
+                            <span asp-validation-for="AnswerContent" class="text-danger"></span>
                         </div>
                         <div class="form-group">
                             <input type="submit" value="Submit" class="btn btn-default" />
@@ -200,26 +250,6 @@
                     </form>
                 </div>
             </div>
-            <hr />
         }
-    }
-</div>
-
-@if (User.Identity.IsAuthenticated && Model.Answers.All(a => a.AuthorId != UserManager.GetUserId(User)))
-{
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-controller="Answer" asp-action="Create">
-                <input type="hidden" asp-for="Id" />
-                <div class="form-group">
-                    <label asp-for="AnswerContent" class="control-label"></label>
-                    <textarea asp-for="AnswerContent" rows="5" class="form-control"></textarea>
-                    <span asp-validation-for="AnswerContent" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Submit" class="btn btn-default" />
-                </div>
-            </form>
-        </div>
     </div>
-}
+</div>
