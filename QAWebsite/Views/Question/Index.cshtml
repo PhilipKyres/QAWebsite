@@ -26,7 +26,7 @@
                 @Html.DisplayNameFor(model => model.CreationDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EditDate)
+                @Html.DisplayNameFor(model => model.AuthorName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Rating)
@@ -37,6 +37,9 @@
                     @Html.DisplayNameFor(model => model.Flags)
                 </th>
             }
+            <th>
+                Answers
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -56,10 +59,13 @@
                     @Html.DisplayFor(modelItem => item.CreationDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EditDate)
+                    @Html.DisplayFor(modelItem => item.AuthorName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Rating)
+                </td>
+                 <td>
+                    @Html.DisplayFor(modelItem => item.AnswerCount)
                 </td>
               
                 @if (User.Identity.IsAuthenticated && User.IsInRole(@Roles.ADMINISTRATOR.ToString()))

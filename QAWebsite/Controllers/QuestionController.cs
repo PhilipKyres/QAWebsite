@@ -51,9 +51,9 @@ namespace QAWebsite.Controllers
             {
                 questions = questions.Where(where);
             }
-
+           
             return  questions.Select(q => new IndexViewModel(q,
-                _ratingController.GetRating<QuestionRating>(q.Id))).ToList()
+                _ratingController.GetRating<QuestionRating>(q.Id), _context.Answer.Count(a => a.QuestionId == q.Id))).ToList()
                 .OrderByDescending(q => q.CreationDate);
         }
 

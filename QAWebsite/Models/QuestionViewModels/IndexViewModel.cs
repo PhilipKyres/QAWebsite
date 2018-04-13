@@ -9,7 +9,7 @@ namespace QAWebsite.Models.QuestionViewModels
 {
     public class IndexViewModel
     {
-        public IndexViewModel(Question question, int rating)
+        public IndexViewModel(Question question, int rating, int answerCount)
         {
             this.AuthorId = question.AuthorId;
             this.Id = question.Id;
@@ -19,6 +19,7 @@ namespace QAWebsite.Models.QuestionViewModels
             this.EditDate = question.EditDate;
             this.Rating = rating;
             this.QuestionTags = question.QuestionTags;
+            this.AnswerCount = answerCount;
 
             if (question.Author != null)
                 this.AuthorName = question.Author.UserName;
@@ -52,8 +53,11 @@ namespace QAWebsite.Models.QuestionViewModels
         public string AuthorId { get; set; }
 
         [Required]
+        [Display(Name = "Author")]
         [ReadOnly(true)]
         public string AuthorName { get; set; }
+
+        public int AnswerCount { get; set; }
 
         [Required]
         public int Rating { get; set; }
