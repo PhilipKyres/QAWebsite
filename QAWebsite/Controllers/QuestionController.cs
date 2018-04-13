@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -22,6 +21,7 @@ namespace QAWebsite.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAchievementDistributor _achievementDistributor;
+        private readonly DbContextOptions<ApplicationDbContext> _dbContextOptions;
         private readonly TagController _tagController;
         private readonly RatingController _ratingController;
         private readonly AnswerController _answerController;
@@ -32,36 +32,38 @@ namespace QAWebsite.Controllers
             _context = context;
             _userManager = userManager;
             _achievementDistributor = achievementDistributor;
+            _dbContextOptions = dbContextOptions;
             _tagController = new TagController(context);
             _ratingController = new RatingController(context, userManager, dbContextOptions);
             _answerController = new AnswerController(context, userManager, achievementDistributor, dbContextOptions);
             _commentController = new CommentController(context, userManager, achievementDistributor, dbContextOptions);
         }
 
-        public IEnumerable<IndexViewModel> GetQuestionList(Func<Question, bool> where = null)
+        public IQueryable<Question> GetQuestionQueryable()
         {
-            var questions = _context.Question
+            return _context.Question
                 .Include(x => x.Author)
-                .Include(x => x.Flags)
                 .Include(x => x.QuestionTags)
-                .ThenInclude(x => x.Tag)
-                .AsEnumerable(); //TODO remove in core 2.1 when IQueryable bug is fixed
+                .ThenInclude(x => x.Tag);
+        }
 
-            if (where != null)
+        public IEnumerable<IndexViewModel> GetQuestionList(IEnumerable<Question> query)
+        {
+            using (var contextInstance = new ApplicationDbContext(_dbContextOptions))
             {
-                questions = questions.Where(where);
+                return query.AsEnumerable().Select(q => new IndexViewModel(q,
+                        _ratingController.GetRating<QuestionRating>(q.Id),
+                        contextInstance.Answer.Count(a => a.QuestionId == q.Id),
+                        contextInstance.Flag.Count(f => f.QuestionId == q.Id)))
+                    .OrderByDescending(q => q.CreationDate).ToList();
             }
-           
-            return  questions.Select(q => new IndexViewModel(q,
-                _ratingController.GetRating<QuestionRating>(q.Id), _context.Answer.Count(a => a.QuestionId == q.Id))).ToList()
-                .OrderByDescending(q => q.CreationDate);
         }
 
         // GET: Question
         [AllowAnonymous]
         public IActionResult Index()
         {
-            return View(GetQuestionList());
+            return View(GetQuestionList(GetQuestionQueryable()));
         }
 
         [AllowAnonymous]
@@ -72,15 +74,21 @@ namespace QAWebsite.Controllers
 
             var split = search.Trim().Normalize().Split(' ');
 
-            var questionAnswers = _context.Answer.Where(a => split.Any(s => a.Content.Normalize().Contains(s))).Select(a => a.QuestionId).Distinct();
-            
-            var vms = GetQuestionList(x => questionAnswers.Any(q => q == x.Id) ||
-                split.Any(s => x.Title.Normalize().Contains(s) || 
-                               x.Content.Normalize().Contains(s) || 
-                               x.QuestionTags.Any(qt => qt.Tag.Name.Normalize().Contains(s)) || 
-                               s == x.Author.UserName.Normalize()));
+            var questions = GetQuestionQueryable()
+                .AsEnumerable(); //TODO remove in Core 2.1
 
-            return View("Index", vms);
+            using (var contextInstance = new ApplicationDbContext(_dbContextOptions))
+            {
+                var questionAnswers = contextInstance.Answer.Where(a => split.Any(s => a.Content.Normalize().Contains(s))).Select(a => a.QuestionId).Distinct();
+
+                questions = questions.Where(x => questionAnswers.Any(q => q == x.Id) ||
+                                     split.Any(s => x.Title.Normalize().Contains(s) ||
+                                                    x.Content.Normalize().Contains(s) ||
+                                                    x.QuestionTags.Any(qt => qt.Tag.Name.Normalize().Contains(s)) ||
+                                                    s == x.Author.UserName.Normalize()));
+            }
+
+            return View("Index", GetQuestionList(questions));
         }
 
         public async Task<DetailsViewModel> GetDetailsViewModel(string questionId)

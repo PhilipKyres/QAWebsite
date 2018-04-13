@@ -34,7 +34,7 @@
             @if (User.Identity.IsAuthenticated && User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
             {
                 <th>
-                    @Html.DisplayNameFor(model => model.Flags)
+                    @Html.DisplayNameFor(model => model.FlagCount)
                 </th>
             }
             <th>
@@ -71,9 +71,9 @@
                 @if (User.Identity.IsAuthenticated && User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
                 {
                      <td>
-                         @if (item.Flags > 0)
+                         @if (item.FlagCount > 0)
                          {
-                            <a asp-action="Index" asp-controller="Flags" asp-route-id="@item.Id">@item.Flags</a>
+                            <a asp-action="Index" asp-controller="Flags" asp-route-id="@item.Id">@item.FlagCount</a>
                          }
                          else
                          {

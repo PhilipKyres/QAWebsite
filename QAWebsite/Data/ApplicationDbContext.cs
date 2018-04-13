@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using QAWebsite.Models;
 using QAWebsite.Models.QuestionModels;
 using QAWebsite.Models.UserModels;
 
