@@ -30,12 +30,16 @@
                     </div>
                     <div style="display: inline-block; width: 80%;"><span style="word-wrap: break-word;">@Html.DisplayFor(modelItem => Model.Content)</span></div>
                 </div>
+                @foreach (var item in Model.QuestionTags)
+                {
+                    <q-tag name="@item.Tag.Name" />
+                }
+                
                 <div style="display: inline-block; margin-left: 50%; width: 50%;">
                     <div class="text-left" style="float: left;"><i>Created on:</i> @Html.DisplayFor(modelItem => Model.CreationDate)</div>
                     <div class="text-right" style="float: right;"><i>Last edit:</i> @Html.DisplayFor(modelItem => Model.EditDate)</div>
                 </div>
             </div>
-            
 
             <div style="display: inline-block;">
                 @Html.ActionLink("Upvote", "RateQuestion", "Rating", new { questionId = Model.Id, rateValue = Ratings.Upvote })

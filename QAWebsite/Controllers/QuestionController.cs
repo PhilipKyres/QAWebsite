@@ -91,6 +91,12 @@ namespace QAWebsite.Controllers
             return View("Index", GetQuestionList(questions));
         }
 
+        [AllowAnonymous]
+        public IActionResult SearchByTag(string tag)
+        {
+            return View("Index", GetQuestionList(GetQuestionQueryable().Where(q => q.QuestionTags.Any(qt => qt.Tag.Name == tag))));
+        }
+
         public async Task<DetailsViewModel> GetDetailsViewModel(string questionId)
         {
             if (questionId == null)

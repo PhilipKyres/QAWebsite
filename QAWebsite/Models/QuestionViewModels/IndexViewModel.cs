@@ -57,12 +57,13 @@ namespace QAWebsite.Models.QuestionViewModels
 
         public int AnswerCount { get; set; }
 
+        [Display(Name = "Flags")]
         public int FlagCount { get; set; }
 
         [Required]
         public int Rating { get; set; }
 
-
+        [Display(Name = "Tags")]
         public ICollection<QuestionTag> QuestionTags { get; set; }
     }
 }
