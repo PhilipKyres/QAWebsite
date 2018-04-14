@@ -26,8 +26,6 @@ namespace QAWebsite.Controllers
 
         public int GetRating<T>(string id) where T : Rating
         {
-
-            //new DbContextOptionsBuilder<ApplicationDbContext>().UseSqlServer(Startup.Configuration.GetConnectionStringSecureValue("DefaultConnection"));
             using (var contextInstance = new ApplicationDbContext(_dbContextOptions))
             {
                 var dbSet = contextInstance.Set<T>();

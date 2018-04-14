@@ -9,7 +9,7 @@ namespace QAWebsite.Models.QuestionViewModels
 {
     public class IndexViewModel
     {
-        public IndexViewModel(Question question, int rating, int answerCount)
+        public IndexViewModel(Question question, int rating, int answerCount, int flagCount)
         {
             this.AuthorId = question.AuthorId;
             this.Id = question.Id;
@@ -20,12 +20,10 @@ namespace QAWebsite.Models.QuestionViewModels
             this.Rating = rating;
             this.QuestionTags = question.QuestionTags;
             this.AnswerCount = answerCount;
+            this.FlagCount = flagCount;
 
             if (question.Author != null)
                 this.AuthorName = question.Author.UserName;
-
-            if (question.Flags != null)
-                this.Flags = question.Flags.Count;
         }
 
         [MaxLength(8)]
@@ -59,11 +57,13 @@ namespace QAWebsite.Models.QuestionViewModels
 
         public int AnswerCount { get; set; }
 
+        [Display(Name = "Flags")]
+        public int FlagCount { get; set; }
+
         [Required]
         public int Rating { get; set; }
 
-        public int Flags { get; set; }
-
+        [Display(Name = "Tags")]
         public ICollection<QuestionTag> QuestionTags { get; set; }
     }
 }

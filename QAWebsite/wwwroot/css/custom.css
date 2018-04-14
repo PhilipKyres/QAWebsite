@@ -94,3 +94,17 @@
     height:25%;
     padding: 3%;
 }
+.tag {
+    display: inline-block;
+    background: #383838;
+    color: white;
+    padding: 1px;
+    padding-left: 6px;
+    padding-right: 6px;
+    margin-left: 3px;
+    margin-right: 3px;
+    text-align: center;
+    border-radius: 1px;
+    font-weight: bold;
+    text-decoration: none !important;
+}

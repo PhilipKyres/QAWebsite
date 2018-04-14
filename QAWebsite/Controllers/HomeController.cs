@@ -30,7 +30,7 @@ namespace QAWebsite.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
-            return View(_questionController.GetQuestionList().Take(10));
+            return View(_questionController.GetQuestionList(_questionController.GetQuestionQueryable().Take(10)));
         }
 
         public IActionResult About()

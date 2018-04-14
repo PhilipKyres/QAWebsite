@@ -15,10 +15,9 @@
                 <h2 style="display:inline-block; width:70%; overflow-wrap:break-word; "><i>@Html.DisplayFor(model => model.Title)</i></h2><h3 style="display:inline-block;float:right;"><a asp-action="Profile" asp-controller="Profile" asp-route-name="@Model.AuthorName">@Html.DisplayFor(modelItem => modelItem.AuthorName)</a></h3>
             </div>
 
-            <div>
+            <div style="display: inline-block; width: 100%;">
                 <div>
                     <div style="width: 11%; display: inline-block;">
-
                         @Html.DisplayFor(model => Model.Rating)
                         @if (Model.Rating < 0)
                         {
@@ -31,16 +30,18 @@
                     </div>
                     <div style="display: inline-block; width: 80%;"><span style="word-wrap: break-word;">@Html.DisplayFor(modelItem => Model.Content)</span></div>
                 </div>
-                <div>
-                    <table>
-                        <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Created on:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => Model.CreationDate)</td></tr>
-                        <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Last edit:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => Model.EditDate)</td></tr>
-
-                    </table>
+                @foreach (var item in Model.QuestionTags)
+                {
+                    <q-tag name="@item.Tag.Name" />
+                }
+                
+                <div style="display: inline-block; margin-left: 50%; width: 50%;">
+                    <div class="text-left" style="float: left;"><i>Created on:</i> @Html.DisplayFor(modelItem => Model.CreationDate)</div>
+                    <div class="text-right" style="float: right;"><i>Last edit:</i> @Html.DisplayFor(modelItem => Model.EditDate)</div>
                 </div>
             </div>
 
-            <div>
+            <div style="display: inline-block;">
                 @Html.ActionLink("Upvote", "RateQuestion", "Rating", new { questionId = Model.Id, rateValue = Ratings.Upvote })
                 @Html.Raw("|")
                 @Html.ActionLink("Downvote", "RateQuestion", "Rating", new { questionId = Model.Id, rateValue = Ratings.Downvote })
@@ -131,7 +132,6 @@
                                     <h4><b>BEST ANSWER</b></h4>
                                 }
 
-
                                 <div>
                                     <h3 style="display: inline-block; float: right;"><a asp-action="Profile" asp-controller="Profile" asp-route-name="@answer.AuthorName">@Html.DisplayFor(modelItem => answer.AuthorName)</a></h3>
                                     <div style="width: 10%; display: inline-block;">
@@ -146,15 +146,11 @@
                                         }
                                     </div>
                                     <div style="display: inline-block; width: 60%;"><span style="word-wrap: break-word;">@Html.DisplayFor(modelItem => answer.Content)</span></div>
-                                    <div>
-                                        <table>
-                                            <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Created on:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => answer.CreationDate)</td></tr>
-                                            <tr><td style="width: 20%; margin-right: 5%;"><h4><i>Last edit:</i></h4></td><td style="width: 70%;">@Html.DisplayFor(modelItem => answer.EditDate)</td></tr>
-
-                                        </table>
+                                    <div style="display: inline-block; margin-left: 50%; width: 50%;">
+                                        <div class="text-left" style="float: left;"><i>Created on:</i> @Html.DisplayFor(modelItem => answer.CreationDate)</div>
+                                        <div class="text-right" style="float: right;"><i>Last edit:</i> @Html.DisplayFor(modelItem => answer.EditDate)</div>
                                     </div>
                                 </div>
-
 
                                 <div>
                                     @Html.ActionLink("Upvote", "RateAnswer", "Rating", new { answerId = answer.Id, rateValue = Ratings.Upvote })

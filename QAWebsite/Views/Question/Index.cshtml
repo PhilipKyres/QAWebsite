@@ -31,15 +31,15 @@
             <th>
                 @Html.DisplayNameFor(model => model.Rating)
             </th>
-            @if (User.Identity.IsAuthenticated && User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
-            {
-                <th>
-                    @Html.DisplayNameFor(model => model.Flags)
-                </th>
-            }
             <th>
                 Answers
             </th>
+            @if (User.Identity.IsAuthenticated && User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.FlagCount)
+                </th>
+            }
         </tr>
     </thead>
     <tbody>
@@ -53,7 +53,10 @@
                     @Html.DisplayFor(modelItem => item.Content)
                 </td>
                 <td>
-                    @string.Join(", ", item.QuestionTags.Select(x => x.Tag.Name))
+                    @foreach (var qt in item.QuestionTags)
+                    {
+                        <q-tag name="@qt.Tag.Name" />
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CreationDate)
@@ -67,21 +70,19 @@
                  <td>
                     @Html.DisplayFor(modelItem => item.AnswerCount)
                 </td>
-              
                 @if (User.Identity.IsAuthenticated && User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
                 {
                      <td>
-                         @if (item.Flags > 0)
+                         @if (item.FlagCount > 0)
                          {
-                            <a asp-action="Index" asp-controller="Flags" asp-route-id="@item.Id">@item.Flags</a>
+                            <a asp-action="Index" asp-controller="Flags" asp-route-id="@item.Id">@item.FlagCount</a>
                          }
                          else
                          {
                                 <p>0</p>
                          }
-                    </td>               
+                    </td>
                 }
-                              
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                     @if (User.Identity.IsAuthenticated && item.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))

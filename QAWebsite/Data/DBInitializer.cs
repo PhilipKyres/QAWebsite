@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using QAWebsite.Models;
 using QAWebsite.Models.Enums;
 using System;
 using System.IO;
@@ -51,7 +50,7 @@ namespace QAWebsite.Data
             
             config.GetSection("Achievements").GetChildren().ToList().ForEach(achievement =>
             {
-                if (context.Achievement.Where(a => a.Title == achievement["title"]).FirstOrDefault() == null)
+                if (context.Achievement.FirstOrDefault(a => a.Title == achievement["title"]) == null)
                 {
                     try
                     {
