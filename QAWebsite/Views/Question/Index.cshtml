@@ -47,7 +47,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Title)
+                    <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.Title)</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Content)
@@ -83,15 +83,13 @@
                          }
                     </td>
                 }
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    @if (User.Identity.IsAuthenticated && item.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
-                    {
-                        @Html.Raw("|")
+                @if (User.Identity.IsAuthenticated && item.AuthorId == UserManager.GetUserId(User) || User.IsInRole(@Roles.ADMINISTRATOR.ToString()))
+                {
+                    <td>
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> @Html.Raw("|")
                         <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    }
-                </td>
+                    </td>
+                }
             </tr>
         }
     </tbody>

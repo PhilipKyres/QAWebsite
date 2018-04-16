@@ -19,9 +19,9 @@ namespace QAWebsite.Controllers
     public class QuestionController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _extraContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAchievementDistributor _achievementDistributor;
-        private readonly DbContextOptions<ApplicationDbContext> _dbContextOptions;
         private readonly TagController _tagController;
         private readonly RatingController _ratingController;
         private readonly AnswerController _answerController;
@@ -30,9 +30,9 @@ namespace QAWebsite.Controllers
         public QuestionController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAchievementDistributor achievementDistributor, DbContextOptions<ApplicationDbContext> dbContextOptions)
         {
             _context = context;
+            _extraContext = new ApplicationDbContext(dbContextOptions);
             _userManager = userManager;
             _achievementDistributor = achievementDistributor;
-            _dbContextOptions = dbContextOptions;
             _tagController = new TagController(context);
             _ratingController = new RatingController(context, userManager, dbContextOptions);
             _answerController = new AnswerController(context, userManager, achievementDistributor, dbContextOptions);
@@ -49,14 +49,11 @@ namespace QAWebsite.Controllers
 
         public IEnumerable<IndexViewModel> GetQuestionList(IEnumerable<Question> query)
         {
-            using (var contextInstance = new ApplicationDbContext(_dbContextOptions))
-            {
-                return query.AsEnumerable().Select(q => new IndexViewModel(q,
-                        _ratingController.GetRating<QuestionRating>(q.Id),
-                        contextInstance.Answer.Count(a => a.QuestionId == q.Id),
-                        contextInstance.Flag.Count(f => f.QuestionId == q.Id)))
-                    .OrderByDescending(q => q.CreationDate).ToList();
-            }
+            return query.AsEnumerable().Select(q => new IndexViewModel(q,
+                    _ratingController.GetRating<QuestionRating>(q.Id),
+                    _extraContext.Answer.Count(a => a.QuestionId == q.Id),
+                    _extraContext.Flag.Count(f => f.QuestionId == q.Id)))
+                .OrderByDescending(q => q.CreationDate).ToList();
         }
 
         // GET: Question
@@ -77,16 +74,13 @@ namespace QAWebsite.Controllers
             var questions = GetQuestionQueryable()
                 .AsEnumerable(); //TODO remove in Core 2.1
 
-            using (var contextInstance = new ApplicationDbContext(_dbContextOptions))
-            {
-                var questionAnswers = contextInstance.Answer.Where(a => split.Any(s => a.Content.Normalize().Contains(s))).Select(a => a.QuestionId).Distinct();
+            var questionAnswers = _extraContext.Answer.Where(a => split.Any(s => a.Content.Normalize().Contains(s))).Select(a => a.QuestionId).Distinct();
 
-                questions = questions.Where(x => questionAnswers.Any(q => q == x.Id) ||
-                                     split.Any(s => x.Title.Normalize().Contains(s) ||
-                                                    x.Content.Normalize().Contains(s) ||
-                                                    x.QuestionTags.Any(qt => qt.Tag.Name.Normalize().Contains(s)) ||
-                                                    s == x.Author.UserName.Normalize()));
-            }
+            questions = questions.Where(x => questionAnswers.Any(q => q == x.Id) ||
+                            split.Any(s => x.Title.Normalize().Contains(s) ||
+                                x.Content.Normalize().Contains(s) ||
+                                x.QuestionTags.Any(qt => qt.Tag.Name.Normalize().Contains(s)) ||
+                                s == x.Author.UserName.Normalize()));
 
             return View("Index", GetQuestionList(questions));
         }
