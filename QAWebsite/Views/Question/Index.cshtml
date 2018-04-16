@@ -62,7 +62,7 @@
                     @Html.DisplayFor(modelItem => item.CreationDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.AuthorName)
+                    <a asp-action="Profile" asp-controller="Profile" asp-route-name="@item.AuthorName">@Html.DisplayFor(modelItem => item.AuthorName)</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Rating)

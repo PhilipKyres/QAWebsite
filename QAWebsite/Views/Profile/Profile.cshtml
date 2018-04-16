@@ -81,13 +81,10 @@
                             {
                                 <tr>
                                     <td>
-                                        @Html.DisplayFor(modelItem => question.Title)
+                                        @Html.ActionLink(question.Title, "Details", "Question", new { id = question.Id })
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => question.CreationDate)
-                                    </td>
-                                    <td>
-                                        @Html.ActionLink("Details", "Details", "Question", new { id = question.Id })
                                     </td>
                                 </tr>
                             }
@@ -116,13 +113,10 @@
                             {
                                 <tr>
                                     <td>
-                                        @Html.DisplayFor(modelItem => answer.Content)
+                                        @Html.ActionLink(answer.Content, "Details", "Question", new { id = answer.QuestionId })
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => answer.CreationDate)
-                                    </td>
-                                    <td>
-                                        @Html.ActionLink("Question Details", "Details", "Question", new { id = answer.QuestionId })
                                     </td>
                                 </tr>
                             }
