@@ -14,7 +14,7 @@ namespace QAWebsite.Models.QuestionViewModels
             this.AuthorId = question.AuthorId;
             this.Id = question.Id;
             this.Title = question.Title;
-            this.Content = question.Content;
+            this.Content = question.Content.Length < 35 ? question.Content : question.Content.Substring(0, 35) + "...";
             this.CreationDate = question.CreationDate;
             this.EditDate = question.EditDate;
             this.Rating = rating;
