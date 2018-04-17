@@ -75,7 +75,7 @@
                      <td>
                          @if (item.FlagCount > 0)
                          {
-                            <a asp-action="Index" asp-controller="Flags" asp-route-id="@item.Id">@item.FlagCount</a>
+                             <a asp-action="FlagsByQuestion" asp-controller="Flags" asp-route-id="@item.Id">@item.FlagCount</a>
                          }
                          else
                          {
