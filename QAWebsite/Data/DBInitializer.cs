@@ -73,13 +73,11 @@ namespace QAWebsite.Data
                                 Type = (AchievementType)Enum.Parse(typeof(AchievementType), achievement["AchievementType"]),
                             });
                     }
-                    catch (Exception exception)
+                    catch (Exception)
                     { //parsing issue move on to next
                     }
                 }
             });
-
-
 
             await context.SaveChangesAsync().ConfigureAwait(false);
         }

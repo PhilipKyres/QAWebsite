@@ -30,7 +30,7 @@
             {
                 <tr>
                     <td>
-                        <a asp-action="Profile" asp-controller="Profile" asp-route-id="@edit.EditorId">@Html.DisplayFor(modelItem => edit.EditedBy)</a>
+                        <a asp-action="Profile" asp-controller="Profile" asp-route-name="@edit.EditedBy">@Html.DisplayFor(modelItem => edit.EditedBy)</a>
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => edit.TitleChanged)

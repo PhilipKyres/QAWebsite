@@ -13,7 +13,7 @@
             @Html.DisplayNameFor(model => model.EditedBy)
         </dt>
         <dd>
-            <a asp-action="Profile" asp-controller="Profile" asp-route-id="@Model.EditorId">@Html.DisplayFor(modelItem => Model.EditedBy)</a>
+            <a asp-action="Profile" asp-controller="Profile" asp-route-name="@Model.EditedBy">@Html.DisplayFor(modelItem => Model.EditedBy)</a>
         </dd>
         
         @if (Model.InitialTitle != null)

@@ -123,7 +123,7 @@ namespace QAWebsite.Controllers
                 return NotFound();
             }
 
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid && ModelState.ErrorCount > 1)
             {
                 return View(am);
             }

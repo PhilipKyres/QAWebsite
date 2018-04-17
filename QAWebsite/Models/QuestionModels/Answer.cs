@@ -31,6 +31,7 @@ namespace QAWebsite.Models.QuestionModels
         [ForeignKey("ApplicationUser")]
         public string AuthorId { get; set; }
 
+        [Required]
         public virtual Question Question { get; set; }
 
         public virtual ICollection<AnswerComment> Comments { get; set; }

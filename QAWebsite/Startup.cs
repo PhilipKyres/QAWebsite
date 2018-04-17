@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using QAWebsite.Controllers;
 using QAWebsite.Data;
 using QAWebsite.Models.UserModels;
 using QAWebsite.Services;

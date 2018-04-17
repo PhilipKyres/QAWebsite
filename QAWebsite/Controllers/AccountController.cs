@@ -494,7 +494,7 @@ namespace QAWebsite.Controllers
             
             user.IsEnabled = false;
             await _userManager.UpdateAsync(user);
-            return RedirectToAction("Profile","Profile", new { id = id });
+            return RedirectToAction("Profile","Profile", new { name = user.UserName });
         }
 
         [HttpGet]
@@ -515,7 +515,7 @@ namespace QAWebsite.Controllers
 
             user.IsEnabled = true;
             await _userManager.UpdateAsync(user);
-            return RedirectToAction("Profile", "Profile", new { id = id });
+            return RedirectToAction("Profile", "Profile", new { name = user.UserName });
             
         }
 
@@ -535,7 +535,7 @@ namespace QAWebsite.Controllers
 
             await _userManager.AddToRoleAsync(user, Roles.ADMINISTRATOR.ToString());
             await _userManager.UpdateAsync(user);
-            return RedirectToAction("Profile", "Profile", new { id = id });
+            return RedirectToAction("Profile", "Profile", new { name = user.UserName });
         }
 
         public async Task<IActionResult> Demote(string id)
@@ -554,7 +554,7 @@ namespace QAWebsite.Controllers
 
             await _userManager.RemoveFromRoleAsync(user, Roles.ADMINISTRATOR.ToString());
             await _userManager.UpdateAsync(user);
-            return RedirectToAction("Profile", "Profile", new { id = id});
+            return RedirectToAction("Profile", "Profile", new { name = user.UserName });
         }
         
         #region Helpers
